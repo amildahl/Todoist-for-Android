@@ -54,12 +54,16 @@ public class TasksList extends ListActivity {
     private void getItems(){
 
     		TodoistAPIHandler handler = new TodoistAPIHandler("TOKEN");
-        	Projects projects = handler.getProjects();
+        	//Projects projects = handler.getProjects();
         	projectArray = new ArrayList<Project>();
-        	for(int i = 0; i < projects.getSize(); i++)
+        	User user = handler.login("user", "pass");
+        	Project project = new Project();
+        	project.setName(user.getAPIToken());
+        	projectArray.add(project);
+        	/*for(int i = 0; i < projects.getSize(); i++)
         	{
 	        	projectArray.add(projects.getProjectsAt(i));
-        	}
+        	}*/
             runOnUiThread(returnRes);
         }
     private class ItemAdapter extends ArrayAdapter<Project> {
