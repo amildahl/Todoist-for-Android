@@ -47,6 +47,15 @@ public class User {
 		this.mobile_host = mobile_host;
 	}
 	
+	public Boolean isValid()
+	{
+		if( this.api_token == "")
+		{
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * @param email the email to set
 	 */
