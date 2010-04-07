@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="com.android.ide.eclipse.adt.debug.LaunchConfigType">
 <intAttribute key="com.android.ide.eclipse.adt.action" value="1"/>
-<stringAttribute key="com.android.ide.eclipse.adt.activity" value="com.android.applications.todoist.TasksList"/>
+<stringAttribute key="com.android.ide.eclipse.adt.activity" value="com.android.applications.todoist.LoginPage"/>
 <stringAttribute key="com.android.ide.eclipse.adt.avd" value="Moto-Droid"/>
 <stringAttribute key="com.android.ide.eclipse.adt.commandline" value=""/>
 <intAttribute key="com.android.ide.eclipse.adt.delay" value="0"/>

@@ -8,6 +8,10 @@ public class TodoistAPIHandler {
 
 	private String token;
 	
+	public TodoistAPIHandler()
+	{
+	}
+	
 	public TodoistAPIHandler( String _token)
 	{
 		token = _token;

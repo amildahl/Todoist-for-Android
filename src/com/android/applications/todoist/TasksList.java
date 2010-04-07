@@ -2,7 +2,7 @@ package com.android.applications.todoist;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,72 +10,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.app.AlertDialog;
 
-public class TasksList extends Activity {
+public class TasksList extends ListActivity {
 	private ProgressDialog m_ProgressDialog = null;
     private ArrayList<Project> projectArray = null;
     private ItemAdapter adapter;
     private Runnable viewProjects;
-    private Button signInButton;
-    private EditText emailText;
-    private EditText passText;
     private TodoistAPIHandler handler;
    
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
-        initControls();
-    }
-    
-    private void initControls()
-    {
-    	//TextView
-    	//EditText 
-    	handler = new TodoistAPIHandler("TOKEN");
-    	emailText = (EditText)findViewById(R.id.edit_email);
-    	passText = (EditText)findViewById(R.id.edit_pass);
-    	signInButton = (Button)findViewById(R.id.btn_signIn);
-    	signInButton.setOnClickListener(new Button.OnClickListener() { public void onClick (View view){ signIn(); } } ); 
-    }
-    
-    private void signIn()
-    {
-    	String email = emailText.getText().toString();
-    	String password = passText.getText().toString();
-    	if(email.length() == 0)
-    	{
-    		//email is empty.. problem
-    	}
-    	else if(password.length() == 0)
-    	{
-    		//password is empty.. problem
-    	}
-    	else
-    	{
-    		//Attempt Login...
-    		User user = handler.login(email, password);
-    		AlertDialog alert = new AlertDialog.Builder(this).create();
-    		if(user.isValid())
-    		{
-    			alert.setTitle("Success!");
-    			alert.show();
-    		}
-    		else
-    		{
-    			//Login Failure...
-    			alert.setTitle("Failure!");
-    			alert.show();
-    		}
-    	}
-    }
-    
-        /*
+        setContentView(R.layout.main);
+        
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)
+        {
+        	handler = new TodoistAPIHandler(extras.getString("token"));
+        }
+        else
+        {
+        	handler = new TodoistAPIHandler();
+        }
+        
         projectArray = new ArrayList<Project>();
         this.adapter = new ItemAdapter(this, R.layout.row, projectArray);
         setListAdapter(this.adapter);
@@ -91,7 +50,7 @@ public class TasksList extends Activity {
         m_ProgressDialog = ProgressDialog.show(TasksList.this,    
               "Please wait...", "Retrieving data ...", true);
     }
-    /*private Runnable returnRes = new Runnable() {
+    private Runnable returnRes = new Runnable() {
 
         @Override
         public void run() {
@@ -106,19 +65,18 @@ public class TasksList extends Activity {
     };
     private void getItems(){
 
-    		TodoistAPIHandler handler = new TodoistAPIHandler("TOKEN");
-        	//Projects projects = handler.getProjects();
+        	Projects projects = handler.getProjects();
         	projectArray = new ArrayList<Project>();
         	User user = handler.login("user", "pass");
         	Project project = new Project();
         	project.setName(user.getAPIToken());
         	projectArray.add(project);
-        	/*for(int i = 0; i < projects.getSize(); i++)
+        	for(int i = 0; i < projects.getSize(); i++)
         	{
 	        	projectArray.add(projects.getProjectsAt(i));
-        	}/
+        	}
             runOnUiThread(returnRes);
-        }*/
+        }
     private class ItemAdapter extends ArrayAdapter<Project> {
 
         private ArrayList<Project> projects;
