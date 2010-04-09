@@ -51,15 +51,18 @@ public class LoginPage extends Activity {
     		AlertDialog alert = new AlertDialog.Builder(this).create();
     		if(user.isValid())
     		{
-    			Intent myIntent = new Intent(LoginPage.this, TasksList.class);
+    			/*Intent myIntent = new Intent(LoginPage.this, TasksList.class);
     			myIntent.putExtra("token", user.getAPIToken());
-    			LoginPage.this.startActivity(myIntent);
+    			LoginPage.this.startActivity(myIntent);*/
+    			setResult(RESULT_OK, new Intent().putExtra("token", user.getAPIToken()));
+    			finish();
     		}
     		else
     		{
     			//Login Failure...
     			alert.setTitle("Failure!");
     			alert.show();
+    			setResult(RESULT_CANCELED, new Intent());
     		}
     	}
     }
