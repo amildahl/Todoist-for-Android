@@ -1,5 +1,8 @@
 package com.android.applications.todoist;
 
+import com.android.applications.todoist.containers.User;
+import com.android.applications.todoist.handlers.TodoistAPIHandler;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -8,6 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * An Activity that allows the user to Login.
+ *
+ * @see     android.app.Activity
+ */
 public class LoginPage extends Activity {
 	private Button signInButton;
     private EditText emailText;
@@ -62,7 +70,7 @@ public class LoginPage extends Activity {
     			//Login Failure...
     			alert.setTitle("Failure!");
     			alert.show();
-    			setResult(RESULT_CANCELED, new Intent());
+    			//setResult(RESULT_CANCELED, new Intent());
     		}
     	}
     }

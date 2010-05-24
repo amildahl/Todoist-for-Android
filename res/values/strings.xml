@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello">Hello World, TasksList!</string>
-    <string name="app_name">ToDoist</string>
+    <string name="app_name">Todoist</string>
 <string name="main_no_items">No items to display</string>
 <string name="login">Login</string>
 </resources>

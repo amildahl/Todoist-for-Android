@@ -1,8 +1,13 @@
-package com.android.applications.todoist;
+package com.android.applications.todoist.handlers;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.android.applications.todoist.containers.Project;
+import com.android.applications.todoist.containers.Projects;
+import com.android.applications.todoist.containers.Tasks;
+import com.android.applications.todoist.containers.User;
 
 public class TodoistAPIHandler {
 
@@ -14,6 +19,10 @@ public class TodoistAPIHandler {
 	
 	public TodoistAPIHandler( String _token)
 	{
+		token = _token;
+	}
+	
+	public void setToken(String _token) {
 		token = _token;
 	}
 	

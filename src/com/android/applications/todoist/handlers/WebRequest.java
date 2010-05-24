@@ -1,4 +1,4 @@
-package com.android.applications.todoist;
+package com.android.applications.todoist.handlers;
 
 public final class WebRequest{
     // Saved response.

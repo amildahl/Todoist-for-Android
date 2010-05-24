@@ -1,6 +1,7 @@
-package com.android.applications.todoist;
+package com.android.applications.todoist.containers;
 
 import java.util.ArrayList;
+
 
 public class Projects {
 

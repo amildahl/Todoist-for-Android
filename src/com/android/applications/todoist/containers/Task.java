@@ -1,4 +1,4 @@
-package com.android.applications.todoist;
+package com.android.applications.todoist.containers;
 
 import java.util.Date;
 
