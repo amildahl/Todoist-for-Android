@@ -17,10 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.android.applications.todoist.containers.Project;
-import com.android.applications.todoist.containers.Projects;
-import com.android.applications.todoist.containers.Task;
-import com.android.applications.todoist.containers.User;
+import com.android.applications.todoist.containers.*;
 import com.android.applications.todoist.handlers.TodoistAPIHandler;
 
 public class TasksList extends ListActivity {
@@ -117,10 +114,10 @@ public class TasksList extends ListActivity {
 
         @Override
         public void run() {
-            if(projectArray != null && projectArray.size() > 0){
+            if(taskArray != null && taskArray.size() > 0){
                 adapter.notifyDataSetChanged();
-                for(int i=0;i<projectArray.size();i++)
-                adapter.add(projectArray.get(i));
+                for(int i=0;i<taskArray.size();i++)
+                adapter.add(taskArray.get(i));
             }
             m_ProgressDialog.dismiss();
             adapter.notifyDataSetChanged();
@@ -130,7 +127,7 @@ public class TasksList extends ListActivity {
     private void getTasks() 
     {
     	taskArray = new ArrayList<Task>();
-        this.adapter = new ItemAdapter(this, R.layout.row, projectArray);
+        this.adapter = new ItemAdapter(this, R.layout.row, taskArray);
         setListAdapter(this.adapter);
        
         viewProjects = new Runnable() {
@@ -148,25 +145,25 @@ public class TasksList extends ListActivity {
     
     private void getItems(){
 
-        	Projects projects = handler.getProjects();
-        	projectArray = new ArrayList<Project>();
+        	//Tasks tasks = handler.getUncompletedTasks("3");
+        	taskArray = new ArrayList<Task>();
         	User user = handler.login("user", "pass");
-        	Project project = new Project();
-        	project.setName(user.getAPIToken());
-        	projectArray.add(project);
-        	for(int i = 0; i < projects.getSize(); i++)
-        	{
-	        	projectArray.add(projects.getProjectsAt(i));
-        	}
+        	Task task = new Task();
+        	task.setID(user.getAPIToken());
+        	taskArray.add(task);
+        	//for(int i = 0; i < tasks.getSize(); i++)
+        	//{
+	        //	taskArray.add(tasks.getProjectsAt(i));
+        	//}
             runOnUiThread(returnRes);
         }
-    private class ItemAdapter extends ArrayAdapter<Project> {
+    private class ItemAdapter extends ArrayAdapter<Task> {
 
-        private ArrayList<Project> projects;
+        private ArrayList<Task> tasks;
 
-        public ItemAdapter(Context context, int textViewResourceId, ArrayList<Project> items) {
+        public ItemAdapter(Context context, int textViewResourceId, ArrayList<Task> items) {
                 super(context, textViewResourceId, items);
-                this.projects = items;
+                this.tasks = items;
         }
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -176,14 +173,14 @@ public class TasksList extends ListActivity {
                     v = vi.inflate(R.layout.row, null);
                 }
                 
-                Project project = projects.get(position);
-                if (project != null) {
+                Task task = tasks.get(position);
+                if (task != null) {
                         TextView tt = (TextView) v.findViewById(R.id.TextView01);
                         TextView bt = (TextView) v.findViewById(R.id.TextView02);
                         if (tt != null) {
-                              tt.setText(project.getName());                            }
+                              tt.setText(task.getID());                            }
                         if(bt != null){
-                              bt.setText(project.getID());
+                              bt.setText(task.getID());
                         }
                 }
                 return v;
