@@ -106,7 +106,7 @@ public class SupportForm extends Activity {
 		    }
 		    
 			SupportCase newCase = new SupportCase(this.nameText.getText().toString(),this.emailText.getText().toString(),
-					this.problemText.getText().toString(), "Some Problem_Data", this.areaSpinner.getSelectedItem().toString(),
+					this.problemText.getText().toString(), "", this.areaSpinner.getSelectedItem().toString(),
 					info.packageName, info.versionName);
 			
 			XMLRPCMethod method = new XMLRPCMethod("reportproblem", new XMLRPCMethodCallback() {

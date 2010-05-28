@@ -50,14 +50,19 @@ public class SupportCase implements XMLRPCSerializable {
 	
 	public Object getSerializable() {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("user_name", user_name);
-		map.put("user_email", user_email);
+		map.put("user_name", cleanString(user_name));
+		map.put("user_email", cleanString(user_email));
 		map.put("problem", problem);
 		map.put("problem_data", problem_data);
 		map.put("problem_area", problem_area);
-		map.put("product_version", product_version);
-		map.put("product_name", product_name);
+		map.put("product_version", cleanString(product_version));
+		map.put("product_name", cleanString(product_name));
 		return map;
+	}
+	
+	private String cleanString(String $str)
+	{
+		return $str.replace("\n", "").replace("\r", "").replace("\t", "");
 	}
 	
 	public boolean callRPC(String uri)
