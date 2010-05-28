@@ -22,6 +22,7 @@ public class LoginPage extends Activity {
     private EditText passText;
     private TodoistAPIHandler handler;
     
+    @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);

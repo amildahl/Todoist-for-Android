@@ -7,7 +7,11 @@ import org.xmlrpc.android.XMLRPCClient;
 import org.xmlrpc.android.XMLRPCException;
 import org.xmlrpc.android.XMLRPCFault;
 
+import com.android.applications.todoist.containers.SupportCase;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -15,8 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-
-import com.android.applications.todoist.containers.SupportCase;
 
 public class SupportForm extends Activity {
 	private EditText nameText;
@@ -27,6 +29,7 @@ public class SupportForm extends Activity {
 	private XMLRPCClient client;
 	private URI uri;
 	
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -61,7 +64,14 @@ public class SupportForm extends Activity {
 		XMLRPCMethod method = new XMLRPCMethod("reportproblem", new XMLRPCMethodCallback() {
 			public void callFinished(Object result)
 			{
-				//TODO: Something with the result... will be Boolean
+				if((Boolean)result)
+				{
+					showAlert("Success!","The problem was reported successfully.  If you entered your e-mail address, you should receive an e-mail in the next few hours.","OK",true);
+				}
+				else
+				{
+					showAlert("Failure!","The problem failed to be reported.  Please try again shortly.  If this problem persists, please contact Admin@DrewDahl.com.","OK",false);
+				}
 			}
 		});
 		
@@ -70,6 +80,31 @@ public class SupportForm extends Activity {
 		};
 		
 		method.call(params);
+	}
+	
+	private void showAlert(String title, String message, String button_text, Boolean finish)
+	{
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle(title).setMessage(message);
+		if(finish)
+		{
+			dialog.setNeutralButton(button_text, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();							
+				}
+			});
+		}
+		else
+		{
+			dialog.setNeutralButton(button_text, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					//Do nothing						
+				}
+			});
+		}
+		
+		dialog.show();
 	}
 	
 	interface XMLRPCMethodCallback {

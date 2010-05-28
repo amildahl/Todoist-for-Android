@@ -11,13 +11,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.android.applications.todoist.containers.*;
+import com.android.applications.todoist.containers.Task;
+import com.android.applications.todoist.containers.User;
 import com.android.applications.todoist.handlers.TodoistAPIHandler;
 
 public class TasksList extends ListActivity {
@@ -28,6 +32,8 @@ public class TasksList extends ListActivity {
     private ItemAdapter adapter;
     private Runnable viewProjects;
     private TodoistAPIHandler handler;
+    
+    public static final int REPORT_PROBLEM = Menu.FIRST + 1;
    
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -60,6 +66,57 @@ public class TasksList extends ListActivity {
         		this.createLogin();
         	}
         }
+    }
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+    	populateMenu(menu);
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+    	populateMenu(menu);
+    	return (super.onCreateOptionsMenu(menu));
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) 
+    {
+    	return(applyMenuChoice(item) || super.onContextItemSelected(item));
+    }
+    
+    private void populateMenu(Menu menu)
+    {
+    	menu.add(Menu.NONE, REPORT_PROBLEM, Menu.NONE, "Report a Problem");
+    }
+    
+    private boolean applyMenuChoice(MenuItem item)
+    {
+    	switch (item.getItemId())
+    	{
+    	case REPORT_PROBLEM:
+    		this.launchActivity(SupportForm.class, new TasksList.ResultCallbackIF() {
+    			
+    			@Override
+    			public void resultOk(Intent data) 
+    			{
+		        	Log.i("TasksList", "Returning on OK from SupportForm");
+		        	finish();
+    			}
+    			
+    			@Override
+    			public void resultCancel(Intent data) 
+    			{
+    				Log.i("TasksList", "Returning on Cancel from SupportForm");
+    				finish();
+    			}
+    		});
+    		return(true);
+    	}
+    	
+    	return (false);
     }
     
     // Will probably be eventually replaced or use the SQLite3 DB
@@ -145,15 +202,15 @@ public class TasksList extends ListActivity {
     
     private void getItems(){
 
-        	//Tasks tasks = handler.getUncompletedTasks("3");
+        	//Tasks tasks = handler.getUncompletedTasks();
         	taskArray = new ArrayList<Task>();
         	User user = handler.login("user", "pass");
         	Task task = new Task();
         	task.setID(user.getAPIToken());
         	taskArray.add(task);
-        	//for(int i = 0; i < tasks.getSize(); i++)
+        	//for(int i = 0; i < projects.getSize(); i++)
         	//{
-	        //	taskArray.add(tasks.getProjectsAt(i));
+	        //	taskArray.add(projects.getProjectsAt(i));
         	//}
             runOnUiThread(returnRes);
         }
