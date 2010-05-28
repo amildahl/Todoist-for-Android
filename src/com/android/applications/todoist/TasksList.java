@@ -103,14 +103,12 @@ public class TasksList extends ListActivity {
     			public void resultOk(Intent data) 
     			{
 		        	Log.i("TasksList", "Returning on OK from SupportForm");
-		        	finish();
     			}
     			
     			@Override
     			public void resultCancel(Intent data) 
     			{
     				Log.i("TasksList", "Returning on Cancel from SupportForm");
-    				finish();
     			}
     		});
     		return(true);

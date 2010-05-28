@@ -5,6 +5,13 @@ import java.util.Map;
 
 import org.xmlrpc.android.XMLRPCSerializable;
 
+import com.android.applications.todoist.SupportForm;
+
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.util.Log;
+
 public class SupportCase implements XMLRPCSerializable {
 	private String user_name;
 	private String user_email;
@@ -12,6 +19,7 @@ public class SupportCase implements XMLRPCSerializable {
 	private String problem_data;
 	private String problem_area;
 	private String product_version;
+	private String product_name;
 	
 	public SupportCase()
 	{
@@ -19,7 +27,7 @@ public class SupportCase implements XMLRPCSerializable {
 	}
 	
 	public SupportCase(String user_name, String user_email, String problem,
-			String problem_data, String problem_area, String product_version)
+			String problem_data, String problem_area, String product_name, String product_version)
 	{
 		this.setUserEmail(user_email);
 		this.setUserName(user_name);
@@ -27,6 +35,7 @@ public class SupportCase implements XMLRPCSerializable {
 		this.setProblemArea(problem_area);
 		this.setProblemData(problem_data);
 		this.setProductVersion(product_version);
+		this.setProductName(product_name);
 	}
 	
 	private void initValues()
@@ -47,6 +56,7 @@ public class SupportCase implements XMLRPCSerializable {
 		map.put("problem_data", problem_data);
 		map.put("problem_area", problem_area);
 		map.put("product_version", product_version);
+		map.put("product_name", product_name);
 		return map;
 	}
 	
@@ -102,6 +112,14 @@ public class SupportCase implements XMLRPCSerializable {
 
 	public String getProductVersion() {
 		return product_version;
+	}
+
+	public void setProductName(String product_name) {
+		this.product_name = product_name;
+	}
+
+	public String getProductName() {
+		return product_name;
 	}
 	
 	

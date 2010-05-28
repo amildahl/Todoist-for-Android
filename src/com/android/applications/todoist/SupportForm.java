@@ -7,24 +7,32 @@ import org.xmlrpc.android.XMLRPCClient;
 import org.xmlrpc.android.XMLRPCException;
 import org.xmlrpc.android.XMLRPCFault;
 
-import com.android.applications.todoist.containers.SupportCase;
-
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
+
+import com.android.applications.todoist.containers.SupportCase;
 
 public class SupportForm extends Activity {
 	private EditText nameText;
 	private EditText emailText;
 	private EditText problemText;
 	private Spinner areaSpinner;
+	private ArrayAdapter<CharSequence> m_adapterForSpinner;
 	private Button submitButton;
 	private XMLRPCClient client;
 	private URI uri;
@@ -54,32 +62,88 @@ public class SupportForm extends Activity {
 						rpcCall();
 					}
 				});
+		
+		m_adapterForSpinner = ArrayAdapter.createFromResource(this, R.array.support_areas, android.R.layout.simple_spinner_item);
+		m_adapterForSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		areaSpinner.setAdapter(m_adapterForSpinner);
+		areaSpinner.setOnItemSelectedListener(
+				new OnItemSelectedListener() {
+					
+					@Override
+					public void onItemSelected(AdapterView<?> parent, View view,
+							int position, long id) {
+						//Do Nothing
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {
+						//Do Nothing
+					}
+					
+				});
+	}
+	
+	private void showToast(CharSequence msg)
+	{
+		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 	
 	private void rpcCall()
 	{
-		SupportCase newCase = new SupportCase(this.nameText.getText().toString(),this.emailText.getText().toString(),
-				this.problemText.getText().toString(), "Some Problem_Data", this.areaSpinner.toString(), "Some Version");
-		
-		XMLRPCMethod method = new XMLRPCMethod("reportproblem", new XMLRPCMethodCallback() {
-			public void callFinished(Object result)
-			{
-				if((Boolean)result)
+		if(checkValues())
+		{
+			Context context = getApplicationContext();
+			PackageInfo info;
+			
+			try {
+	            // read current version information about this package
+	            PackageManager manager = context.getPackageManager();
+	            info = manager.getPackageInfo(context.getPackageName(), 0);
+	
+		    } catch(Exception e) {
+		            Log.e("SupportCase", "Couldn't find package information in PackageManager", e);
+		            return;
+		    }
+		    
+			SupportCase newCase = new SupportCase(this.nameText.getText().toString(),this.emailText.getText().toString(),
+					this.problemText.getText().toString(), "Some Problem_Data", this.areaSpinner.getSelectedItem().toString(),
+					info.packageName, info.versionName);
+			
+			XMLRPCMethod method = new XMLRPCMethod("reportproblem", new XMLRPCMethodCallback() {
+				public void callFinished(Object result)
 				{
-					showAlert("Success!","The problem was reported successfully.  If you entered your e-mail address, you should receive an e-mail in the next few hours.","OK",true);
+					if((Boolean)result && emailText.getText().length() != 0)
+					{
+						showAlert("Success!","The problem was reported successfully. \n\nYou should receive an automated e-mail in the next few hours.","OK",true);
+					}
+					else if((Boolean)result)
+					{
+						showAlert("Success!","The problem was reported successfully. \n\nNotice: Since you did not enter your e-mail address, there will be no correspondance.","OK",true);
+					}
+					else
+					{
+						showAlert("Failure!","The problem failed to be reported.  Please try again shortly.  If this problem persists, please contact Admin@DrewDahl.com.","OK",false);
+					}
 				}
-				else
-				{
-					showAlert("Failure!","The problem failed to be reported.  Please try again shortly.  If this problem persists, please contact Admin@DrewDahl.com.","OK",false);
-				}
-			}
-		});
+			});
+			
+			Object[] params = {
+					newCase,				
+			};
+			
+			method.call(params);
+		}
+	}
+	
+	private boolean checkValues()
+	{
+		if(this.problemText.getText().toString().replaceAll(" ", "") == "")
+		{
+			showToast("Problem Text cannot be blank.");
+			return false;
+		}
 		
-		Object[] params = {
-				newCase,				
-		};
-		
-		method.call(params);
+		return true;
 	}
 	
 	private void showAlert(String title, String message, String button_text, Boolean finish)
