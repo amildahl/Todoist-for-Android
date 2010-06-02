@@ -1,5 +1,8 @@
-package com.android.applications.todoist;
+package com.android.applications.todoist.views;
 
+import com.android.applications.todoist.R;
+import com.android.applications.todoist.R.id;
+import com.android.applications.todoist.R.layout;
 import com.android.applications.todoist.containers.User;
 import com.android.applications.todoist.handlers.TodoistAPIHandler;
 

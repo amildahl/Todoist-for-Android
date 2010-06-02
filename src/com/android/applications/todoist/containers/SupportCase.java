@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.xmlrpc.android.XMLRPCSerializable;
 
-import com.android.applications.todoist.SupportForm;
+import com.android.applications.todoist.views.SupportForm;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;

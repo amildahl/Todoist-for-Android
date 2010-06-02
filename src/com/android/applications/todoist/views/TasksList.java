@@ -1,4 +1,4 @@
-package com.android.applications.todoist;
+package com.android.applications.todoist.views;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.android.applications.todoist.R;
 import com.android.applications.todoist.containers.Task;
+import com.android.applications.todoist.containers.Tasks;
 import com.android.applications.todoist.containers.User;
 import com.android.applications.todoist.handlers.TodoistAPIHandler;
 
@@ -200,16 +202,13 @@ public class TasksList extends ListActivity {
     
     private void getItems(){
 
-        	//Tasks tasks = handler.getUncompletedTasks();
+        	Tasks tasks = handler.query("[\"2010-6-2T10:13\",\"overdue\"]");
         	taskArray = new ArrayList<Task>();
-        	User user = handler.login("user", "pass");
-        	Task task = new Task();
-        	task.setID(user.getAPIToken());
-        	taskArray.add(task);
-        	//for(int i = 0; i < projects.getSize(); i++)
-        	//{
-	        //	taskArray.add(projects.getProjectsAt(i));
-        	//}
+
+        	for(int i = 0; i < tasks.getSize(); i++)
+        	{
+	        	taskArray.add(tasks.getTaskAt(i));
+        	}
             runOnUiThread(returnRes);
         }
     private class ItemAdapter extends ArrayAdapter<Task> {

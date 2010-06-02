@@ -1,4 +1,4 @@
-package com.android.applications.todoist;
+package com.android.applications.todoist.views;
 
 import java.util.HashMap;
 import java.util.Random;

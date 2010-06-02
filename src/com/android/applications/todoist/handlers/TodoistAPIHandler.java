@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.applications.todoist.Constants;
 import com.android.applications.todoist.containers.Project;
 import com.android.applications.todoist.containers.Projects;
 import com.android.applications.todoist.containers.Tasks;
@@ -60,10 +61,10 @@ public class TodoistAPIHandler {
 		{
 			JSONObject obj = new JSONObject(jsonData);
 			
-			return new User(obj.getString(JSON_EMAIL), obj.getString(JSON_FULLNAME), obj.getString(JSON_ID), obj.getString(JSON_APITOKEN), 
-					obj.getString(JSON_STARTPAGE), obj.getString(JSON_TIMEZONE), obj.getString(JSON_TZOFFSET), obj.getString(JSON_TIMEFORMAT), 
-					obj.getString(JSON_DATEFORMAT), obj.getString(JSON_SORTORDER), obj.getString(JSON_TWITTER), obj.getString(JSON_JABBER), 
-					obj.getString(JSON_MSN), obj.getString(JSON_MOBILENUMBER), obj.getString(JSON_MOBILEHOST));
+			return new User(obj.getString(Constants.JSON_EMAIL), obj.getString(Constants.JSON_FULLNAME), obj.getString(Constants.JSON_ID), obj.getString(Constants.JSON_APITOKEN), 
+					obj.getString(Constants.JSON_STARTPAGE), obj.getString(Constants.JSON_TIMEZONE), obj.getString(Constants.JSON_TZOFFSET), obj.getString(Constants.JSON_TIMEFORMAT), 
+					obj.getString(Constants.JSON_DATEFORMAT), obj.getString(Constants.JSON_SORTORDER), obj.getString(Constants.JSON_TWITTER), obj.getString(Constants.JSON_JABBER), 
+					obj.getString(Constants.JSON_MSN), obj.getString(Constants.JSON_MOBILENUMBER), obj.getString(Constants.JSON_MOBILEHOST));
 			
 		}
 		catch (JSONException e)
@@ -96,8 +97,8 @@ public class TodoistAPIHandler {
 			for(int i=0;i<jArray.length();i++)
 			{
 				obj = jArray.getJSONObject(i);
-				project = new Project(obj.getString(JSON_USERID), obj.getString(JSON_NAME), obj.getString(JSON_COLOR), obj.getString(JSON_COLLAPSED), 
-						obj.getString(JSON_ITEMORDER), obj.getString(JSON_CACHECOUNT), obj.getString(JSON_INDENT), obj.getString(JSON_ID));
+				project = new Project(obj.getString(Constants.JSON_USERID), obj.getString(Constants.JSON_NAME), obj.getString(Constants.JSON_COLOR), obj.getString(Constants.JSON_COLLAPSED), 
+						obj.getString(Constants.JSON_ITEMORDER), obj.getString(Constants.JSON_CACHECOUNT), obj.getString(Constants.JSON_INDENT), obj.getString(Constants.JSON_ID));
 				projects.addProject(project);
 			}	
 			
@@ -115,14 +116,20 @@ public class TodoistAPIHandler {
 	// TODO: Output Exceptions
 	public Tasks getUncompletedTasks(String project_id)
 	{
-		return this.parseTasks(this.navigate(GET_UNCOMPLETED_ITEMS.replace(PARAM_PROJECTID,project_id).replace(PARAM_TOKEN,token)));
+		return new Tasks(this.navigate(GET_UNCOMPLETED_ITEMS.replace(PARAM_PROJECTID,project_id).replace(PARAM_TOKEN,token)));
 	}
 	
-	// TODO: Everything...
-	private Tasks parseTasks(String jsonData)
+	public Tasks query(String query)
 	{
-		return new Tasks();
+		return new Tasks(this.navigate(QUERY.replace(PARAM_QUERIES, query).replace(PARAM_TOKEN, token)));
 	}
+	
+	public String parseQuery(String query)
+	{
+		//TODO: Parse out the query
+		return query;
+	}
+	
 	
 	/* URI Parameter Values */
 	private static final String PARAM_TOKEN = "MyToken";		// User's API Token
@@ -196,28 +203,6 @@ public class TodoistAPIHandler {
 	private static final String OPTIONAL_PRIORITY = "&priority=" + PARAM_PRIORITY;	// .Replace(PARAM_PRIORITY, priority);
 	private static final String OPTIONAL_CONTENT = "&content=" + PARAM_CONTENT; // .Replace(PARAM_CONTENT, content);
 	
-	/* Todoist JSON elements */
-	private static final String JSON_USERID = "user_id";
-	private static final String JSON_NAME = "name";
-	private static final String JSON_COLOR = "color";
-	private static final String JSON_COLLAPSED = "collapsed";
-	private static final String JSON_ITEMORDER = "item_order";
-	private static final String JSON_INDENT = "indent";
-	private static final String JSON_CACHECOUNT = "cache_count";
-	private static final String JSON_ID = "id";
-	private static final String JSON_EMAIL = "email";
-	private static final String JSON_FULLNAME = "full_name";
-	private static final String JSON_APITOKEN = "api_token";
-	private static final String JSON_STARTPAGE = "start_page";
-	private static final String JSON_TIMEZONE = "timezone";
-	private static final String JSON_TZOFFSET = "tz_offset";
-	private static final String JSON_TIMEFORMAT = "time_format";
-	private static final String JSON_DATEFORMAT = "date_format";
-	private static final String JSON_SORTORDER = "sort_order";
-	private static final String JSON_TWITTER = "twitter";
-	private static final String JSON_JABBER = "jabber";
-	private static final String JSON_MSN = "msn";
-	private static final String JSON_MOBILENUMBER = "mobile_number";
-	private static final String JSON_MOBILEHOST = "mobile_host";
+
 	
 }

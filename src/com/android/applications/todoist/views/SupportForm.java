@@ -1,4 +1,4 @@
-package com.android.applications.todoist;
+package com.android.applications.todoist.views;
 
 import java.net.URI;
 
@@ -25,6 +25,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+import com.android.applications.todoist.R;
+import com.android.applications.todoist.R.array;
+import com.android.applications.todoist.R.id;
+import com.android.applications.todoist.R.layout;
 import com.android.applications.todoist.containers.SupportCase;
 
 public class SupportForm extends Activity {
