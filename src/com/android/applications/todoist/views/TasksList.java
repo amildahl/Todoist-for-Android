@@ -1,5 +1,6 @@
 package com.android.applications.todoist.views;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -9,6 +10,7 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -23,7 +25,7 @@ import android.widget.TextView;
 import com.android.applications.todoist.R;
 import com.android.applications.todoist.containers.Task;
 import com.android.applications.todoist.containers.Tasks;
-import com.android.applications.todoist.containers.User;
+import com.android.applications.todoist.handlers.DBHelper;
 import com.android.applications.todoist.handlers.TodoistAPIHandler;
 
 public class TasksList extends ListActivity {
@@ -122,8 +124,26 @@ public class TasksList extends ListActivity {
     // Will probably be eventually replaced or use the SQLite3 DB
     private String getToken() 
     {
-    	
-    	return "";
+    	DBHelper help = new DBHelper(this);
+		try
+		{
+			help.createDB();
+		}
+		catch (IOException e)
+		{
+			throw new Error("Unable to create database");
+		}
+		
+		try 
+		{
+			help.openDB();
+		}
+		catch (SQLException sqle)
+		{
+			throw sqle;
+		}
+		
+		return help.getUser().getAPIToken();
     }
     
     // Call the LoginPage Activity and deal with that
