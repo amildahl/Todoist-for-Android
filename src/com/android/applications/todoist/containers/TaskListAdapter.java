@@ -1,5 +1,7 @@
 package com.android.applications.todoist.containers;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,36 +9,60 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.widget.SimpleAdapter;
 
 import com.android.applications.todoist.Constants;
+import com.android.applications.todoist.R;
 
 public class TaskListAdapter {
 	private SeparatedListAdapter adapter;
+	private Context context;
 	
 	public TaskListAdapter(Context context) 
 	{
-		this.adapter = new SeparatedListAdapter(context);
+		this.context = context;
+		this.adapter = new SeparatedListAdapter(this.context);
 	}
 	
-	public TaskListAdapter(Context context, Tasks tasks, Boolean projectList)
+	public TaskListAdapter(Context context, Tasks tasks)
 	{
-		this.adapter = new SeparatedListAdapter(context);
-		this.setTasks(tasks, projectList);
+		this.context = context;
+		this.adapter = new SeparatedListAdapter(this.context);
+		this.setTasks(tasks);
 	}
 	
-	public void setTasks(Tasks tasks, Boolean projectList)
+	public TaskListAdapter(Context context, Tasks tasks, Query query)
+	{
+		this.context = context;
+		this.adapter = new SeparatedListAdapter(this.context);
+		this.setTasks(tasks, query);
+	}
+	
+	public void setTasks(Tasks tasks, Query query)
+	{
+		List<Map<String,?>> list;
+		SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_STRING_SHORT);
+		Task tempTask;
+		ArrayList<Task> taskList;
+		ArrayList<Date> dates = query.getDates();
+		for(int i=0; i < dates.size(); i++)
+		{
+			list = new LinkedList<Map<String,?>>();
+			taskList = tasks.getTasksByDate(dates.get(i));
+			for(int j=0; j < taskList.size(); j++)
+			{
+				tempTask = taskList.get(j);
+				list.add(this.createItem(tempTask.getContent(), tempTask.getProjectID()));
+			}
+			this.adapter.addSection(format.format(dates.get(i)), new SimpleAdapter(this.context, list, R.layout.task, new String[] {Constants.ADAPTER_TITLE, Constants.ADAPTER_PROJECT}, new int[] { R.id.TextView01, R.id.TextView02} ));
+		}
+	}
+	
+	public void setTasks(Tasks tasks)
 	{
 		List<Map<String,?>> list = new LinkedList<Map<String,?>>();
-		list.add(this.createItem("title","date"));
-		if(projectList)
-		{
-			
-		}
-		else
-		{
-			
-		}
-		//this.ad.addSection("Header", new SimpleAdapter(this, list , R.layout.task, new String[] {"title","date"},new int[] { R.id.TextView01, R.id.TextView02} ));
+		
+		//Project listing
 	}
 	
 	public SeparatedListAdapter getAdapter()

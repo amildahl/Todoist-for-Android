@@ -2,10 +2,9 @@ package com.android.applications.todoist.views;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import android.app.Activity;
@@ -19,9 +18,9 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SimpleAdapter;
 
 import com.android.applications.todoist.R;
+import com.android.applications.todoist.containers.Query;
 import com.android.applications.todoist.containers.SeparatedListAdapter;
 import com.android.applications.todoist.containers.Task;
 import com.android.applications.todoist.containers.TaskListAdapter;
@@ -38,6 +37,7 @@ public class TasksList extends ListActivity {
     private Runnable viewTasks;
     private TodoistAPIHandler handler;
     private TaskListAdapter adapter;
+    private SeparatedListAdapter ad;
     
     public static final int REPORT_PROBLEM = Menu.FIRST + 1;
    
@@ -193,13 +193,14 @@ public class TasksList extends ListActivity {
 
         @Override
         public void run() {
-            if(taskArray != null && taskArray.size() > 0){
+     //       if(taskArray != null && taskArray.size() > 0){
      //           adapter.notifyDataSetChanged();
      //           for(int i=0;i<taskArray.size();i++)
      //           	adapter.add(taskArray.get(i));
-            }
+     //       }
             
             m_ProgressDialog.dismiss();
+            setListAdapter(adapter.getAdapter());
       //      adapter.notifyDataSetChanged();
         }
         
@@ -210,16 +211,6 @@ public class TasksList extends ListActivity {
     	taskArray = new ArrayList<Task>();
     	this.adapter = new TaskListAdapter(this);
     	
-    	//this.adapter = new ItemAdapter(this, R.layout.task, taskArray);
-    	
-    	List<Map<String,?>> list = new LinkedList<Map<String,?>>();
-    	Map<String,String> map = new HashMap<String,String>();
-    	map.put("title", "test");
-    	map.put("date","some");
-    	list.add(map);
-    	
-        setListAdapter(adapter.getAdapter());
-       
         viewTasks = new Runnable() {
             @Override
             public void run() 
@@ -236,13 +227,15 @@ public class TasksList extends ListActivity {
     
     private void getItems(){
 
-        	Tasks tasks = handler.query("[\"2010-6-2T10:13\",\"overdue\"]");
-        	taskArray = new ArrayList<Task>();
+        	Tasks tasks = handler.query("[\"2010-7-6T10:13\",\"overdue\"]");
+        	Query query = new Query();        	
+        	query.setDates( new Date(110,5,30), new Date(110,6,6));
+        	this.adapter.setTasks(tasks,query);
 
-        	for(int i = 0; i < tasks.getSize(); i++)
+        	/*for(int i = 0; i < tasks.getSize(); i++)
         	{
 	        	taskArray.add(tasks.getTaskAt(i));
-        	}
+        	}*/
             runOnUiThread(returnRes);
         }
     /*private class ItemAdapter extends ArrayAdapter<Task> {
