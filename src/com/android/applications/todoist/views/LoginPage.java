@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.android.applications.todoist.R;
@@ -22,6 +23,7 @@ import com.android.applications.todoist.handlers.TodoistAPIHandler;
  * @see     android.app.Activity
  */
 public class LoginPage extends Activity {
+	private CheckBox rememberPass;
 	private Button signInButton;
     private EditText emailText;
     private EditText passText;
@@ -40,6 +42,7 @@ public class LoginPage extends Activity {
     	//TextView
     	//EditText 
     	handler = new TodoistAPIHandler("TOKEN");
+    	rememberPass = (CheckBox)findViewById(R.id.check_rememberPass);
     	emailText = (EditText)findViewById(R.id.edit_email);
     	passText = (EditText)findViewById(R.id.edit_pass);
     	signInButton = (Button)findViewById(R.id.btn_signIn);
@@ -68,25 +71,28 @@ public class LoginPage extends Activity {
     			/*Intent myIntent = new Intent(LoginPage.this, TasksList.class);
     			myIntent.putExtra("token", user.getAPIToken());
     			LoginPage.this.startActivity(myIntent);*/
-    			DBHelper help = new DBHelper(this);
-    			try
+    			if(rememberPass.isChecked())
     			{
-    				help.createDB();
+	    			DBHelper help = new DBHelper(this);
+	    			try
+	    			{
+	    				help.createDB();
+	    			}
+	    			catch (IOException e)
+	    			{
+	    				throw new Error("Unable to create database");
+	    			}
+	    			
+	    			try 
+	    			{
+	    				help.openDB();
+	    			}
+	    			catch (SQLException sqle)
+	    			{
+	    				throw sqle;
+	    			}
+	    			help.storeUser(user);
     			}
-    			catch (IOException e)
-    			{
-    				throw new Error("Unable to create database");
-    			}
-    			
-    			try 
-    			{
-    				help.openDB();
-    			}
-    			catch (SQLException sqle)
-    			{
-    				throw sqle;
-    			}
-    			help.storeUser(user);
     			
     			setResult(RESULT_OK, new Intent().putExtra("token", user.getAPIToken()));
     			finish();

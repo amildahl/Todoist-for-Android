@@ -45,6 +45,12 @@ public final class Constants {
 	public static final String JSON_UID = "uid";
 	public static final String JSON_USERID = "user_id";
 	
+	public static final String ADAPTER_TITLE = "title";
+	public static final String ADAPTER_PROJECT = "project";
+	
+	public static final String DATE_STRING_SHORT = "MMM d";
+	public static final String DATE_STRING_LONG = "EEE " + DATE_STRING_SHORT;
+	
 	private Constants()
 	{
 		throw new AssertionError();

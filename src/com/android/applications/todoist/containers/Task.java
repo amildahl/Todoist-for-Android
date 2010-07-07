@@ -2,6 +2,11 @@ package com.android.applications.todoist.containers;
 
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.android.applications.todoist.Constants;
+
 public class Task {
 
 	public Task()
@@ -18,9 +23,10 @@ public class Task {
 		this.id = "";
 		this.checked = false;
 		this.date_string = "";
+		this.type = "";
 	}
 	
-	public Task(Date due_date, String user_id, Boolean collapsed, Boolean in_history, int priority, int item_order, String content, int indent, String project_id, String id, Boolean checked, String date_string)
+	public Task(Date due_date, String user_id, Boolean collapsed, Boolean in_history, int priority, int item_order, String content, int indent, String project_id, String id, Boolean checked, String date_string, String type)
 	{
 		this.due_date = due_date;
 		this.user_id = user_id;
@@ -34,6 +40,85 @@ public class Task {
 		this.id = id;
 		this.checked = checked;
 		this.date_string = date_string;
+		this.type = type;
+	}
+	
+	public Task(JSONObject obj, String type)
+	{
+		this.type = type;
+		
+		try {
+			this.due_date = new Date(Date.parse(obj.getString(Constants.JSON_DUEDATE)));
+		} catch (JSONException e) {
+			this.due_date = new Date();
+			e.printStackTrace();
+		}
+		try {
+			this.user_id = obj.getString(Constants.JSON_USERID);
+		} catch (JSONException e) {
+			this.user_id = "";
+			e.printStackTrace();
+		}
+		try {
+			this.collapsed = obj.getBoolean(Constants.JSON_COLLAPSED);
+		} catch (JSONException e) {
+			this.collapsed = false;
+			e.printStackTrace();
+		}
+		try {
+			this.in_history = obj.getBoolean(Constants.JSON_INHISTORY);
+		} catch (JSONException e8) {
+			this.in_history = false;
+			e8.printStackTrace();
+		}
+		try {
+			this.priority = obj.getInt(Constants.JSON_PRIORITY);
+		} catch (JSONException e7) {
+			this.priority = 0;
+			e7.printStackTrace();
+		}
+		try {
+			this.item_order = obj.getInt(Constants.JSON_ITEMORDER);
+		} catch (JSONException e6) {
+			this.item_order = 0;
+			e6.printStackTrace();
+		}
+		try {
+			this.content = obj.getString(Constants.JSON_CONTENT);
+		} catch (JSONException e5) {
+			this.content = "";
+			e5.printStackTrace();
+		}
+		try {
+			this.indent = obj.getInt(Constants.JSON_INDENT);
+		} catch (JSONException e4) {
+			this.indent = 0;
+			e4.printStackTrace();
+		}
+		try {
+			this.project_id = obj.getString(Constants.JSON_PROJECTID);
+		} catch (JSONException e3) {
+			this.project_id = "";
+			e3.printStackTrace();
+		}
+		try {
+			this.id = obj.getString(Constants.JSON_ID);
+		} catch (JSONException e2) {
+			this.id = "";
+			e2.printStackTrace();
+		}
+		try {
+			this.checked = obj.getBoolean(Constants.JSON_CHECKED);
+		} catch (JSONException e1) {
+			this.checked = false;
+			e1.printStackTrace();
+		}
+		try {
+			this.date_string = obj.getString(Constants.JSON_DATESTRING);
+		} catch (JSONException e) {
+			this.date_string = "";
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -180,6 +265,18 @@ public class Task {
 	public String getDateString() {
 		return date_string;
 	}
+	/**
+	 * @param type - the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
 	
 	private Date due_date;
 	private String user_id;
@@ -193,5 +290,6 @@ public class Task {
 	private String id;
 	private Boolean checked;
 	private String date_string;
+	private String type;
 	
 }

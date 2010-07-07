@@ -3,27 +3,28 @@ package com.android.applications.todoist.views;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+import android.widget.SimpleAdapter;
 
 import com.android.applications.todoist.R;
+import com.android.applications.todoist.containers.SeparatedListAdapter;
 import com.android.applications.todoist.containers.Task;
+import com.android.applications.todoist.containers.TaskListAdapter;
 import com.android.applications.todoist.containers.Tasks;
 import com.android.applications.todoist.handlers.DBHelper;
 import com.android.applications.todoist.handlers.TodoistAPIHandler;
@@ -33,9 +34,10 @@ public class TasksList extends ListActivity {
 	private String token = "";
 	private ProgressDialog m_ProgressDialog = null;
     private ArrayList<Task> taskArray = null;
-    private ItemAdapter adapter;
-    private Runnable viewProjects;
+   // private ItemAdapter adapter;
+    private Runnable viewTasks;
     private TodoistAPIHandler handler;
+    private TaskListAdapter adapter;
     
     public static final int REPORT_PROBLEM = Menu.FIRST + 1;
    
@@ -192,32 +194,44 @@ public class TasksList extends ListActivity {
         @Override
         public void run() {
             if(taskArray != null && taskArray.size() > 0){
-                adapter.notifyDataSetChanged();
-                for(int i=0;i<taskArray.size();i++)
-                adapter.add(taskArray.get(i));
+     //           adapter.notifyDataSetChanged();
+     //           for(int i=0;i<taskArray.size();i++)
+     //           	adapter.add(taskArray.get(i));
             }
+            
             m_ProgressDialog.dismiss();
-            adapter.notifyDataSetChanged();
+      //      adapter.notifyDataSetChanged();
         }
+        
     };
     
     private void getTasks() 
-    {
+    {   
     	taskArray = new ArrayList<Task>();
-        this.adapter = new ItemAdapter(this, R.layout.row, taskArray);
-        setListAdapter(this.adapter);
+    	this.adapter = new TaskListAdapter(this);
+    	
+    	//this.adapter = new ItemAdapter(this, R.layout.task, taskArray);
+    	
+    	List<Map<String,?>> list = new LinkedList<Map<String,?>>();
+    	Map<String,String> map = new HashMap<String,String>();
+    	map.put("title", "test");
+    	map.put("date","some");
+    	list.add(map);
+    	
+        setListAdapter(adapter.getAdapter());
        
-        viewProjects = new Runnable() {
+        viewTasks = new Runnable() {
             @Override
             public void run() 
             {
                 getItems();
             }
         };
-        Thread thread =  new Thread(null, viewProjects, "MagentoBackground");
+        Thread thread =  new Thread(null, viewTasks, "MagentoBackground");
         thread.start();
         m_ProgressDialog = ProgressDialog.show(TasksList.this,    
               "Please wait...", "Retrieving data ...", true);
+        
     }
     
     private void getItems(){
@@ -231,7 +245,7 @@ public class TasksList extends ListActivity {
         	}
             runOnUiThread(returnRes);
         }
-    private class ItemAdapter extends ArrayAdapter<Task> {
+    /*private class ItemAdapter extends ArrayAdapter<Task> {
 
         private ArrayList<Task> tasks;
 
@@ -252,14 +266,14 @@ public class TasksList extends ListActivity {
                         TextView tt = (TextView) v.findViewById(R.id.TextView01);
                         TextView bt = (TextView) v.findViewById(R.id.TextView02);
                         if (tt != null) {
-                              tt.setText(task.getID());                            }
+                              tt.setText(task.getContent());                            }
                         if(bt != null){
-                              bt.setText(task.getID());
+                              bt.setText(task.getDueDate().getMonth() + "/" + task.getDueDate().getDate());
                         }
                 }
                 return v;
         }
-    }
+    }*/
     
     
     @SuppressWarnings("unchecked")
