@@ -1,123 +1,169 @@
 package com.android.applications.todoist.containers;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
-import android.os.Bundle;
-
-import com.android.applications.todoist.Constants;
-
+/**
+ * Query Class that generates queries for the TODOIST API based on input.
+ * The possible input includes dates, labels, and priorities.  It also
+ * allows for the overdue and viewall options.
+ * @author Andrew Dahl
+ */
 public class Query {
-	private String query_string;
-	private String project_id;
-	private String search_string;
-	private Integer next_days;
-	private boolean is_project;
-	private boolean is_today;
-	private boolean is_tomorrow;
-	private boolean include_overdue;
-	private boolean include_all;
-	private ArrayList<String> priorities;
-	private ArrayList<String> labels;
-	private ArrayList<Date> dates;
+	private ArrayList<String> queries;
 	
+	/**
+	 * public Query()
+	 * <p>
+	 * Default Constructor for Query Class
+	 * @see Query
+	 */
 	public Query()
 	{
-		this.setDefaults();
+		this.queries = new ArrayList<String>();
 	}
 	
-	public Query(String query)
-	{
-		this.setDefaults();
-		this.query_string = query;
-	}
-	
-	public Query(Bundle extras)
-	{
-		this.setDefaults();
-		//TODO: Query Constructor (Bundle)
-		//Why the ffff was this a bundle again?... crap >.>
-	}
-	
-	private void setDefaults()
-	{
-		this.query_string = "";
-		this.project_id = "";
-		this.search_string = "";
-		this.next_days = 0;
-		this.is_project = false;
-		this.is_today = false;
-		this.is_tomorrow = false;
-		this.include_overdue = false;
-		this.include_all = false;
-		this.priorities = new ArrayList<String>();
-		this.labels = new ArrayList<String>();
-		this.dates = new ArrayList<Date>();
-	}
-	
+	/**
+	 * public boolean isEmpty()
+	 * <p>
+	 * Checks if the query list is empty
+	 * @return 
+	 * <li> True if list is empty
+	 * <li> False if it's not empty
+	 */
 	public boolean isEmpty()
-	{
-		if(this.query_string != "" || this.project_id != "")
+	{	
+		if(this.queries.size() > 0)
 			return false;
 		
 		return true;
 	}
 	
-	public boolean isProjectQuery()
-	{
-		if(this.project_id != "")
-			return true;
-		
-		return false;
-	}
-	
-	public boolean isNormalQuery()
-	{
-		if(this.query_string != "")
-			return true;
-		
-		return false;
-	}
-	
+	/**
+	 * public void clear()
+	 * <p>
+	 * Clears the current query list
+	 */
 	public void clear()
 	{
-		this.setDefaults();
+		this.queries.clear();
 	}
 	
+	/**
+	 * public String getQuery()
+	 * <p>
+	 * Returns a String that can be used as the query parameters in the query API method
+	 * @return
+	 * <li>Example String: ["2007-4-29T0:0:0","overdue","p1","p2"]
+	 */
 	public String getQuery()
 	{
-		return this.query_string;
+		String query = "[";
+		
+		if(this.queries.size() > 0)
+		{
+			query += "\"queries[0]\""; 
+				
+			for(int i=1; i<this.queries.size(); i++)
+			{
+				query += ",\"" + queries.get(i) + "\"";
+			}
+		}
+		
+		query += "]";
+		return query;
 	}
 	
-	public String getProjectID()
+	/**
+	 * public void addDate(Date date)
+	 * <p>
+	 * Adds a date to the list of queries
+	 * @param date - The date to be queried for
+	 * @see Date
+	 */
+	public void addDate(Date date)
 	{
-		return this.project_id;
+		this.queries.add(date.getYear() + "-" + date.getMonth() + "-" + date.getDate() + "T0:0:0");
 	}
 	
-	public void setDate(Date date)
-	{
-		this.dates.add(date);
-	}
-	
-	public void setDates(Date start, Date finish)
+	/**
+	 * public void addDateRange(Date start, Date finish)
+	 * <p>
+	 * Adds all dates from start to finish to the list of queries, including start and finish
+	 * @param start - Starting date of the range to be queried for
+	 * @param finish - Finishing date of the range to be queried for
+	 * @see Date
+	 */
+	public void addDateRange(Date start, Date finish)
 	{
 		start.setHours(0);
 		start.setMinutes(0);
 		start.setSeconds(0);
-		finish.setHours(0);
+		finish.setHours(1);
 		finish.setMinutes(0);
 		finish.setSeconds(0);
 		
 		for(; start.before(finish); advanceDate(start))
 		{
-			this.dates.add((Date)start.clone());
+			this.addDate(start);
 		}
-		
-		this.dates.add(finish);
 	}
 	
+	/**
+	 * public void addPriority(int priority)
+	 * <p>
+	 * Adds a priority to the list of queries
+	 * @param priority - The integer of the priority to be queried for. Possible integers are 1-4
+	 */
+	public void addPriority(int priority)
+	{
+		if(priority > 0 && priority < 5)
+		{
+			this.queries.add("p" + priority);
+		}
+	}
+	
+	/**
+	 * public void addOverdue()
+	 * <p>
+	 * Adds the overdue flag to the list of queries
+	 */
+	public void addOverdue()
+	{
+		this.queries.add("overdue");
+	}
+	
+	/**
+	 * public void addLable(String label)
+	 * <p>
+	 * Adds a label to the list of queries
+	 * @param label - Label to be queried
+	 */
+	public void addLabel(String label)
+	{
+		if(!(label.contains("@")))
+			label = "@" + label;
+		
+		this.queries.add(label);
+	}
+	
+	/**
+	 * public void addAll()
+	 * <p>
+	 * Adds the viewall option to the query list
+	 */
+	public void addAll()
+	{
+		this.queries.add("viewall");
+	}
+	
+	/**
+	 * private void advanceDate(Date date)
+	 * <p>
+	 * Advances the date by one day
+	 * @param date - The date to be advanced
+	 * @see Date
+	 */
 	private void advanceDate(Date date) 
 	{
 		int[] daysMonth = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -145,6 +191,15 @@ public class Query {
 		  }
 	}
 
+	/**
+	 * private boolean isLeapYear(int year)
+	 * <p>
+	 * Checks to see if year is a leap year
+	 * @param year - The year to be checked
+	 * @return
+	 * <li>True if year is divisible by (4, but not 100) OR by 400
+	 * <li>False the above is not true
+	 */
 	private boolean isLeapYear(int year)
 	{
 		if( ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0) )
@@ -155,15 +210,5 @@ public class Query {
 		{
 			return false;
 		}
-	}
-	
-	public void clearDates()
-	{
-		this.dates.clear();
-	}
-	
-	public ArrayList<Date> getDates()
-	{
-		return dates;
 	}
 }
