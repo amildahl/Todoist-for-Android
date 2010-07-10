@@ -1,5 +1,3 @@
 
 syntax: glob
 bin/
-syntax: glob
-src\org\xmlrpc\android\.svn
