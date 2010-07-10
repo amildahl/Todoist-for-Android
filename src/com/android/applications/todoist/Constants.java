@@ -51,6 +51,8 @@ public final class Constants {
 	public static final String DATE_STRING_SHORT = "MMM d";
 	public static final String DATE_STRING_LONG = "EEE " + DATE_STRING_SHORT;
 	
+	public enum ListType { DATE, PRIORITY, LABEL, PROJECT }
+	
 	private Constants()
 	{
 		throw new AssertionError();

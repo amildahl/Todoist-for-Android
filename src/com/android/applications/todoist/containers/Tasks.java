@@ -56,14 +56,40 @@ public class Tasks {
 		}
 	}
 	
-	public ArrayList<Task> getTasksByDate(Date date)
+	public ArrayList<Task> getTasksByDate(Date date, boolean remove)
 	{
 		ArrayList<Task> list = new ArrayList<Task>();
-		Date temp;
+		Date dueDate;
 		for(int i = 0; i < this.tasks.size(); i++)
 		{
-			temp = this.tasks.get(i).getDueDate();
-			if(temp.getDate() == date.getDate() && temp.getMonth() == date.getMonth() && temp.getYear() == date.getYear())
+			dueDate = this.tasks.get(i).getDueDate();
+			if(dueDate.compareTo(date) == 0)
+			{
+				list.add(this.tasks.get(i));
+				if(remove)
+				{
+					this.tasks.remove(i);
+					i--;
+				}
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Task> getOverdueTasks()
+	{
+		ArrayList<Task> list = new ArrayList<Task>();
+		Date dueDate;
+		Date today = new Date();
+		today.setSeconds(0);
+		today.setMinutes(0);
+		today.setHours(0);
+		
+		for(int i = 0; i < this.tasks.size(); i++)
+		{
+			dueDate = this.tasks.get(i).getDueDate();
+			if(dueDate.before(today))
 			{
 				list.add(this.tasks.get(i));
 			}
