@@ -49,8 +49,10 @@ public class SupportForm extends Activity {
 		initControls();
 	}
 	
+	//Initialize Controls
 	private void initControls()
 	{
+		//URI of the XMLRPC Server-Side Script
 		this.uri = URI.create("http://dev.drewdahl.com/server.php");
 		this.client = new XMLRPCClient(uri);
 		
@@ -59,6 +61,8 @@ public class SupportForm extends Activity {
 		this.problemText = (EditText)findViewById(R.id.EditText_Problem);
 		this.areaSpinner = (Spinner)findViewById(R.id.Spinner_Area);
 		this.submitButton = (Button)findViewById(R.id.Button_Submit);
+		
+		//Call rpcCall() on button click
 		this.submitButton.setOnClickListener(new Button.OnClickListener() 
 				{
 					public void onClick(View view)
@@ -70,7 +74,7 @@ public class SupportForm extends Activity {
 		m_adapterForSpinner = ArrayAdapter.createFromResource(this, R.array.support_areas, android.R.layout.simple_spinner_item);
 		m_adapterForSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		areaSpinner.setAdapter(m_adapterForSpinner);
-		areaSpinner.setOnItemSelectedListener(
+		/*areaSpinner.setOnItemSelectedListener(
 				new OnItemSelectedListener() {
 					
 					@Override
@@ -84,7 +88,7 @@ public class SupportForm extends Activity {
 						//Do Nothing
 					}
 					
-				});
+				});*/
 	}
 	
 	private void showToast(CharSequence msg)
@@ -105,16 +109,20 @@ public class SupportForm extends Activity {
 	            info = manager.getPackageInfo(context.getPackageName(), 0);
 	
 		    } catch(Exception e) {
-		            Log.e("SupportCase", "Couldn't find package information in PackageManager", e);
-		            return;
+		    	//TODO: Something better here :-D
+		        Log.e("SupportCase", "Couldn't find package information in PackageManager", e);
+		        return;
 		    }
 		    
+		    // Create a SupportCase w/ the information entered
 			SupportCase newCase = new SupportCase(this.nameText.getText().toString(),this.emailText.getText().toString(),
 					this.problemText.getText().toString(), "", this.areaSpinner.getSelectedItem().toString(),
 					info.packageName, info.versionName);
 			
+			// Report the problem
+			// TODO: Add something to XMLRPCMethod that checks the result of the page (in case the site is down) 
 			XMLRPCMethod method = new XMLRPCMethod("reportproblem", new XMLRPCMethodCallback() {
-				public void callFinished(Object result)
+				public void callFinished(Object result, String str)
 				{
 					if((Boolean)result && emailText.getText().length() != 0)
 					{
@@ -176,7 +184,7 @@ public class SupportForm extends Activity {
 	}
 	
 	interface XMLRPCMethodCallback {
-		void callFinished(Object result);
+		void callFinished(Object result, String str);
 	}
 	
 	class XMLRPCMethod extends Thread {
@@ -206,28 +214,31 @@ public class SupportForm extends Activity {
     			final long t1 = System.currentTimeMillis();
     			handler.post(new Runnable() {
 					public void run() {
-						//TODO: Call went good, run along now...
+						//Call went good, run along now...
 						Log.i("RPC Call", "XML-RPC call took " + (t1-t0) + "ms");
-						callBack.callFinished(result);
+						callBack.callFinished(result,"");
 					}
     			});
     		} catch (final XMLRPCFault e) {
     			handler.post(new Runnable() {
 					public void run() {
-						//TODO: Make it known that there was an error
 						Log.e("RPC Call", "Fault message: " + e.getFaultString() + "\nFault code: " + e.getFaultCode());
+
+						callBack.callFinished((Object)false, "1000 - Message: " + e.getFaultString() + " -- Code: " + e.getFaultCode());
 					}
     			});
     		} catch (final XMLRPCException e) {
     			handler.post(new Runnable() {
-					public void run() {
-						//TODO: Make it known that we were unable to connect.  Try again later...
-						
-						Throwable couse = e.getCause();
-						if (couse instanceof HttpHostConnectException) {
-							Log.e("RPC Call", "Cannot connect to " + uri.getHost() + "\nTry again later.  If problem persists, e-mail Admin@DrewDahl.com!");
+					public void run() {						
+						Throwable cause = e.getCause();
+						if (cause instanceof HttpHostConnectException) {
+							Log.e("RPC Call", "Cannot connect to " + uri.getHost() + "\nTry again later.  If problem persists, please report this problem!");
+							
+							callBack.callFinished((Object)false, "1001");
 						} else {
 							Log.e("RPC Call", "Error " + e.getMessage());
+							
+							callBack.callFinished((Object)false, "1002 - Message: " + e.getMessage());
 						}
 					}
     			});

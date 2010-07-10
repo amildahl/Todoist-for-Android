@@ -10,7 +10,12 @@ import java.util.Date;
  * @author Andrew Dahl
  */
 public class Query {
-	private ArrayList<String> queries;
+	private ArrayList<Date> dates;
+	private ArrayList<Integer> priorities;
+	private ArrayList<String> labels;
+	
+	private boolean include_overdue;
+	private boolean include_all;
 	
 	/**
 	 * public Query()
@@ -20,7 +25,11 @@ public class Query {
 	 */
 	public Query()
 	{
-		this.queries = new ArrayList<String>();
+		this.dates = new ArrayList<Date>();
+		this.labels = new ArrayList<String>();
+		this.priorities = new ArrayList<Integer>();
+		this.include_all = false;
+		this.include_overdue = false;
 	}
 	
 	/**
@@ -33,20 +42,26 @@ public class Query {
 	 */
 	public boolean isEmpty()
 	{	
-		if(this.queries.size() > 0)
+		if(this.dates.size() > 0 || this.priorities.size() > 0 || this.labels.size() > 0 || 
+				this.include_all == true || this.include_overdue == true)
 			return false;
 		
 		return true;
 	}
 	
 	/**
-	 * public void clear()
+	 * public void reset()
 	 * <p>
-	 * Clears the current query list
+	 * Resets the query list, item lists, and other values
 	 */
-	public void clear()
+	public void reset()
 	{
-		this.queries.clear();
+		this.dates.clear();
+		this.labels.clear();
+		this.priorities.clear();
+		
+		this.include_all = false;
+		this.include_overdue = false;
 	}
 	
 	/**
@@ -58,20 +73,140 @@ public class Query {
 	 */
 	public String getQuery()
 	{
+		boolean started = false;
 		String query = "[";
+		int i = 0;
 		
-		if(this.queries.size() > 0)
+		// Set Dates
+		if(this.dates.size() > 0)
 		{
-			query += "\"queries[0]\""; 
+			Date date;
+			date = dates.get(0);
+			query += "\"" + (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T0:0:0" + "\""; 
 				
-			for(int i=1; i<this.queries.size(); i++)
+			for(i=1; i<this.dates.size(); i++)
 			{
-				query += ",\"" + queries.get(i) + "\"";
+				date = dates.get(i);
+				query += ",\"" + (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate() + "T0:0:0" + "\"";
+			}
+		}
+		
+		// Set Labels
+		if(this.labels.size() > 0)
+		{
+			if(started)
+			{
+				i = 0;	
+			}
+			else
+			{
+				query += "\"" + labels.get(0) + "\"";
+				i = 1;
+				started = true;
+			}
+			
+			for(; i < this.labels.size(); i++)
+			{
+				query += ",\"" + this.labels.get(i) + "\"";
+			}
+			
+			
+		}
+		
+		if(this.priorities.size() > 0)
+		{
+			if(started)
+			{
+				i = 0;
+			}
+			else
+			{
+				query += "\"p" + priorities.get(0) + "\"";
+				i = 1;
+				started = true;
+			}
+			
+			for(; i < this.priorities.size(); i++)
+			{
+				query += ",\"p" + this.priorities.get(i) + "\"";
+			}
+		}
+		
+		if(started)
+		{
+			if(this.include_all)
+			{
+				query += ",\"viewall\"";
+			}
+			
+			if(this.include_overdue)
+			{
+				query += ",\"overdue\"";
+			}
+		}
+		else
+		{
+			if(this.include_all)
+			{
+				query += "\"viewall\"";
+				started = true;
+			}
+			
+			if(this.include_overdue)
+			{
+				if(started)
+				{
+					query += "\"overdue\"";
+				}
+				else
+				{
+					query += ",\"overdue\"";
+				}
 			}
 		}
 		
 		query += "]";
 		return query;
+	}
+	
+	/**
+	 * public ArrayList<Date> getDates()
+	 * <p>
+	 * Gets the ArrayList of dates that are included within the query
+	 * @return
+	 * <li> The list of dates included in the query
+	 * @see Date
+	 * @see ArrayList
+	 */
+	public ArrayList<Date> getDates()
+	{
+		return this.dates;
+	}
+	
+	/**
+	 * public ArrayList<Integer> getPriorities()
+	 * <p>
+	 * Gets the ArrayList of priorities included in the query 
+	 * @return
+	 * <li> The list of priorities included in the query
+	 * @see ArrayList
+	 */
+	public ArrayList<Integer> getPriorities()
+	{
+		return this.priorities;
+	}
+	
+	/**
+	 * public ArrayList<String> getLabels()
+	 * <p>
+	 * Gets the ArrayList of labels included in the query
+	 * @return
+	 * <li> The list of labels included in the query
+	 * @see ArrayList
+	 */
+	public ArrayList<String> getLabels()
+	{
+		return this.labels;
 	}
 	
 	/**
@@ -83,7 +218,7 @@ public class Query {
 	 */
 	public void addDate(Date date)
 	{
-		this.queries.add(date.getYear() + "-" + date.getMonth() + "-" + date.getDate() + "T0:0:0");
+		this.dates.add(date);
 	}
 	
 	/**
@@ -106,6 +241,9 @@ public class Query {
 		for(; start.before(finish); advanceDate(start))
 		{
 			this.addDate(start);
+			// This is required. If it's not here, all the dates in the array will be identical
+			// Java is stupid.
+			start = (Date)start.clone();
 		}
 	}
 	
@@ -119,7 +257,7 @@ public class Query {
 	{
 		if(priority > 0 && priority < 5)
 		{
-			this.queries.add("p" + priority);
+			this.priorities.add(priority);
 		}
 	}
 	
@@ -130,7 +268,7 @@ public class Query {
 	 */
 	public void addOverdue()
 	{
-		this.queries.add("overdue");
+		this.include_overdue = true;
 	}
 	
 	/**
@@ -140,11 +278,11 @@ public class Query {
 	 * @param label - Label to be queried
 	 */
 	public void addLabel(String label)
-	{
+	{		
 		if(!(label.contains("@")))
 			label = "@" + label;
 		
-		this.queries.add(label);
+		this.labels.add(label);
 	}
 	
 	/**
@@ -154,7 +292,7 @@ public class Query {
 	 */
 	public void addAll()
 	{
-		this.queries.add("viewall");
+		this.include_all = true;
 	}
 	
 	/**

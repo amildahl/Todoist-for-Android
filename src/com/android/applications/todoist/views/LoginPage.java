@@ -11,8 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.applications.todoist.R;
+import com.android.applications.todoist.containers.Query;
 import com.android.applications.todoist.containers.User;
 import com.android.applications.todoist.handlers.DBHelper;
 import com.android.applications.todoist.handlers.TodoistAPIHandler;
@@ -34,76 +36,88 @@ public class LoginPage extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        // Initiate Controls
         initControls();
     }
     
+    // Initialize the controls of the page and set event handlers
     private void initControls()
-    {
-    	//TextView
-    	//EditText 
+    { 
     	handler = new TodoistAPIHandler("TOKEN");
     	rememberPass = (CheckBox)findViewById(R.id.check_rememberPass);
     	emailText = (EditText)findViewById(R.id.edit_email);
     	passText = (EditText)findViewById(R.id.edit_pass);
     	signInButton = (Button)findViewById(R.id.btn_signIn);
+    	
+    	// Call signIn() when button is clicked
     	signInButton.setOnClickListener(new Button.OnClickListener() { public void onClick (View view){ signIn(); } } ); 
     }
     
+    // Perform user sign-in
     private void signIn()
     {
+    	//Get E-mail and Password, then check their length...
     	String email = emailText.getText().toString();
     	String password = passText.getText().toString();
+
     	if(email.length() == 0)
     	{
     		//email is empty.. problem
+    		this.showToast("Your E-Mail address cannot be empty.");
     	}
     	else if(password.length() == 0)
     	{
     		//password is empty.. problem
+    		this.showToast("Your Password cannot be empty.");
     	}
     	else
     	{
     		//Attempt Login...
     		User user = handler.login(email, password);
-    		AlertDialog alert = new AlertDialog.Builder(this).create();
+    		
     		if(user.isValid())
     		{
-    			/*Intent myIntent = new Intent(LoginPage.this, TasksList.class);
-    			myIntent.putExtra("token", user.getAPIToken());
-    			LoginPage.this.startActivity(myIntent);*/
+    			// If the user wants us to remember their password, store it
     			if(rememberPass.isChecked())
     			{
 	    			DBHelper help = new DBHelper(this);
 	    			try
-	    			{
-	    				help.createDB();
-	    			}
+	    			{ help.createDB(); }
 	    			catch (IOException e)
-	    			{
-	    				throw new Error("Unable to create database");
-	    			}
+	    			{ throw new Error("Unable to create database");	}
 	    			
 	    			try 
-	    			{
-	    				help.openDB();
-	    			}
+	    			{ help.openDB(); }
 	    			catch (SQLException sqle)
-	    			{
-	    				throw sqle;
-	    			}
+	    			{ throw sqle; }
+	    			
 	    			help.storeUser(user);
     			}
     			
+    			// Login was successful, set user API Token in result bundle and call finish()
     			setResult(RESULT_OK, new Intent().putExtra("token", user.getAPIToken()));
     			finish();
     		}
     		else
     		{
     			//Login Failure...
-    			alert.setTitle("Failure!");
-    			alert.show();
-    			//setResult(RESULT_CANCELED, new Intent());
+    			this.displayError("Failed to login! Please check your login credentials and try again.");
     		}
     	}
     }
+    
+    // Displays error message
+    private void displayError(String msg)
+    {
+    	// TODO: We need an OK Button on this Dialog, or some way to exit out w/o having to hit back
+    	AlertDialog alert = new AlertDialog.Builder(this).create();
+		alert.setTitle(msg);
+		alert.show();
+    }
+    
+    // Displays Toast... YUMMY!
+	private void showToast(CharSequence msg)
+	{
+		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+	}
 }

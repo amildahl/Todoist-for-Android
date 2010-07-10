@@ -32,12 +32,10 @@ public class TasksList extends ListActivity {
 	protected HashMap<Integer, ResultCallbackIF> _callbackMap = new HashMap<Integer, ResultCallbackIF>();
 	private String token = "";
 	private ProgressDialog m_ProgressDialog = null;
-    private ArrayList<Task> taskArray = null;
    // private ItemAdapter adapter;
     private Runnable viewTasks;
     private TodoistAPIHandler handler;
     private TaskListAdapter adapter;
-    private SeparatedListAdapter ad;
     
     public static final int REPORT_PROBLEM = Menu.FIRST + 1;
    
@@ -53,12 +51,16 @@ public class TasksList extends ListActivity {
         
         if(extras != null)
         {
-        	//We're being called >.> I think it came from inside the house :|
+        	// We're being called >.> I think it came from inside the house :|
+        	// So, get the token!
+        	// TODO: Check token
         	handler.setToken(extras.getString("token"));
         	this.getTasks();
         }
         else
         {
+        	// If extras is null, then most likely the app is opening
+        	// Get the token, check it, and so on...
         	String token = this.getToken();
         	if(token != "") 
         	{
@@ -156,10 +158,10 @@ public class TasksList extends ListActivity {
 			@Override
 			public void resultOk(Intent data) 
 			{
+				//We're good! Get to token, set it to the API, and show tasks
 				Bundle extras = data.getExtras();
 				if(extras != null)
 		        {
-					storeToken(extras.getString("token"));
 		        	Log.e("Login-resultOk():",token);
 		        	handler.setToken(token);
 		        	getTasks();
@@ -167,6 +169,8 @@ public class TasksList extends ListActivity {
 		        }
 		        else
 		        {
+		        	//TODO: I don't think we should EVER get here, but we should
+		        	// show some seriously awesome errors if we do :-)
 		        	Log.e("Login-resultOk():","No Token!!!");
 		        }
 			}
@@ -179,43 +183,41 @@ public class TasksList extends ListActivity {
 				finish();
 			}
 		});
-	}
-
-    // More than likely this will be replaced or just use the SQLite DB
-	private void storeToken(String token)
-	{
-		// TODO Store Token
-		this.token = token; 
-	}
-    
+	}    
 	
     private Runnable returnRes = new Runnable() {
 
         @Override
         public void run() {
-     //       if(taskArray != null && taskArray.size() > 0){
-     //           adapter.notifyDataSetChanged();
-     //           for(int i=0;i<taskArray.size();i++)
-     //           	adapter.add(taskArray.get(i));
-     //       }
-            
+            // Getting tasks is done, so dismiss the progress dialog and
+        	// set the adapter to be the list adapter
             m_ProgressDialog.dismiss();
             setListAdapter(adapter.getAdapter());
-      //      adapter.notifyDataSetChanged();
         }
         
     };
     
+    
     private void getTasks() 
     {   
-    	taskArray = new ArrayList<Task>();
     	this.adapter = new TaskListAdapter(this);
     	
         viewTasks = new Runnable() {
             @Override
             public void run() 
             {
-                getItems();
+            	//Run the query, set the adapter task, return to to UI Thread
+            	Date start = new Date();
+            	Calendar finish = Calendar.getInstance();
+            	finish.add(Calendar.DATE, 7);
+            	Query query = new Query();        	
+            	query.addDateRange(start, finish.getTime());
+            	query.addOverdue();
+            	Tasks tasks = handler.query(query.getQuery());
+            	
+            	adapter.setTasks(tasks,query);
+
+                runOnUiThread(returnRes);
             }
         };
         Thread thread =  new Thread(null, viewTasks, "MagentoBackground");
@@ -223,51 +225,7 @@ public class TasksList extends ListActivity {
         m_ProgressDialog = ProgressDialog.show(TasksList.this,    
               "Please wait...", "Retrieving data ...", true);
         
-    }
-    
-    private void getItems(){
-
-        	Tasks tasks = handler.query("[\"2010-7-6T10:13\",\"overdue\"]");
-        	Query query = new Query();        	
-        	query.setDates( new Date(110,5,30), new Date(110,6,6));
-        	this.adapter.setTasks(tasks,query);
-
-        	/*for(int i = 0; i < tasks.getSize(); i++)
-        	{
-	        	taskArray.add(tasks.getTaskAt(i));
-        	}*/
-            runOnUiThread(returnRes);
-        }
-    /*private class ItemAdapter extends ArrayAdapter<Task> {
-
-        private ArrayList<Task> tasks;
-
-        public ItemAdapter(Context context, int textViewResourceId, ArrayList<Task> items) {
-                super(context, textViewResourceId, items);
-                this.tasks = items;
-        }
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-                View v = convertView;
-                if (v == null) {
-                    LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    v = vi.inflate(R.layout.row, null);
-                }
-                
-                Task task = tasks.get(position);
-                if (task != null) {
-                        TextView tt = (TextView) v.findViewById(R.id.TextView01);
-                        TextView bt = (TextView) v.findViewById(R.id.TextView02);
-                        if (tt != null) {
-                              tt.setText(task.getContent());                            }
-                        if(bt != null){
-                              bt.setText(task.getDueDate().getMonth() + "/" + task.getDueDate().getDate());
-                        }
-                }
-                return v;
-        }
-    }*/
-    
+    }   
     
     @SuppressWarnings("unchecked")
 	public void launchActivity(Class subActivityClass, ResultCallbackIF callback, Bundle bundle) 
