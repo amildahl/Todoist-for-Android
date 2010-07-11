@@ -61,7 +61,7 @@ public final class WebRequest{
         conn.setConnectTimeout( 10000 );    // 10 seconds
         conn.setReadTimeout( 10000 );       // 10 seconds
         conn.setInstanceFollowRedirects( true );
-        conn.setRequestProperty( "User-agent", "spider" );
+        conn.setRequestProperty( "User-agent", "Mozilla/5.0 (Linux; U; Android 1.0; en-us; dream) AppleWebKit/525.10+ (KHTML, like Gecko) Version/3.0.4 Mobile Safari/523.12.2" );
  
         // Send the request.
         conn.connect( );

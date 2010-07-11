@@ -66,6 +66,23 @@ public class Projects {
 			this.size++;
 		}
 	}
+	
+	public Project getProjectByID(String ID)
+	{
+		int size = this.projects.size();
+		String id;
+		
+		for(int i=0; i < size; i++)
+		{
+			id = this.projects.get(i).getID();
+			if(id.equals(ID))
+			{
+				return this.projects.get(i);
+			}
+		}
+		
+		return new Project();
+	}
 
 	/**
 	 * @return the projects

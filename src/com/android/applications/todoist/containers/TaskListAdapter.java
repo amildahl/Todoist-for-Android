@@ -36,9 +36,8 @@
 
 package com.android.applications.todoist.containers;
 
-import java.text.SimpleDateFormat;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,40 +45,64 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.widget.SimpleAdapter;
+import android.database.SQLException;
 
 import com.android.applications.todoist.Constants;
-import com.android.applications.todoist.R;
+import com.android.applications.todoist.handlers.DBHelper;
+import com.android.applications.todoist.handlers.TodoistAPIHandler;
 
 public class TaskListAdapter {
-	private SeparatedListAdapter adapter;
+	private SeparatedTaskListAdapter adapter;
 	private Context context;
 	
 	public TaskListAdapter(Context context) 
 	{
 		this.context = context;
-		this.adapter = new SeparatedListAdapter(this.context);
+		this.adapter = new SeparatedTaskListAdapter(this.context);
 	}
 	
 	public TaskListAdapter(Context context, Tasks tasks)
 	{
 		this.context = context;
-		this.adapter = new SeparatedListAdapter(this.context);
+		this.adapter = new SeparatedTaskListAdapter(this.context);
 		this.setTasks(tasks);
 	}
 	
 	public TaskListAdapter(Context context, Tasks tasks, Query query)
 	{
 		this.context = context;
-		this.adapter = new SeparatedListAdapter(this.context);
+		this.adapter = new SeparatedTaskListAdapter(this.context);
 		this.setTasks(tasks, query);
 	}
 	
 	public void setTasks(Tasks tasks, Query query)
 	{
+		//Temporary Solution
+		DBHelper help = new DBHelper(this.context);
+		try
+		{
+			help.createDB();
+		}
+		catch (IOException e)
+		{
+			throw new Error("Unable to create database");
+		}
+		
+		try 
+		{
+			help.openDB();
+		}
+		catch (SQLException sqle)
+		{
+			throw sqle;
+		}
+		
+		TodoistAPIHandler handler = new TodoistAPIHandler(help.getUser().getAPIToken());
+		Projects projects = handler.getProjects();
+		
 		List<Map<String,?>> list;
 		PriorityDisplayList priorityList = new PriorityDisplayList(Constants.ListType.DATE);
-		Date tempDate;
+
 		Task tempTask;
 		ArrayList<Task> taskList;
 		//ArrayList<Date> dates = query.getDates();
@@ -93,23 +116,12 @@ public class TaskListAdapter {
 			for(int j=0; j < taskList.size(); j++)
 			{
 				tempTask = taskList.get(j);
-				list.add(this.createItem(tempTask.getContent(), tempTask.getProjectID()));
+				list.add(this.createItem(tempTask.getContent(), projects.getProjectByID(tempTask.getProjectID()).getName()));
 			}
 			priorityList.addList(list, dates.get(i));
 		}
 		
-		while(priorityList.getListSize() != 0)
-		{
-			SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_STRING_SHORT);
-			//Important Note! priorityList.getLowestPriorityDate() removes the date from the list!
-			//priorityList.getLowestPriority() removes the List AND Priority Integer from their lists!
-			//SO! They need to be run in THAT order, else you'll get really wonky results.
-			tempDate = priorityList.getHighestPriorityDate();
-			this.adapter.addSection(this.getDateString(tempDate,priorityList.findDateDifference(tempDate)), " " + format.format(tempDate),
-					new SimpleAdapter(this.context, priorityList.getHighestPriority(), R.layout.task, 
-							new String[] {Constants.ADAPTER_TITLE, Constants.ADAPTER_PROJECT}, 
-							new int[] { R.id.TextView01, R.id.TextView02} ));
-		}
+		this.adapter.addList(priorityList);
 	}
 	
 	private ArrayList<Date> combineDates(ArrayList<Date> dateSet1, ArrayList<Date> dateSet2)
@@ -120,10 +132,10 @@ public class TaskListAdapter {
 		for(int i=0; i < size; i++)
 		{
 			tempDate = dateSet2.get(i);
-			tempDate.setHours(23);
+			/*tempDate.setHours(23);
 			tempDate.setMinutes(59);
-			tempDate.setSeconds(59);
-			
+			tempDate.setSeconds(59);*/
+			tempDate.setTime(tempDate.UTC(tempDate.getYear(), tempDate.getMonth(), tempDate.getDate(), 23, 59, 59));			
 			if(!dateSet1.contains(tempDate))
 			{
 				dateSet1.add(tempDate);
@@ -156,38 +168,6 @@ public class TaskListAdapter {
 	private Map<String,?> createItem(String title, Date date)
 	{
 		return this.createItem(title, date.toString());
-	}
-	
-	private String getDateString(Date date, Integer diff)
-	{
-		
-		String dateString = "";
-			
-		switch(diff)
-		{
-			case -1:
-				dateString = "Yesterday";
-				break;
-			case 0:
-				dateString = "Today";
-				break;
-			case 1:
-				dateString = "Tomorrow";
-				break;
-			default:
-				if(diff > 1)
-				{
-				SimpleDateFormat format2 = new SimpleDateFormat("EEEEE");
-				dateString = format2.format(date);
-				}
-				else
-				{
-					dateString = (diff*(-1)) + " days ago";
-				}
-				break;
-		}
-		
-		return ( dateString );
 	}
 	
 	public class PriorityDisplayList

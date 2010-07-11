@@ -40,6 +40,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.android.applications.todoist.Constants;
 import com.android.applications.todoist.containers.Project;
 import com.android.applications.todoist.containers.Projects;
@@ -75,6 +77,7 @@ public class TodoistAPIHandler {
 		catch (Exception e)
 		{
 			//output (e.getMessage());	
+			Log.e("f",e.getMessage());
 		}
 		
 		return jsonData;
@@ -118,7 +121,9 @@ public class TodoistAPIHandler {
 	 */
 	public Projects getProjects()
 	{		
-		return this.parseProjects(this.navigate(GET_PROJECTS.replace(PARAM_TOKEN,token)));
+		String url =GET_PROJECTS.replace(PARAM_TOKEN,token);
+		String data =this.navigate(url);
+		return this.parseProjects(data);
 	}
 	
 	// TODO: Exceptions
