@@ -78,12 +78,15 @@ public class TaskListAdapter {
 	public void setTasks(Tasks tasks, Query query)
 	{
 		List<Map<String,?>> list;
-		PriorityList priorityList = new PriorityList(Constants.ListType.DATE);
+		PriorityDisplayList priorityList = new PriorityDisplayList(Constants.ListType.DATE);
 		Date tempDate;
 		Task tempTask;
 		ArrayList<Task> taskList;
-		ArrayList<Date> dates = query.getDates();
-		for(int i=0; i < dates.size(); i++)
+		//ArrayList<Date> dates = query.getDates();
+		ArrayList<Date> dates = this.combineDates(tasks.getDates(),query.getDates());
+		int size = dates.size();
+		
+		for(int i=0; i < size; i++)
 		{
 			list = new LinkedList<Map<String,?>>();
 			taskList = tasks.getTasksByDate(dates.get(i), true);
@@ -97,15 +100,37 @@ public class TaskListAdapter {
 		
 		while(priorityList.getListSize() != 0)
 		{
+			SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_STRING_SHORT);
 			//Important Note! priorityList.getLowestPriorityDate() removes the date from the list!
 			//priorityList.getLowestPriority() removes the List AND Priority Integer from their lists!
 			//SO! They need to be run in THAT order, else you'll get really wonky results.
-			tempDate = priorityList.getLowestPriorityDate();
-			this.adapter.addSection(this.getDateString(tempDate,priorityList.findDateDifference(tempDate)), 
-					new SimpleAdapter(this.context, priorityList.getLowestPriority(), R.layout.task, 
+			tempDate = priorityList.getHighestPriorityDate();
+			this.adapter.addSection(this.getDateString(tempDate,priorityList.findDateDifference(tempDate)), " " + format.format(tempDate),
+					new SimpleAdapter(this.context, priorityList.getHighestPriority(), R.layout.task, 
 							new String[] {Constants.ADAPTER_TITLE, Constants.ADAPTER_PROJECT}, 
 							new int[] { R.id.TextView01, R.id.TextView02} ));
 		}
+	}
+	
+	private ArrayList<Date> combineDates(ArrayList<Date> dateSet1, ArrayList<Date> dateSet2)
+	{
+		int size = dateSet2.size();
+		Date tempDate;
+		
+		for(int i=0; i < size; i++)
+		{
+			tempDate = dateSet2.get(i);
+			tempDate.setHours(23);
+			tempDate.setMinutes(59);
+			tempDate.setSeconds(59);
+			
+			if(!dateSet1.contains(tempDate))
+			{
+				dateSet1.add(tempDate);
+			}
+		}
+		
+		return dateSet1;
 	}
 	
 	public void setTasks(Tasks tasks)
@@ -135,7 +160,7 @@ public class TaskListAdapter {
 	
 	private String getDateString(Date date, Integer diff)
 	{
-		SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_STRING_SHORT);
+		
 		String dateString = "";
 			
 		switch(diff)
@@ -162,16 +187,16 @@ public class TaskListAdapter {
 				break;
 		}
 		
-		return ( dateString + " " + format.format(date) );
+		return ( dateString );
 	}
 	
-	public class PriorityList
+	public class PriorityDisplayList
 	{
 		private Constants.ListType type;
 		private List<List<Map<String,?>>> list;
 		private List<Integer> priority;
 		private List<Date> dateList;
-		PriorityList(Constants.ListType type)
+		PriorityDisplayList(Constants.ListType type)
 		{
 			list = new LinkedList<List<Map<String,?>>>();
 			priority = new LinkedList<Integer>();
@@ -184,9 +209,9 @@ public class TaskListAdapter {
 			return this.list.size();
 		}
 		
-		public Date getLowestPriorityDate()
+		public Date getHighestPriorityDate()
 		{
-			int lowest = this.findLowestPriority();
+			int lowest = this.findHighestPriority();
 			if(lowest > -1)
 			{
 				return this.dateList.remove(lowest);
@@ -197,15 +222,14 @@ public class TaskListAdapter {
 		
 		public void addList(List<Map<String,?>> item, Date date)
 		{
-			Date today = new Date();
 			this.dateList.add(date);
 			this.priority.add(this.findDateDifference(date));
 			this.list.add(item);
 		}
 		
-		public List<Map<String,?>> getLowestPriority()
+		public List<Map<String,?>> getHighestPriority()
 		{
-			int lowest = this.findLowestPriority();
+			int lowest = this.findHighestPriority();
 			if(lowest > -1)
 			{	
 				this.priority.remove(lowest);
@@ -217,21 +241,46 @@ public class TaskListAdapter {
 			}
 		}
 		
-		private Integer findLowestPriority()
-		{
+		private Integer findHighestPriority()
+		{			
 			if(this.priority.size() > 0)
 			{
 				int lowest = this.priority.get(0);
 				int num = 0;
+				int challenge = 0;
 				
 				if(this.priority.size() > 1)
 				{
 					for(int i=1; i<this.priority.size(); i++)
 					{
-						if(this.priority.get(i) < lowest)
+						challenge = this.priority.get(i);
+						
+						if(challenge < 0 && challenge > -6)
 						{
-							lowest = this.priority.get(i);
-							num = i;
+							//Priority #1
+							if(challenge < lowest || lowest < -5 || lowest >= 0)
+							{
+								lowest = challenge;
+								num = i;
+							}
+						}
+						else if(challenge >= 0 && (lowest >= 0 || lowest < -5))
+						{
+							//Priority #2
+							if(challenge < lowest || lowest < -5)
+							{
+								lowest = challenge;
+								num = i;
+							}
+						}
+						else if(lowest < -5)
+						{
+							//Priority #3
+							if(challenge > lowest)
+							{
+								lowest = challenge;
+								num = i;
+							}
 						}
 					}
 				}

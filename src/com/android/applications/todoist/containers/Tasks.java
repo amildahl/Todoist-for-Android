@@ -116,18 +116,35 @@ public class Tasks {
 	public ArrayList<Task> getOverdueTasks()
 	{
 		ArrayList<Task> list = new ArrayList<Task>();
-		Date dueDate;
+		int size = this.tasks.size();
 		Date today = new Date();
 		today.setSeconds(0);
 		today.setMinutes(0);
 		today.setHours(0);
 		
-		for(int i = 0; i < this.tasks.size(); i++)
+		for(int i = 0; i < size; i++)
 		{
-			dueDate = this.tasks.get(i).getDueDate();
-			if(dueDate.before(today))
+			if(this.tasks.get(i).getDueDate().before(today))
 			{
 				list.add(this.tasks.get(i));
+			}
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Date> getDates()
+	{
+		ArrayList<Date> list = new ArrayList<Date>();
+		Date tempDate;
+		int size = this.tasks.size();
+		
+		for(int i=0; i < size; i++)
+		{
+			tempDate = this.tasks.get(i).getDueDate();
+			if(!list.contains(tempDate))
+			{
+				list.add(tempDate);
 			}
 		}
 		
