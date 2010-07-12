@@ -130,7 +130,7 @@ public class UserProvider extends ContentProvider {
         case LIVE_FOLDER_PROJECTS:
             qb.setProjectionMap(sLiveFolderProjectionMap);
             break;
-
+            
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
         }
