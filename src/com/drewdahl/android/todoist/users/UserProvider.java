@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.drewdahl.android.todoist.projects;
+package com.drewdahl.android.todoist.users;
 
 /**
  * @note This may change if Bug 13 takes.
  */
-import com.drewdahl.android.todoist.projects.Todoist.Projects;
 import com.drewdahl.android.todoist.users.Todoist.Users;
 
 import android.content.ContentProvider;
@@ -43,15 +42,15 @@ import java.util.HashMap;
  * Provides access to a database of notes. Each note has a title, the note
  * itself, a creation date and a modified data.
  */
-public class ProjectProvider extends ContentProvider {
+public class UserProvider extends ContentProvider {
 	
-	private static final String TAG = "ProjectProvider";
+	private static final String TAG = "UserProvider";
 
     private static final String DATABASE_NAME = "todoist.db";
     private static final int DATABASE_VERSION = 1;
-    private static final String PROJECTS_TABLE_NAME = "projects";
+    private static final String USERS_TABLE_NAME = "users";
 
-    private static HashMap<String, String> sProjectProjectionMap;
+    private static HashMap<String, String> sUserProjectionMap;
     private static HashMap<String, String> sLiveFolderProjectionMap;
 
     private static final int PROJECTS = 1;
@@ -71,15 +70,24 @@ public class ProjectProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE " + PROJECTS_TABLE_NAME + " ("
-            		+ Users._ID + " INTEGER,"
-                    + Projects.NAME + " TEXT,"
-                    + Projects.COLOR + " TEXT,"
-                    + Projects.COLLAPSED + " INTEGER,"
-                    + Projects.ITEM_ORDER + " INTEGER,"
-                    + Projects.CACHE_COUNT + " INTEGER,"
-                    + Projects.INDENT + " INTEGER,"
-                    + Projects._ID + " INTEGER PRIMARY KEY"
+            db.execSQL("CREATE TABLE " + USERS_TABLE_NAME + " ("
+            		+ Users.START_PAGE + " TEXT,"
+            		+ Users.TWITTER + " TEXT,"
+            		+ Users.API_TOKEN + " TEXT,"
+            		+ Users.TIME_FORMAT + " INTEGER,"
+            		+ Users.SORT_ORDER + " INTEGER,"
+            		+ Users.FULL_NAME + " TEXT,"
+            		+ Users.MOBILE_NUMBER + " TEXT,"
+            		+ Users.MOBILE_HOST + " TEXT,"
+            		+ Users.TIMEZONE + " TEXT,"
+            		+ Users.JABBER + " TEXT,"
+            		+ Users._ID + " INTEGER PRIMARY KEY,"
+            		+ Users.DATE_FORMAT + " INTEGER,"
+            		+ Users.PREMIUM_UNTIL + " TEXT,"
+            		+ Users.TZ_OFFSET + " TEXT," //!< @note This may need to go away.
+            		+ Users.MSN + " TEXT,"
+            		+ Users.DEFAULT_REMINDER + " TEXT,"
+            		+ Users.EMAIL + " TEXT"
                     + ");");
         }
 
@@ -107,16 +115,16 @@ public class ProjectProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(PROJECTS_TABLE_NAME);
+        qb.setTables(USERS_TABLE_NAME);
 
         switch (sUriMatcher.match(uri)) {
         case PROJECTS:
-            qb.setProjectionMap(sProjectProjectionMap);
+            qb.setProjectionMap(sUserProjectionMap);
             break;
 
         case PROJECT_ID:
-            qb.setProjectionMap(sProjectProjectionMap);
-            qb.appendWhere(Projects._ID + "=" + uri.getPathSegments().get(1));
+            qb.setProjectionMap(sUserProjectionMap);
+            qb.appendWhere(Users._ID + "=" + uri.getPathSegments().get(1));
             break;
 
         case LIVE_FOLDER_PROJECTS:
@@ -130,7 +138,7 @@ public class ProjectProvider extends ContentProvider {
         // If no sort order is specified use the default
         String orderBy;
         if (TextUtils.isEmpty(sortOrder)) {
-            orderBy = Todoist.Projects.DEFAULT_SORT_ORDER;
+            orderBy = Todoist.Users.DEFAULT_SORT_ORDER;
         } else {
             orderBy = sortOrder;
         }
@@ -149,10 +157,10 @@ public class ProjectProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
         case PROJECTS:
         case LIVE_FOLDER_PROJECTS:
-            return Projects.CONTENT_TYPE;
+            return Users.CONTENT_TYPE;
 
         case PROJECT_ID:
-            return Projects.CONTENT_ITEM_TYPE;
+            return Users.CONTENT_ITEM_TYPE;
 
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);
@@ -174,9 +182,9 @@ public class ProjectProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        long rowId = db.insert(PROJECTS_TABLE_NAME, Projects.NAME, values);
+        long rowId = db.insert(USERS_TABLE_NAME, Users.FULL_NAME, values);
         if (rowId > 0) {
-            Uri projectUri = ContentUris.withAppendedId(Projects.CONTENT_URI, rowId);
+            Uri projectUri = ContentUris.withAppendedId(Users.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(projectUri, null);
             return projectUri;
         }
@@ -190,12 +198,12 @@ public class ProjectProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
         case PROJECTS:
-            count = db.delete(PROJECTS_TABLE_NAME, where, whereArgs);
+            count = db.delete(USERS_TABLE_NAME, where, whereArgs);
             break;
 
         case PROJECT_ID:
             String noteId = uri.getPathSegments().get(1);
-            count = db.delete(PROJECTS_TABLE_NAME, Projects._ID + "=" + noteId
+            count = db.delete(USERS_TABLE_NAME, Users._ID + "=" + noteId
                     + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
             break;
 
@@ -213,12 +221,12 @@ public class ProjectProvider extends ContentProvider {
         int count;
         switch (sUriMatcher.match(uri)) {
         case PROJECTS:
-            count = db.update(PROJECTS_TABLE_NAME, values, where, whereArgs);
+            count = db.update(USERS_TABLE_NAME, values, where, whereArgs);
             break;
 
         case PROJECT_ID:
             String noteId = uri.getPathSegments().get(1);
-            count = db.update(PROJECTS_TABLE_NAME, values, Projects._ID + "=" + noteId
+            count = db.update(USERS_TABLE_NAME, values, Users._ID + "=" + noteId
                     + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
             break;
 
@@ -236,20 +244,14 @@ public class ProjectProvider extends ContentProvider {
         sUriMatcher.addURI(Todoist.AUTHORITY, "projects/#", PROJECT_ID);
         sUriMatcher.addURI(Todoist.AUTHORITY, "live_folders/projects", LIVE_FOLDER_PROJECTS);
 
-        sProjectProjectionMap = new HashMap<String, String>();
-        sProjectProjectionMap.put(Projects._ID, Projects._ID);
-        sProjectProjectionMap.put(Projects.NAME, Projects.NAME);
-        sProjectProjectionMap.put(Projects.COLOR, Projects.COLOR);
-        sProjectProjectionMap.put(Projects.COLLAPSED, Projects.COLLAPSED);
-        sProjectProjectionMap.put(Projects.ITEM_ORDER, Projects.ITEM_ORDER);
-        sProjectProjectionMap.put(Projects.CACHE_COUNT, Projects.CACHE_COUNT);
-        sProjectProjectionMap.put(Projects.INDENT, Projects.INDENT);
-
+        sUserProjectionMap = new HashMap<String, String>();
+        sUserProjectionMap.put(Users._ID, Users._ID);
+        
         // Support for Live Folders.
         sLiveFolderProjectionMap = new HashMap<String, String>();
-        sLiveFolderProjectionMap.put(LiveFolders._ID, Projects._ID + " AS " +
+        sLiveFolderProjectionMap.put(LiveFolders._ID, Users._ID + " AS " +
                 LiveFolders._ID);
-        sLiveFolderProjectionMap.put(LiveFolders.NAME, Projects.NAME + " AS " +
+        sLiveFolderProjectionMap.put(LiveFolders.NAME, Users.FULL_NAME + " AS " +
                 LiveFolders.NAME);
         // Add more columns here for more robust Live Folders.
     }
