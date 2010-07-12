@@ -20,6 +20,7 @@ package com.drewdahl.android.todoist.projects;
  * @note This may change if Bug 13 takes.
  */
 import com.drewdahl.android.todoist.projects.Todoist.Projects;
+import com.drewdahl.android.todoist.users.Todoist.Users;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -72,12 +73,14 @@ public class ProjectProvider extends ContentProvider {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + PROJECTS_TABLE_NAME + " ("
-                    + Projects._ID + " INTEGER PRIMARY KEY,"
-                    + Users._ID + " INTEGER,"
-                    + Projects.TITLE + " TEXT,"
+            		+ Users._ID + " INTEGER,"
+                    + Projects.NAME + " TEXT,"
                     + Projects.COLOR + " TEXT,"
-                    + Projects.CREATED_DATE + " INTEGER,"
-                    + Projects.MODIFIED_DATE + " INTEGER"
+                    + Projects.COLLAPSED + " INTEGER,"
+                    + Projects.ITEM_ORDER + " INTEGER,"
+                    + Projects.CACHE_COUNT + " INTEGER,"
+                    + Projects.INDENT + " INTEGER,"
+                    + Projects._ID + " INTEGER PRIMARY KEY"
                     + ");");
         }
 
@@ -128,10 +131,7 @@ public class ProjectProvider extends ContentProvider {
         // If no sort order is specified use the default
         String orderBy;
         if (TextUtils.isEmpty(sortOrder)) {
-            /**
-             * @TODO Create a default sort order!
-             * orderBy = .Notes.DEFAULT_SORT_ORDER;
-             */
+            orderBy = Todoist.Projects.DEFAULT_SORT_ORDER;
         } else {
             orderBy = sortOrder;
         }
@@ -174,37 +174,13 @@ public class ProjectProvider extends ContentProvider {
             values = new ContentValues();
         }
 
-        Long now = Long.valueOf(System.currentTimeMillis());
-
-        // Make sure that the fields are all set
-        if (values.containsKey(Projects.CREATED_DATE) == false) {
-            values.put(Projects.CREATED_DATE, now);
-        }
-
-        if (values.containsKey(Projects.MODIFIED_DATE) == false) {
-        	/**
-        	 * @note Should this be run regardless?  We are modifying it ... now?
-        	 */
-            values.put(Projects.MODIFIED_DATE, now);
-        }
-
-        if (values.containsKey(Projects.TITLE) == false) {
-            Resources r = Resources.getSystem();
-            values.put(Projects.TITLE, r.getString(android.R.string.untitled));
-        }
-
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        /**
-         * @note Not sure yet what this is doing but getting there.
-         */
-        /*
-        long rowId = db.insert(PROJECTS_TABLE_NAME, Projects.NOTE, values);
+        long rowId = db.insert(PROJECTS_TABLE_NAME, Projects.NAME, values);
         if (rowId > 0) {
-            Uri noteUri = ContentUris.withAppendedId(Projects.CONTENT_URI, rowId);
-            getContext().getContentResolver().notifyChange(noteUri, null);
-            return noteUri;
+            Uri projectUri = ContentUris.withAppendedId(Projects.CONTENT_URI, rowId);
+            getContext().getContentResolver().notifyChange(projectUri, null);
+            return projectUri;
         }
-        */
 
         throw new SQLException("Failed to insert row into " + uri);
     }
@@ -261,17 +237,20 @@ public class ProjectProvider extends ContentProvider {
         sUriMatcher.addURI(Todoist.AUTHORITY, "projects/#", PROJECT_ID);
         sUriMatcher.addURI(Todoist.AUTHORITY, "live_folders/projects", LIVE_FOLDER_PROJECTS);
 
-        sProjectsProjectionMap = new HashMap<String, String>();
-        sProjectsProjectionMap.put(Projects._ID, Projects._ID);
-        sProjectsProjectionMap.put(Projects.TITLE, Projects.TITLE);
-        sProjectsProjectionMap.put(Projects.CREATED_DATE, Projects.CREATED_DATE);
-        sProjectsProjectionMap.put(Projects.MODIFIED_DATE, Projects.MODIFIED_DATE);
+        sProjectProjectionMap = new HashMap<String, String>();
+        sProjectProjectionMap.put(Projects._ID, Projects._ID);
+        sProjectProjectionMap.put(Projects.NAME, Projects.NAME);
+        sProjectProjectionMap.put(Projects.COLOR, Projects.COLOR);
+        sProjectProjectionMap.put(Projects.COLLAPSED, Projects.COLLAPSED);
+        sProjectProjectionMap.put(Projects.ITEM_ORDER, Projects.ITEM_ORDER);
+        sProjectProjectionMap.put(Projects.CACHE_COUNT, Projects.CACHE_COUNT);
+        sProjectProjectionMap.put(Projects.INDENT, Projects.INDENT);
 
         // Support for Live Folders.
         sLiveFolderProjectionMap = new HashMap<String, String>();
         sLiveFolderProjectionMap.put(LiveFolders._ID, Projects._ID + " AS " +
                 LiveFolders._ID);
-        sLiveFolderProjectionMap.put(LiveFolders.NAME, Projects.TITLE + " AS " +
+        sLiveFolderProjectionMap.put(LiveFolders.NAME, Projects.NAME + " AS " +
                 LiveFolders.NAME);
         // Add more columns here for more robust Live Folders.
     }
