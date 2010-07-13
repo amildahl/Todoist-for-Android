@@ -43,10 +43,10 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.android.applications.todoist.Constants;
-import com.android.applications.todoist.containers.Project;
 import com.android.applications.todoist.containers.Projects;
 import com.android.applications.todoist.containers.Tasks;
-import com.android.applications.todoist.containers.User;
+import com.drewdahl.android.todoist.users.User;
+import com.drewdahl.android.todoist.projects.Project;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -55,6 +55,7 @@ import java.util.Map;
  * @brief A singleton that holds a persistent but sleepable connection to todoist.
  * @author alunduil
  *
+ * TODO Is this thread safe?  I hope so ... it would be pretty awesome if so.
  */
 public class TodoistApiHandler {
 	
@@ -116,9 +117,9 @@ public class TodoistApiHandler {
 	 * 
 	 * Must update the token item as well since this is returned by the object.
 	 */
-	public User login(String email, String password) throws TodoistApiHandlerException
+	public User login(String email, String password)
 	{
-		user = new User(call(LOGIN.replace(PARAM_EMAIL, email).replace(PARAM_PASSWORD, password)));
+		user = new User(new JSONObject(call(LOGIN.replace(PARAM_EMAIL, email).replace(PARAM_PASSWORD, password))));
 		token = user.getToken();
 		return user;
 	}
@@ -148,7 +149,7 @@ public class TodoistApiHandler {
 	 */
 	public User register(String email, String full_name, String password, String timezone)
 	{
-		user = new User(call(REGISTER.replace(PARAM_EMAIL, email).replace(PARAM_FULLNAME, full_name).replace(PARAM_PASSWORD, password).replace(PARAM_TIMEZONE, timezone)));
+		user = new User(new JSONObject(call(REGISTER.replace(PARAM_EMAIL, email).replace(PARAM_FULLNAME, full_name).replace(PARAM_PASSWORD, password).replace(PARAM_TIMEZONE, timezone))));
 		token = user.getToken();
 		return user;
 	}
@@ -170,7 +171,7 @@ public class TodoistApiHandler {
 				Uri += OPTIONAL_TIMEZONE.replace(PARAM_TIMEZONE, n.getValue());
 			}
 		}
-		user = new User(call(Uri));
+		user = new User(new JSONObject(call(Uri)));
 		token = user.getToken();
 		return user;
 	}
@@ -182,19 +183,19 @@ public class TodoistApiHandler {
 		JSONArray jArray = new JSONArray(response); 
 		for(int i = 0; i < jArray.length(); ++i)
 		{
-			ret.add(new Project(jArray.getJSONObject(i)));
+			ret.add(new Project(jArray.getJSONObject(i), user));
 		}
 		return (Project[])ret.toArray();
 	}
 	
 	public Project getProject(Integer project_id)
 	{
-		return new Project(call(GET_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString())));
+		return new Project(new JSONObject(call(GET_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()))), user);
 	}
 
 	public Project addProject(String name)
 	{
-		return new Project(call(ADD_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_NAME, name)));
+		return new Project(new JSONObject(call(ADD_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_NAME, name))), user);
 	}
 	
 	public Project updateProject(Map.Entry<String, String>...entries)
@@ -217,7 +218,7 @@ public class TodoistApiHandler {
 				Uri += PARAM_PROJECTID.replace(PARAM_PROJECTID, n.getValue());
 			}
 		}
-		return new Project(call(Uri));
+		return new Project(new JSONObject(call(Uri)), user);
 	}
 	
 	public void deleteProject(Integer project_id)

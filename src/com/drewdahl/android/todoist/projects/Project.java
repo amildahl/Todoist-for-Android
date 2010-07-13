@@ -36,174 +36,124 @@
 
 package com.drewdahl.android.todoist.projects;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.android.applications.todoist.Constants;
-import com.android.applications.todoist.containers.Project;
-import com.android.applications.todoist.containers.Projects;
+
+import com.drewdahl.android.todoist.users.User;
 
 public class Project {
-	
-	public Project() {
-		this.user_id = "";
-		this.name = "";
-		this.color = "";
-		this.collapsed = false;
-		this.item_order = 0;
-		this.cache_count = 0;
-		this.indent = 0;
-		this.id = "";
-	}
-	
-	public Project(String user_id, String name, String color, String collapsed, String item_order, String cache_count, String indent, String id) {
-		this.user_id = user_id;
-		this.name = name;
-		this.color = color;
-		if(collapsed == "1")
-			this.collapsed = Boolean.TRUE;
-		else
-			this.collapsed = Boolean.FALSE;
-		this.item_order = Integer.parseInt(item_order);
-		this.cache_count = Integer.parseInt(cache_count);
-		this.indent = Integer.parseInt(indent);
-		this.id = id;
-	}
-	
-	// TODO: Exceptions
-	private Projects parseProjects(String jsonData)
+
+	public Project(JSONObject obj, User user)
 	{
-		JSONObject obj;
-		Projects projects = new Projects();
-		Project project;
-		try 
+		try
 		{
-			JSONArray jArray = new JSONArray(jsonData);
-			for(int i=0;i<jArray.length();i++)
-			{
-				obj = jArray.getJSONObject(i);
-				project = new Project(obj.getString(Constants.JSON_USERID), obj.getString(Constants.JSON_NAME), obj.getString(Constants.JSON_COLOR), obj.getString(Constants.JSON_COLLAPSED), 
-						obj.getString(Constants.JSON_ITEMORDER), obj.getString(Constants.JSON_CACHECOUNT), obj.getString(Constants.JSON_INDENT), obj.getString(Constants.JSON_ID));
-				projects.addProject(project);
-			}	
-			
-			return projects;
-		} 
-		catch (JSONException e) 
+			Integer user_id = obj.getInt(Constants.JSON_USERID);
+			if (user_id == user.getId()) this.user = user;
+			name = obj.getString(Constants.JSON_NAME);
+			color = obj.getString(Constants.JSON_COLOR);
+			collapsed = obj.getInt(Constants.JSON_COLLAPSED);
+			item_order = obj.getInt(Constants.JSON_ITEMORDER);
+			cache_count = obj.getInt(Constants.JSON_CACHECOUNT);
+			indent = obj.getInt(Constants.JSON_INDENT);
+			id = obj.getInt(Constants.JSON_ID);
+		}
+		catch (JSONException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return new Projects();
+	}
+
+	/**
+	 * Setters and Getters.
+	 */
+	public User getUser()
+	{
+		return user;
 	}
 	
+	public void setUser(User user)
+	{
+		this.user = user;
+	}
 	
-	
-	/**
-	 * @param user_id the user_id to set
-	 */
-	public void setUserID(String user_id) {
-		this.user_id = user_id;
-	}
-	/**
-	 * @return the user_id
-	 */
-	public String getUserID() {
-		return user_id;
-	}
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
-	/**
-	 * @param color the color to set
-	 */
-	public void setColor(String color) {
-		this.color = color;
+	
+	public void setName(String name)
+	{
+		this.name = name;
 	}
-	/**
-	 * @return the color
-	 */
-	public String getColor() {
+	
+	public String getColor()
+	{
 		return color;
 	}
-	/**
-	 * @param collapsed the collapsed to set
-	 */
-	public void setCollapsed(Boolean collapsed) {
-		this.collapsed = collapsed;
+	
+	public void setColor(String color)
+	{
+		this.color = color;
 	}
-	/**
-	 * @return the collapsed
-	 */
-	public Boolean getCollapsed() {
+	
+	public Integer getCollapsed()
+	{
 		return collapsed;
 	}
-	/**
-	 * @param item_order the item_order to set
-	 */
-	public void setItem_order(int item_order) {
-		this.item_order = item_order;
+	
+	public void setCollapsed(Integer collapsed)
+	{
+		this.collapsed = collapsed;
 	}
-	/**
-	 * @return the item_order
-	 */
-	public int getItem_order() {
+	
+	public Integer getItemOrder()
+	{
 		return item_order;
 	}
-	/**
-	 * @param cache_count the cache_count to set
-	 */
-	public void setCache_count(int cache_count) {
-		this.cache_count = cache_count;
+	
+	public void setItemOrder(Integer item_order)
+	{
+		this.item_order = item_order;
 	}
-	/**
-	 * @return the cache_count
-	 */
-	public int getCache_count() {
+	
+	public Integer getCacheCount()
+	{
 		return cache_count;
 	}
-	/**
-	 * @param indent the indent to set
-	 */
-	public void setIndent(int indent) {
-		this.indent = indent;
+	
+	public void setCacheCount(Integer cache_count)
+	{
+		this.cache_count = cache_count;
 	}
-	/**
-	 * @return the indent
-	 */
-	public int getIndent() {
+	
+	public Integer getIndent()
+	{
 		return indent;
 	}
-	/**
-	 * @param id the id to set
-	 */
-	public void setID(String id) {
-		this.id = id;
+	
+	public void setIndent(Integer indent)
+	{
+		this.indent = indent;
 	}
-	/**
-	 * @return the id
-	 */
-	public String getID() {
+	
+	public Integer getId()
+	{
 		return id;
 	}
 	
-	private String user_id;
+	public void setId(Integer id)
+	{
+		this.id = id;
+	}
+	
+	private User user = null;
 	private String name;
 	private String color;
-	private Boolean collapsed;
+	private int collapsed;
 	private int item_order;
 	private int cache_count;
 	private int indent;
-	private String id;
+	private int id;
 }
