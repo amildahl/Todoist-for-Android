@@ -40,284 +40,232 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.android.applications.todoist.Constants;
-import com.android.applications.todoist.containers.User;
+import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
+import com.drewdahl.android.todoist.projects.Project;
 
+/**
+ * 
+ * @author Andrew Dahl
+ *
+ * TODO Add a save method to this class that saves it in the cache and
+ * updates the server.  We can then update the caching times by using this
+ * class as a wrapper to everything else that manages our data stores.
+ */
 public class User {
-
-	public User()
-	{
-		this.email = "";
-		this.full_name = "";
-		this.id = "";	
-		this.api_token = "";
-		this.start_page = "";
-		this.timezone = "";
-		this.tz_offset = "";
-		this.time_format = 0;
-		this.date_format = 0;
-		this.sort_order = 0;
-		this.twitter = "";
-		this.jabber = "";
-		this.msn = "";
-		this.mobile_number = "";
-		this.mobile_host = "";
-	}
+	/**
+	 * This class should always be created from the API Handler as it should 
+	 * associate the user with an actual todoist account.  Without that what
+	 * use is there for this thing?
+	 */
 	
 	/**
-	 * @TODO Change this to be in the User class's constructor.
-	 * @param jsonData
-	 * @return
+	 * @param JSONObject obj Just so we never get confused.
 	 */
-	public User parseLogin(String jsonData)
+	public User(JSONObject obj)
 	{
 		try
 		{
-			JSONObject obj = new JSONObject(jsonData);
-			
-			return new User(obj.getString(Constants.JSON_EMAIL), obj.getString(Constants.JSON_FULLNAME), obj.getString(Constants.JSON_ID), obj.getString(Constants.JSON_APITOKEN), 
-					obj.getString(Constants.JSON_STARTPAGE), obj.getString(Constants.JSON_TIMEZONE), obj.getString(Constants.JSON_TZOFFSET), obj.getString(Constants.JSON_TIMEFORMAT), 
-					obj.getString(Constants.JSON_DATEFORMAT), obj.getString(Constants.JSON_SORTORDER), obj.getString(Constants.JSON_TWITTER), obj.getString(Constants.JSON_JABBER), 
-					obj.getString(Constants.JSON_MSN), obj.getString(Constants.JSON_MOBILENUMBER), obj.getString(Constants.JSON_MOBILEHOST));
-			
+			email = obj.getString(Constants.JSON_EMAIL);
+			full_name = obj.getString(Constants.JSON_FULLNAME);
+			id = obj.getInt(Constants.JSON_ID);
+			api_token = obj.getString(Constants.JSON_APITOKEN);
+			start_page = obj.getString(Constants.JSON_STARTPAGE);
+			timezone = obj.getString(Constants.JSON_TIMEZONE);
+			tz_offset = obj.getJSONObject(Constants.JSON_TZOFFSET);
+			time_format = obj.getInt(Constants.JSON_TIMEFORMAT);
+			date_format = obj.getInt(Constants.JSON_DATEFORMAT);
+			sort_order = obj.getInt(Constants.JSON_SORTORDER);
+			twitter = obj.getString(Constants.JSON_TWITTER);
+			jabber = obj.getString(Constants.JSON_JABBER);
+			msn = obj.getString(Constants.JSON_MSN);
+			mobile_number = obj.getString(Constants.JSON_MOBILENUMBER);
+			mobile_host = obj.getString(Constants.JSON_MOBILEHOST);
+			token = obj.getString(Constants.JSON_TOKEN);
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
 		}
-		return new User();
-	}
-
-
-	
-	public User(String email, String full_name, String id, String api_token, String start_page, String timezone, String tz_offset, 
-			String time_format, String date_format, String sort_order, String twitter, String jabber, String msn, String mobile_number, String mobile_host)
-	{
-		this.setValues(email, full_name, id, api_token, start_page, timezone, tz_offset, time_format, date_format, sort_order, twitter, jabber, msn, mobile_number, mobile_host);
 	}
 	
-	public void setValues(String email, String full_name, String id, String api_token, String start_page, String timezone, String tz_offset, 
-			String time_format, String date_format, String sort_order, String twitter, String jabber, String msn, String mobile_number, String mobile_host)
+	public Project[] GetProjects()
 	{
-		this.email = email;
-		this.full_name = full_name;
-		this.id = id;	
-		this.api_token = api_token;
-		this.start_page = start_page;
-		this.timezone = timezone;
-		this.tz_offset = tz_offset;
-		this.time_format = Byte.parseByte(time_format);
-		this.date_format = Byte.parseByte(date_format);
-		this.sort_order = Byte.parseByte(sort_order);
-		this.twitter = twitter;
-		this.jabber = jabber;
-		this.msn = msn;
-		this.mobile_number = mobile_number;
-		this.mobile_host = mobile_host;
-	}
-	
-	public Boolean isValid()
-	{
-		if( this.api_token == "")
-		{
-			return false;
-		}
-		return true;
+		return TodoistApiHandler.getInstance(token).getProjects();
 	}
 	
 	/**
-	 * @param email the email to set
+	 * Getters and Setters ...
 	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
+	
+	public String getEmail()
+	{
 		return email;
 	}
-	/**
-	 * @param full_name the full_name to set
-	 */
-	public void setFullName(String full_name) {
-		this.full_name = full_name;
+	
+	public void setEmail(String email)
+	{
+		this.email = email;
 	}
-	/**
-	 * @return the full_name
-	 */
-	public String getFullName() {
+	
+	public String getFullName()
+	{
 		return full_name;
 	}
-	/**
-	 * @param id the id to set
-	 */
-	public void setID(String id) {
-		this.id = id;
+	
+	public void setFullName(String full_name)
+	{
+		this.full_name = full_name;
 	}
-	/**
-	 * @return the id
-	 */
-	public String getID() {
+	
+	public Integer getId()
+	{
 		return id;
 	}
-	/**
-	 * @param api_token the api_token to set
-	 */
-	public void setAPIToken(String api_token) {
-		this.api_token = api_token;
+	
+	public void setId(Integer id)
+	{
+		this.id = id;
 	}
-	/**
-	 * @return the api_token
-	 */
-	public String getAPIToken() {
+	
+	public String getApiToken()
+	{
 		return api_token;
 	}
-	/**
-	 * @param start_page the start_page to set
-	 */
-	public void setStartPage(String start_page) {
-		this.start_page = start_page;
+	
+	public void setApiToken(String api_token)
+	{
+		this.api_token = api_token;
 	}
-	/**
-	 * @return the start_page
-	 */
-	public String getStartPage() {
+	
+	public String getStartPage()
+	{
 		return start_page;
 	}
-	/**
-	 * @param timezone the timezone to set
-	 */
-	public void setTimezone(String timezone) {
-		this.timezone = timezone;
+	
+	public void setStartPage(String start_page)
+	{
+		this.start_page = start_page;
 	}
-	/**
-	 * @return the timezone
-	 */
-	public String getTimezone() {
+	
+	public String getTimezone()
+	{
 		return timezone;
 	}
-	/**
-	 * @param tz_offset the tz_offset to set
-	 */
-	public void setTzOffset(String tz_offset) {
-		this.tz_offset = tz_offset;
+	
+	public void setTimezone(String timezone)
+	{
+		this.timezone = timezone;
 	}
-	/**
-	 * @return the tz_offset
-	 */
-	public String getTzOffset() {
+	
+	public JSONObject getTzOffset()
+	{
 		return tz_offset;
 	}
-	/**
-	 * @param time_format the time_format to set
-	 */
-	public void setTimeFormat(Byte time_format) {
-		this.time_format = time_format;
+	
+	public void setTzOffset(JSONObject tz_offset)
+	{
+		this.tz_offset = tz_offset;
 	}
-	/**
-	 * @return the time_format
-	 */
-	public Byte getTimeFormat() {
+	
+	public Integer getTimeFormat()
+	{
 		return time_format;
 	}
-	/**
-	 * @param date_format the date_format to set
-	 */
-	public void setDateFormat(Byte date_format) {
-		this.date_format = date_format;
+	
+	public void setTimeFormat(Integer time_format)
+	{
+		this.time_format = time_format;
 	}
-	/**
-	 * @return the date_format
-	 */
-	public Byte getDateFormat() {
+	
+	public Integer getDateFormat()
+	{
 		return date_format;
 	}
-	/**
-	 * @param sort_order the sort_order to set
-	 */
-	public void setSortOrder(Byte sort_order) {
-		this.sort_order = sort_order;
+	
+	public void setDateFormat(Integer date_format)
+	{
+		this.date_format = date_format;
 	}
-	/**
-	 * @return the sort_order
-	 */
-	public Byte getSortOrder() {
+	
+	public Integer getSortOrder()
+	{
 		return sort_order;
 	}
-	/**
-	 * @param twitter the twitter to set
-	 */
-	public void setTwitter(String twitter) {
-		this.twitter = twitter;
+	
+	public void setSortOrder(Integer sort_order)
+	{
+		this.sort_order = sort_order;
 	}
-	/**
-	 * @return the twitter
-	 */
-	public String getTwitter() {
+	
+	public String getTwitter()
+	{
 		return twitter;
 	}
-	/**
-	 * @param jabber the jabber to set
-	 */
-	public void setJabber(String jabber) {
-		this.jabber = jabber;
+	
+	public void setTwitter(String twitter)
+	{
+		this.twitter = twitter;
 	}
-	/**
-	 * @return the jabber
-	 */
-	public String getJabber() {
+	
+	public String getJabber()
+	{
 		return jabber;
 	}
-	/**
-	 * @param msn the msn to set
-	 */
-	public void setMSN(String msn) {
-		this.msn = msn;
+	
+	public void setJabber(String jabber)
+	{
+		this.jabber = jabber;
 	}
-	/**
-	 * @return the msn
-	 */
-	public String getMSN() {
+	
+	public String getMsn()
+	{
 		return msn;
 	}
-	/**
-	 * @param mobile_number the mobile_number to set
-	 */
-	public void setMobileNumber(String mobile_number) {
-		this.mobile_number = mobile_number;
+	
+	public void setMsn(String msn)
+	{
+		this.msn = msn;
 	}
-	/**
-	 * @return the mobile_number
-	 */
-	public String getMobileNumber() {
+	
+	public String getMobileNumber()
+	{
 		return mobile_number;
 	}
-	/**
-	 * @param mobile_host the mobile_host to set
-	 */
-	public void setMobileHost(String mobile_host) {
-		this.mobile_host = mobile_host;
+	
+	public void setMobileNumber(String mobile_number)
+	{
+		this.mobile_number = mobile_number;
 	}
-	/**
-	 * @return the mobile_host
-	 */
-	public String getMobileHost() {
+	
+	public String getMobileHost()
+	{
 		return mobile_host;
 	}
-
+	
+	public void setMobileHost(String mobile_host)
+	{
+		this.mobile_host = mobile_host;
+	}
+	
+	public String getToken()
+	{
+		return token;
+	}
+	
 	private String email;		  // User's e-mail address	someGuy@someDomain.com
 	private String full_name;	  // User's full name 		Joe Anderson
-	private String id;			  // User's ID				156841
+	private int id;			  // User's ID				156841
 	private String api_token;	  // User's API Token		d18a76ab310947100kc60fe9b3cdc466515bb3a1 -- 40-digit hex
 	private String start_page;	  // User's start_page		_info_page
 	private String timezone;	  // User's Local Timezone	US/Central
-	private String tz_offset;	  // User's Timezone Offset	["-5:00", -5, 0, 1] -- [GMT_STRING, HOURS, MINUTES, IS_DAYLIGHT_SAVINGS_TIME]
-	private Byte time_format;	  // User's time format		0 = 13:00 else 1pm
-	private Byte date_format;	  // User's date format		0 = DD-MM-YYYY else MM-DD-YYYY
-	private Byte sort_order;	  // User's sort order		0 = Oldest dates first else Oldest dates last
+	private JSONObject tz_offset;	  // User's Timezone Offset	["-5:00", -5, 0, 1] -- [GMT_STRING, HOURS, MINUTES, IS_DAYLIGHT_SAVINGS_TIME]
+	private int time_format;	  // User's time format		0 = 13:00 else 1pm
+	private int date_format;	  // User's date format		0 = DD-MM-YYYY else MM-DD-YYYY
+	private int sort_order;	  // User's sort order		0 = Oldest dates first else Oldest dates last
 	private String twitter;		  // User's twitter account	
 	private String jabber;		  // User's jabber account	joe@doe.com
 	private String msn;			  // User's msn account		amix_bin@msn.com
 	private String mobile_number; // User's mobile number	
 	private String mobile_host;	  // User's mobile host
+	private String token;         // The login session token from the API.
 }

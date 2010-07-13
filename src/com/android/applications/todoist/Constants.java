@@ -1,18 +1,18 @@
 /*    
-	This file is part of Todoist for Android™.
+	This file is part of Todoist for Androidï¿½.
 
-    Todoist for Android™ is free software: you can redistribute it and/or 
+    Todoist for Androidï¿½ is free software: you can redistribute it and/or 
     modify it under the terms of the GNU General Public License as published 
     by the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Todoist for Android™ is distributed in the hope that it will be useful,
+    Todoist for Androidï¿½ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Todoist for Android™.  If not, see <http://www.gnu.org/licenses/>.
+    along with Todoist for Androidï¿½.  If not, see <http://www.gnu.org/licenses/>.
     
     This file incorporates work covered by the following copyright and  
  	permission notice:
@@ -80,6 +80,7 @@ public final class Constants {
 	public static final String JSON_TZOFFSET = "tz_offset";
 	public static final String JSON_UID = "uid";
 	public static final String JSON_USERID = "user_id";
+	public static final String JSON_TOKEN = "token";
 	
 	public static final String ADAPTER_TITLE = "title";
 	public static final String ADAPTER_PROJECT = "project";
