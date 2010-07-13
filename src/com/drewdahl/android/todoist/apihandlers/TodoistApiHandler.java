@@ -43,8 +43,6 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.android.applications.todoist.Constants;
-import com.android.applications.todoist.containers.Projects;
-import com.android.applications.todoist.containers.Tasks;
 import com.drewdahl.android.todoist.users.User;
 import com.drewdahl.android.todoist.projects.Project;
 
@@ -119,7 +117,14 @@ public class TodoistApiHandler {
 	 */
 	public User login(String email, String password)
 	{
-		user = new User(new JSONObject(call(LOGIN.replace(PARAM_EMAIL, email).replace(PARAM_PASSWORD, password))));
+		try
+		{
+			user = new User(new JSONObject(call(LOGIN.replace(PARAM_EMAIL, email).replace(PARAM_PASSWORD, password))));
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 		token = user.getToken();
 		return user;
 	}
@@ -128,12 +133,21 @@ public class TodoistApiHandler {
 	{
 		String response = call(GET_TIMEZONES);
 		ArrayList<String> ret = new ArrayList<String>();
-		JSONArray jArray = new JSONArray(response); 
-		for(int i = 0; i < jArray.length(); ++i)
+		JSONArray jArray = null;
+		try
 		{
-			JSONObject obj = jArray.getJSONObject(i);
-			ret.add(obj.getString(Constants.JSON_TIMEZONE));
+			jArray = new JSONArray(response);
+			for(int i = 0; i < jArray.length(); ++i)
+			{
+				JSONObject obj = jArray.getJSONObject(i);
+				ret.add(obj.getString(Constants.JSON_TIMEZONE));
+			}
 		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+
 		return (String[])ret.toArray();
 	}
 	
@@ -149,7 +163,14 @@ public class TodoistApiHandler {
 	 */
 	public User register(String email, String full_name, String password, String timezone)
 	{
-		user = new User(new JSONObject(call(REGISTER.replace(PARAM_EMAIL, email).replace(PARAM_FULLNAME, full_name).replace(PARAM_PASSWORD, password).replace(PARAM_TIMEZONE, timezone))));
+		try
+		{
+			user = new User(new JSONObject(call(REGISTER.replace(PARAM_EMAIL, email).replace(PARAM_FULLNAME, full_name).replace(PARAM_PASSWORD, password).replace(PARAM_TIMEZONE, timezone))));
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 		token = user.getToken();
 		return user;
 	}
@@ -171,7 +192,14 @@ public class TodoistApiHandler {
 				Uri += OPTIONAL_TIMEZONE.replace(PARAM_TIMEZONE, n.getValue());
 			}
 		}
-		user = new User(new JSONObject(call(Uri)));
+		try 
+		{
+			user = new User(new JSONObject(call(Uri)));
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
 		token = user.getToken();
 		return user;
 	}
@@ -180,22 +208,48 @@ public class TodoistApiHandler {
 	{
 		String response = call(GET_PROJECTS.replace(PARAM_TOKEN, token));
 		ArrayList<Project> ret = new ArrayList<Project>();
-		JSONArray jArray = new JSONArray(response); 
-		for(int i = 0; i < jArray.length(); ++i)
+		JSONArray jArray = null;
+		try
 		{
-			ret.add(new Project(jArray.getJSONObject(i), user));
+			jArray = new JSONArray(response); 
+			for(int i = 0; i < jArray.length(); ++i)
+			{
+				ret.add(new Project(jArray.getJSONObject(i), user));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
 		}
 		return (Project[])ret.toArray();
 	}
 	
 	public Project getProject(Integer project_id)
 	{
-		return new Project(new JSONObject(call(GET_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()))), user);
+		Project ret = null;
+		try
+		{
+			ret = new Project(new JSONObject(call(GET_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()))), user);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		return ret;
 	}
 
 	public Project addProject(String name)
 	{
-		return new Project(new JSONObject(call(ADD_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_NAME, name))), user);
+		Project ret = null;
+		try
+		{
+			ret = new Project(new JSONObject(call(ADD_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_NAME, name))), user);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		return ret;
 	}
 	
 	public Project updateProject(Map.Entry<String, String>...entries)
@@ -218,7 +272,16 @@ public class TodoistApiHandler {
 				Uri += PARAM_PROJECTID.replace(PARAM_PROJECTID, n.getValue());
 			}
 		}
-		return new Project(new JSONObject(call(Uri)), user);
+		Project ret = null;
+		try
+		{
+			ret = new Project(new JSONObject(call(Uri)), user);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		return ret;
 	}
 	
 	public void deleteProject(Integer project_id)
