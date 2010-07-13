@@ -448,6 +448,27 @@ public class TodoistApiHandler {
 	private static final String TODOIST = "http://todoist.com/API/";
 	private static final String TODOIST_SSL = "https://todoist.com/API/";
 	
+	/* URI Parameter Values */
+	private static final String PARAM_TOKEN = "MyToken";		// User's API Token
+	private static final String PARAM_PROJECTID = "Project_ID";	// Project's ID
+	private static final String PARAM_EMAIL = "MyEMAIL";		// User's Email Address
+	private static final String PARAM_PASSWORD = "MyPassword";	// User's Password
+	private static final String PARAM_FULLNAME = "MyFullName";	// User's FullName
+	private static final String PARAM_TIMEZONE = "MyTimeZone";	// User's Timezone
+	private static final String PARAM_NAME = "MyName";			// Project Name || Label's Name
+	private static final String PARAM_COLOR = "MyColor";		// Project Color
+	private static final String PARAM_INDENT = "MyIndent";		// Project Indent
+	private static final String PARAM_ORDER = "MyOrder";		// Project Order
+	private static final String PARAM_OLDNAME = "MyOldName";	// Label's Old Name
+	private static final String PARAM_NEWNAME = "MyNewName";	// Label's New Name
+	private static final String PARAM_IDS = "MyIDS";			// JSON List of Item ID's (tasks)
+	private static final String PARAM_CONTENT = "MyContent";	// Text of the Item (task)
+	private static final String PARAM_DATESTRING = "MyDateString"; // Date String of Item (task)
+	private static final String PARAM_PRIORITY = "MyPriority";	// Priority of Item (task)
+	private static final String PARAM_ITEMID = "MyItemID";		// ID of an Item (task)
+	private static final String PARAM_QUERIES = "MyQuery";		// Query
+	private static final String PARAM_INHISTORY = "InHistory";  // In History
+	
 	/* Todoist User API */
 	private static final String LOGIN = TODOIST_SSL + "login?email=" + PARAM_EMAIL + "&password=" + PARAM_PASSWORD; // .Replace(PARAM_EMAIL,email).Replace(PARAM_PASSWORD,password);
 	private static final String GET_TIMEZONES = TODOIST + "getTimezones";
@@ -476,31 +497,10 @@ public class TodoistApiHandler {
 	private static final String UPDATE_RECURRING_DATE = TODOIST + "UpdateRecurringDate?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
 	private static final String DELETE_ITEMS = TODOIST + "DeleteItems?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
 	private static final String COMPLETE_ITEMS = TODOIST + "CompleteItems?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
-	private static final String UNCOMPLETE_ITEMS = TODOIprivateST + "UncompleteItems?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
+	private static final String UNCOMPLETE_ITEMS = TODOIST + "UncompleteItems?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
 	
 	/* Date Query & Search API */
 	private static final String QUERY = TODOIST + "query?queries=" + PARAM_QUERIES + "&token=" + PARAM_TOKEN; // .Replace(PARAM_QUERIES,queries).Replace(PARAM_TOKEN,token);
-	
-	/* URI Parameter Values */
-	private static final String PARAM_TOKEN = "MyToken";		// User's API Token
-	private static final String PARAM_PROJECTID = "Project_ID";	// Project's ID
-	private static final String PARAM_EMAIL = "MyEMAIL";		// User's Email Address
-	private static final String PARAM_PASSWORD = "MyPassword";	// User's Password
-	private static final String PARAM_FULLNAME = "MyFullName";	// User's FullName
-	private static final String PARAM_TIMEZONE = "MyTimeZone";	// User's Timezone
-	private static final String PARAM_NAME = "MyName";			// Project Name || Label's Name
-	private static final String PARAM_COLOR = "MyColor";		// Project Color
-	private static final String PARAM_INDENT = "MyIndent";		// Project Indent
-	private static final String PARAM_ORDER = "MyOrder";		// Project Order
-	private static final String PARAM_OLDNAME = "MyOldName";	// Label's Old Name
-	private static final String PARAM_NEWNAME = "MyNewName";	// Label's New Name
-	private static final String PARAM_IDS = "MyIDS";			// JSON List of Item ID's (tasks)
-	private static final String PARAM_CONTENT = "MyContent";	// Text of the Item (task)
-	private static final String PARAM_DATESTRING = "MyDateString"; // Date String of Item (task)
-	private static final String PARAM_PRIORITY = "MyPriority";	// Priority of Item (task)
-	private static final String PARAM_ITEMID = "MyItemID";		// ID of an Item (task)
-	private static final String PARAM_QUERIES = "MyQuery";		// Query
-	private static final String PARAM_INHISTORY = "InHistory";  // In History
 	
 	/* Todoist Optional API Parameters 
 	 * Check /docs/ for Details on OPTIONAL parameters 
