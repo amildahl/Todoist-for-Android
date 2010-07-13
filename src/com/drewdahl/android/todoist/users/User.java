@@ -61,31 +61,24 @@ public class User {
 	/**
 	 * @param JSONObject obj Just so we never get confused.
 	 */
-	public User(JSONObject obj)
+	public User(JSONObject obj) throws JSONException
 	{
-		try
-		{
-			email = obj.getString(Constants.JSON_EMAIL);
-			full_name = obj.getString(Constants.JSON_FULLNAME);
-			id = obj.getInt(Constants.JSON_ID);
-			api_token = obj.getString(Constants.JSON_APITOKEN);
-			start_page = obj.getString(Constants.JSON_STARTPAGE);
-			timezone = obj.getString(Constants.JSON_TIMEZONE);
-			tz_offset = obj.getJSONObject(Constants.JSON_TZOFFSET);
-			time_format = obj.getInt(Constants.JSON_TIMEFORMAT);
-			date_format = obj.getInt(Constants.JSON_DATEFORMAT);
-			sort_order = obj.getInt(Constants.JSON_SORTORDER);
-			twitter = obj.getString(Constants.JSON_TWITTER);
-			jabber = obj.getString(Constants.JSON_JABBER);
-			msn = obj.getString(Constants.JSON_MSN);
-			mobile_number = obj.getString(Constants.JSON_MOBILENUMBER);
-			mobile_host = obj.getString(Constants.JSON_MOBILEHOST);
-			token = obj.getString(Constants.JSON_TOKEN);
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
+		email = obj.getString(Constants.JSON_EMAIL);
+		full_name = obj.getString(Constants.JSON_FULLNAME);
+		id = obj.getInt(Constants.JSON_ID);
+		api_token = obj.getString(Constants.JSON_APITOKEN);
+		start_page = obj.getString(Constants.JSON_STARTPAGE);
+		timezone = obj.getString(Constants.JSON_TIMEZONE);
+		tz_offset = obj.getJSONObject(Constants.JSON_TZOFFSET);
+		time_format = obj.getInt(Constants.JSON_TIMEFORMAT);
+		date_format = obj.getInt(Constants.JSON_DATEFORMAT);
+		sort_order = obj.getInt(Constants.JSON_SORTORDER);
+		twitter = obj.getString(Constants.JSON_TWITTER);
+		jabber = obj.getString(Constants.JSON_JABBER);
+		msn = obj.getString(Constants.JSON_MSN);
+		mobile_number = obj.getString(Constants.JSON_MOBILENUMBER);
+		mobile_host = obj.getString(Constants.JSON_MOBILEHOST);
+		token = obj.getString(Constants.JSON_TOKEN);
 	}
 	
 	public Project[] GetProjects()

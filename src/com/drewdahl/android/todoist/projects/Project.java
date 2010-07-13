@@ -45,24 +45,17 @@ import com.drewdahl.android.todoist.users.User;
 
 public class Project {
 
-	public Project(JSONObject obj, User user)
+	public Project(JSONObject obj, User user) throws JSONException
 	{
-		try
-		{
-			Integer user_id = obj.getInt(Constants.JSON_USERID);
-			if (user_id == user.getId()) this.user = user;
-			name = obj.getString(Constants.JSON_NAME);
-			color = obj.getString(Constants.JSON_COLOR);
-			collapsed = obj.getInt(Constants.JSON_COLLAPSED);
-			item_order = obj.getInt(Constants.JSON_ITEMORDER);
-			cache_count = obj.getInt(Constants.JSON_CACHECOUNT);
-			indent = obj.getInt(Constants.JSON_INDENT);
-			id = obj.getInt(Constants.JSON_ID);
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
+		Integer user_id = obj.getInt(Constants.JSON_USERID);
+		if (user_id == user.getId()) this.user = user;
+		name = obj.getString(Constants.JSON_NAME);
+		color = obj.getString(Constants.JSON_COLOR);
+		collapsed = obj.getInt(Constants.JSON_COLLAPSED);
+		item_order = obj.getInt(Constants.JSON_ITEMORDER);
+		cache_count = obj.getInt(Constants.JSON_CACHECOUNT);
+		indent = obj.getInt(Constants.JSON_INDENT);
+		id = obj.getInt(Constants.JSON_ID);
 	}
 
 	/**
