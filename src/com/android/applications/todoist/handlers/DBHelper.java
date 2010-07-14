@@ -186,15 +186,6 @@ public class DBHelper extends SQLiteOpenHelper {
 		if(!checkDB())
 		{
 			this.getReadableDatabase();
-			
-			try 
-			{
-				copyDB();
-			} 
-			catch(IOException e)
-			{
-				throw new Error("Error copying database");
-			}
 		}
 	}
 
@@ -218,23 +209,6 @@ public class DBHelper extends SQLiteOpenHelper {
 		}
 		
 		return false;
-	}
-	
-	private void copyDB() throws IOException
-	{
-		InputStream input = this.context.getAssets().open(NAME);
-		OutputStream output = new FileOutputStream(PATH + NAME);
-		
-		byte[] buffer = new byte[1024];
-		int length;
-		while((length = input.read(buffer))>0)
-		{
-			output.write(buffer, 0, length);
-		}
-		
-		output.flush();
-		output.close();
-		input.close();
 	}
 	
 	public void openDB() throws SQLException
