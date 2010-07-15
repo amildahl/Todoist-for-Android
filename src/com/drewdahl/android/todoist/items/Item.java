@@ -34,7 +34,7 @@
    	limitations under the License.
 */
 
-package com.drewdahl.android.todoist.projects;
+package com.drewdahl.android.todoist.items;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,54 +42,64 @@ import org.json.JSONObject;
 import com.android.applications.todoist.Constants;
 
 import com.drewdahl.android.todoist.users.User;
+import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
+import com.drewdahl.android.todoist.projects.Project;
 
-public class Project {
+public class Item {
 
-	public Project(JSONObject obj, User user) throws JSONException
+	/**
+	 * 
+	 * @param obj
+	 * @param user
+	 * @param project Can be null and will be filled in by constructor.
+	 * @throws JSONException
+	 */
+	public Item(JSONObject obj, User user, Project project) throws JSONException
 	{
+		due_date = obj.getInt(Constants.JSON_DUEDATE);
 		Integer user_id = obj.getInt(Constants.JSON_USERID);
 		if (user_id == user.getId()) this.user = user;
-		name = obj.getString(Constants.JSON_NAME);
-		color = obj.getString(Constants.JSON_COLOR);
+		/**
+		 * TODO Else error?
+		 */
 		collapsed = obj.getInt(Constants.JSON_COLLAPSED);
+		in_history = obj.getInt(Constants.JSON_INHISTORY);
+		priority = obj.getInt(Constants.JSON_PRIORITY);
 		item_order = obj.getInt(Constants.JSON_ITEMORDER);
-		cache_count = obj.getInt(Constants.JSON_CACHECOUNT);
+		content = obj.getString(Constants.JSON_CONTENT);
 		indent = obj.getInt(Constants.JSON_INDENT);
+		Integer project_id = obj.getInt(Constants.JSON_PROJECTID);
+		if (project == null) project = TodoistApiHandler.getInstance(user.getToken()).getProject(project_id);
+		if (project_id == project.getId()) this.project = project;
+		/**
+		 * TODO Else error?
+		 */
 		id = obj.getInt(Constants.JSON_ID);
+		checked = obj.getInt(Constants.JSON_CHECKED);
+		date_string = obj.getString(Constants.JSON_DATESTRING);
 	}
 
 	/**
 	 * Setters and Getters.
 	 */
+	public Integer getDueDate()
+	{
+		return due_date;
+	}
+	
+	public void setDueDate(Integer due_date)
+	{
+		this.due_date = due_date;
+	}
+	
 	public User getUser()
 	{
 		return user;
 	}
 	
-	public void setUser(User user)
-	{
-		this.user = user;
-	}
-	
-	public String getName()
-	{
-		return name;
-	}
-	
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	
-	public String getColor()
-	{
-		return color;
-	}
-	
-	public void setColor(String color)
-	{
-		this.color = color;
-	}
+	/**
+	 * TODO Have a public setUser() method?
+	 */
 	
 	public Integer getCollapsed()
 	{
@@ -99,6 +109,26 @@ public class Project {
 	public void setCollapsed(Integer collapsed)
 	{
 		this.collapsed = collapsed;
+	}
+	
+	public Integer getInHistory()
+	{
+		return in_history;
+	}
+	
+	public void setInHistory(Integer in_history)
+	{
+		this.in_history = in_history;
+	}
+	
+	public Integer getPriority()
+	{
+		return priority;
+	}
+	
+	public void setPriority(Integer priority)
+	{
+		this.priority = priority;
 	}
 	
 	public Integer getItemOrder()
@@ -111,14 +141,14 @@ public class Project {
 		this.item_order = item_order;
 	}
 	
-	public Integer getCacheCount()
+	public String getContent()
 	{
-		return cache_count;
+		return content;
 	}
 	
-	public void setCacheCount(Integer cache_count)
+	public void setContent(String content)
 	{
-		this.cache_count = cache_count;
+		this.content = content;
 	}
 	
 	public Integer getIndent()
@@ -131,27 +161,51 @@ public class Project {
 		this.indent = indent;
 	}
 	
+	public Project getProject()
+	{
+		return project;
+	}
+	
+	public void setProject(Project project)
+	{
+		this.project = project;
+	}
+	
 	public Integer getId()
 	{
 		return id;
 	}
 	
-	/**
-	 * TODO should this not be available?  When will the ID change?
-	 * @note This is also a question in User and Item.
-	 * @param id
-	 */
-	public void setId(Integer id)
+	public Integer getChecked()
 	{
-		this.id = id;
+		return checked;
 	}
 	
+	public void setChecked(Integer checked)
+	{
+		this.checked = checked;
+	}
+	
+	public String getDateString()
+	{
+		return date_string;
+	}
+	
+	public void setDateString(String date_string)
+	{
+		this.date_string = date_string;
+	}
+	
+	private Integer due_date;
 	private User user = null;
-	private String name;
-	private String color;
-	private int collapsed;
-	private int item_order;
-	private int cache_count;
-	private int indent;
-	private int id;
+	private Integer collapsed;
+	private Integer in_history;
+	private Integer priority;
+	private Integer item_order;
+	private String content;
+	private Integer indent;
+	private Project project = null;
+	private Integer id;
+	private Integer checked;
+	private String date_string;
 }

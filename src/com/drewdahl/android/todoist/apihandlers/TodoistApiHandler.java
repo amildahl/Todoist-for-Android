@@ -45,6 +45,7 @@ import android.util.Log;
 import com.android.applications.todoist.Constants;
 import com.drewdahl.android.todoist.users.User;
 import com.drewdahl.android.todoist.projects.Project;
+import com.drewdahl.android.todoist.items.Item;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -317,10 +318,17 @@ public class TodoistApiHandler {
 	{
 		String response = call(GET_UNCOMPLETED_ITEMS.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()));
 		ArrayList<Item> ret = new ArrayList<Item>();
-		JSONArray jArray = new JSONArray(response); 
-		for(int i = 0; i < jArray.length(); ++i)
+		try
 		{
-			ret.add(new Item(jArray.getJSONObject(i)));
+			JSONArray jArray = new JSONArray(response); 
+			for(int i = 0; i < jArray.length(); ++i)
+			{
+				ret.add(new Item(jArray.getJSONObject(i), user, null));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
 		}
 		return (Item[])ret.toArray();
 	}
@@ -329,10 +337,17 @@ public class TodoistApiHandler {
 	{
 		String response = call(GET_COMPLETED_ITEMS.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()));
 		ArrayList<Item> ret = new ArrayList<Item>();
-		JSONArray jArray = new JSONArray(response); 
-		for(int i = 0; i < jArray.length(); ++i)
+		try
 		{
-			ret.add(new Item(jArray.getJSONObject(i)));
+			JSONArray jArray = new JSONArray(response); 
+			for(int i = 0; i < jArray.length(); ++i)
+			{
+				ret.add(new Item(jArray.getJSONObject(i), user, null));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
 		}
 		return (Item[])ret.toArray();
 	}
@@ -353,10 +368,17 @@ public class TodoistApiHandler {
 		
 		String response = call(GET_ITEMS_BY_ID.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring));
 		ArrayList<Item> ret = new ArrayList<Item>();
-		JSONArray jArray = new JSONArray(response); 
-		for(int i = 0; i < jArray.length(); ++i)
+		try
 		{
-			ret.add(new Item(jArray.getJSONObject(i)));
+			JSONArray jArray = new JSONArray(response); 
+			for(int i = 0; i < jArray.length(); ++i)
+			{
+				ret.add(new Item(jArray.getJSONObject(i), user, null));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
 		}
 		return (Item[])ret.toArray();
 	}
@@ -375,7 +397,16 @@ public class TodoistApiHandler {
 			}
 		}
 		
-		return new Item(call(Uri));
+		Item ret = null;
+		try
+		{
+			ret = new Item(new JSONObject(call(Uri)), user, null);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		return ret;
 	}
 	
 	public Item updateItem(Integer item_id, Map.Entry<String, String>...entries)
@@ -400,7 +431,16 @@ public class TodoistApiHandler {
 			}
 		}
 		
-		return new Item(call(Uri));
+		Item ret = null;
+		try
+		{
+			ret = new Item(new JSONObject(call(Uri)), user, null);
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		return ret;
 	}
 	
 	public void updateOrders(Integer project_id, Integer...item_ids)
@@ -423,6 +463,12 @@ public class TodoistApiHandler {
 		call(UPDATE_ORDERS.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()).replace(PARAM_IDS, idstring));
 	}
 	
+	/**
+	 * TODO fix this method to return a list of items.
+	 * TODO Check the API and verify this is correct.
+	 * @param item_ids
+	 * @return
+	 */
 	public Item[] updateRecurringDate(Integer...item_ids)
 	{
 		boolean first = true;
