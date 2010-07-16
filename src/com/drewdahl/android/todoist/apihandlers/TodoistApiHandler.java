@@ -464,8 +464,6 @@ public class TodoistApiHandler {
 	}
 	
 	/**
-	 * TODO fix this method to return a list of items.
-	 * TODO Check the API and verify this is correct.
 	 * @param item_ids
 	 * @return
 	 */
@@ -485,7 +483,21 @@ public class TodoistApiHandler {
 		}
 		idstring += "]";
 		
-		call(UPDATE_RECURRING_DATE.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring));
+		String response = call(UPDATE_RECURRING_DATE.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring));
+		ArrayList<Item> ret = new ArrayList<Item>();
+		try
+		{
+			JSONArray jArray = new JSONArray(response); 
+			for(int i = 0; i < jArray.length(); ++i)
+			{
+				ret.add(new Item(jArray.getJSONObject(i), user, null));
+			}
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+		}
+		return (Item[])ret.toArray();
 	}
 	
 	public void deleteItems(Integer...item_ids)
