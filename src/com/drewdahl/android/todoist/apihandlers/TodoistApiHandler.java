@@ -1,38 +1,21 @@
-/*    
-	This file is part of Todoist for Android�.
-
-    Todoist for Android� is free software: you can redistribute it and/or 
-    modify it under the terms of the GNU General Public License as published 
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Todoist for Android� is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Todoist for Android�.  If not, see <http://www.gnu.org/licenses/>.
-    
-    This file incorporates work covered by the following copyright and  
- 	permission notice:
- 	
- 	Copyright [2010] pskink <pskink@gmail.com>
- 	Copyright [2010] ys1382 <ys1382@gmail.com>
- 	Copyright [2010] JonTheNiceGuy <JonTheNiceGuy@gmail.com>
-
-   	Licensed under the Apache License, Version 2.0 (the "License");
-   	you may not use this file except in compliance with the License.
-   	You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   	Unless required by applicable law or agreed to in writing, software
-   	distributed under the License is distributed on an "AS IS" BASIS,
-   	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   	See the License for the specific language governing permissions and
-   	limitations under the License.
-*/
+/*
+ * Copyright (C) 2008 by Alex Brandt <alunduil@alunduil.com>
+ * 
+ * This program is free software; you can redistribute it and#or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the
+ * Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 package com.drewdahl.android.todoist.apihandlers;
 
@@ -42,7 +25,7 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.android.applications.todoist.Constants;
+import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.users.User;
 import com.drewdahl.android.todoist.projects.Project;
 import com.drewdahl.android.todoist.items.Item;
@@ -51,24 +34,29 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * @brief A singleton that holds a persistent but sleepable connection to todoist.
- * @author alunduil
- *
+ * @author Alex Brandt <alunduil@alunduil.com>
+ * 
  * TODO Is this thread safe?  I hope so ... it would be pretty awesome if so.
  */
 public class TodoistApiHandler {
-	
+
 	private static TodoistApiHandler instance = null;
 	
-	private String token = "";
-	private WebRequest browser = null;
-	
-	private User user = null;
+	private String token;
+	private WebRequest browser;
+	private User user;
 	
 	protected TodoistApiHandler()
 	{
+		browser = null;
+		user = null;
+		token = "";
 	}
-	
+
+	/**
+	 * Get the instance of the ApiHandler.
+	 * @return The single copy of the ApiHandler.
+	 */
 	public static TodoistApiHandler getInstance()
 	{
 		if (instance == null) {
@@ -76,7 +64,12 @@ public class TodoistApiHandler {
 		}
 		return instance;
 	}
-	
+
+	/**
+	 * Get the instance of the ApiHandler with a particular token.
+	 * @param token The token we got from logging in.
+	 * @return The single copy of the ApiHandler.
+	 */
 	public static TodoistApiHandler getInstance(String token)
 	{
 		TodoistApiHandler tmp = getInstance();
@@ -84,11 +77,20 @@ public class TodoistApiHandler {
 		return tmp;
 	}
 	
+	/**
+	 * Get the authentication token being used by this instance.
+	 * @return Authentication token.
+	 */
 	public String getToken()
 	{
 		return token;
 	}
 
+	/**
+	 * Call a Todoist RESTful function.
+	 * @param Uri The resource locater.
+	 * @return The response string.
+	 */
 	protected String call(String Uri)
 	{
 		String ret = "";
@@ -97,6 +99,9 @@ public class TodoistApiHandler {
 		{
 			browser = new WebRequest(Uri);
 			ret = (String)browser.getContent();
+			if (browser.getResponseCode() != 200) {
+				throw new Exception("Not a 200 response");
+			}
 		}
 		catch (Exception e)
 		{
@@ -107,14 +112,26 @@ public class TodoistApiHandler {
 	}
 	
 	/**
-	 * @brief Log in the user.
-	 * @param email
-	 * @param password
-	 * @return
+	 * Login as the user and return that user.
+	 * @param email The email address of the user.
+	 * @param password The password for the user.
+	 * @return The user that was successfully logged in.
 	 * 
 	 * TODO Catch failed logins ...
 	 * 
-	 * Must update the token item as well since this is returned by the object.
+	 * /API/login should be HTTPS
+	 * Login user into Todoist to get a token. Required to do any communication.
+	 * 
+	 * Required parameters:
+	 *   email: User's email
+	 *   password: User's password
+	 * 
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with user info:
+	 *     {"email": "...", "token": ..., ...}
+	 * 
+	 * Error returns:
+	 *   "LOGIN_ERROR"
 	 */
 	public User login(String email, String password)
 	{
@@ -130,6 +147,17 @@ public class TodoistApiHandler {
 		return user;
 	}
 	
+	/**
+	 * Get the list of timezones that Todoist supports.
+	 * @return An array of Strings (each is a timezone string).
+	 * 
+	 * /API/getTimezones
+	 * Returns the timezones Todoist supports.
+	 * 
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with timezone names:
+	 *     ["US/Alaska", "US/Arizona", "US/Central", "US/Eastern", ...]
+	 */
 	public String[] getTimezones()
 	{
 		String response = call(GET_TIMEZONES);
@@ -138,8 +166,7 @@ public class TodoistApiHandler {
 		try
 		{
 			jArray = new JSONArray(response);
-			for(int i = 0; i < jArray.length(); ++i)
-			{
+			for(int i = 0; i < jArray.length(); ++i) {
 				JSONObject obj = jArray.getJSONObject(i);
 				ret.add(obj.getString(Constants.JSON_TIMEZONE));
 			}
@@ -213,8 +240,7 @@ public class TodoistApiHandler {
 		try
 		{
 			jArray = new JSONArray(response); 
-			for(int i = 0; i < jArray.length(); ++i)
-			{
+			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Project(jArray.getJSONObject(i), user));
 			}
 		}
@@ -321,8 +347,7 @@ public class TodoistApiHandler {
 		try
 		{
 			JSONArray jArray = new JSONArray(response); 
-			for(int i = 0; i < jArray.length(); ++i)
-			{
+			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Item(jArray.getJSONObject(i), user, null));
 			}
 		}
@@ -340,8 +365,7 @@ public class TodoistApiHandler {
 		try
 		{
 			JSONArray jArray = new JSONArray(response); 
-			for(int i = 0; i < jArray.length(); ++i)
-			{
+			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Item(jArray.getJSONObject(i), user, null));
 			}
 		}
@@ -356,8 +380,7 @@ public class TodoistApiHandler {
 	{
 		boolean first = true;
 		String idstring = "[";
-		for (Integer n : ids)
-		{
+		for (Integer n : ids) {
 			if (first) {
 				idstring += n.toString();
 				first = false;
@@ -371,8 +394,7 @@ public class TodoistApiHandler {
 		try
 		{
 			JSONArray jArray = new JSONArray(response); 
-			for(int i = 0; i < jArray.length(); ++i)
-			{
+			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Item(jArray.getJSONObject(i), user, null));
 			}
 		}
@@ -387,8 +409,7 @@ public class TodoistApiHandler {
 	{
 		String Uri = ADD_ITEM.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()).replace(PARAM_CONTENT, content);
 
-		for (Map.Entry<String, String> n : entries)
-		{
+		for (Map.Entry<String, String> n : entries) {
 			if (n.getKey().toLowerCase() == "date_string") {
 				Uri += OPTIONAL_DATESTRING.replace(PARAM_DATESTRING, n.getValue());
 			}
@@ -447,14 +468,12 @@ public class TodoistApiHandler {
 	{
 		boolean first = true;
 		String idstring = "[";
-		for (Integer n : item_ids)
-		{
+		for (Integer n : item_ids) {
 			if (first) {
 				idstring += n.toString();
 				first = false;
 			}
-			else // TODO Crap, where else did I forget this?
-			{
+			else { // TODO Crap, where else did I forget this?
 				idstring += "," + n.toString();
 			}
 		}
@@ -476,8 +495,7 @@ public class TodoistApiHandler {
 				idstring += n.toString();
 				first = false;
 			}
-			else
-			{
+			else {
 				idstring += "," + n.toString();
 			}
 		}
@@ -488,8 +506,7 @@ public class TodoistApiHandler {
 		try
 		{
 			JSONArray jArray = new JSONArray(response); 
-			for(int i = 0; i < jArray.length(); ++i)
-			{
+			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Item(jArray.getJSONObject(i), user, null));
 			}
 		}
@@ -509,8 +526,7 @@ public class TodoistApiHandler {
 				idstring += n.toString();
 				first = false;
 			}
-			else
-			{
+			else {
 				idstring += "," + n.toString();
 			}
 		}
@@ -531,8 +547,7 @@ public class TodoistApiHandler {
 				idstring += n.toString();
 				first = false;
 			}
-			else
-			{
+			else {
 				idstring += "," + n.toString();
 			}
 		}
@@ -559,6 +574,11 @@ public class TodoistApiHandler {
 		idstring += "]";
 		
 		call(UNCOMPLETE_ITEMS.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring));
+	}
+	
+	public User getUser()
+	{
+		return user;
 	}
 	
 	/**
