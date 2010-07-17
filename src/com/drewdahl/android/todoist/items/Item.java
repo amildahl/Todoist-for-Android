@@ -1,38 +1,21 @@
-/*    
-	This file is part of Todoist for Android�.
-
-    Todoist for Android� is free software: you can redistribute it and/or 
-    modify it under the terms of the GNU General Public License as published 
-    by the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Todoist for Android� is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Todoist for Android�.  If not, see <http://www.gnu.org/licenses/>.
-    
-    This file incorporates work covered by the following copyright and  
- 	permission notice:
- 	
- 	Copyright [2010] pskink <pskink@gmail.com>
- 	Copyright [2010] ys1382 <ys1382@gmail.com>
- 	Copyright [2010] JonTheNiceGuy <JonTheNiceGuy@gmail.com>
-
-   	Licensed under the Apache License, Version 2.0 (the "License");
-   	you may not use this file except in compliance with the License.
-   	You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   	Unless required by applicable law or agreed to in writing, software
-   	distributed under the License is distributed on an "AS IS" BASIS,
-   	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   	See the License for the specific language governing permissions and
-   	limitations under the License.
-*/
+/*
+ * Copyright (C) 2008 by Alex Brandt <alunduil@alunduil.com>
+ * 
+ * This program is free software; you can redistribute it and#or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the
+ * Free Software Foundation, Inc.,
+ * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 
 package com.drewdahl.android.todoist.items;
 
@@ -40,13 +23,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.drewdahl.android.todoist.Constants;
-
 import com.drewdahl.android.todoist.users.User;
 import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
 import com.drewdahl.android.todoist.projects.Project;
 
-public class Item {
+import com.drewdahl.android.todoist.items.ItemException;
 
+public class Item 
+{
 	/**
 	 * 
 	 * @param obj
@@ -54,26 +38,29 @@ public class Item {
 	 * @param project Can be null and will be filled in by constructor.
 	 * @throws JSONException
 	 */
-	public Item(JSONObject obj, User user, Project project) throws JSONException
+	public Item(JSONObject obj, User user) throws JSONException, ItemException
 	{
 		due_date = obj.getInt(Constants.JSON_DUEDATE);
 		Integer user_id = obj.getInt(Constants.JSON_USERID);
-		if (user_id == user.getId()) this.user = user;
-		/**
-		 * TODO Else error?
-		 */
+		
+		if (user_id == user.getId()) {
+			this.user = user;
+		}
+		else {
+			/**
+			 * This will probably never happen but I don't feel like
+			 * proving it.
+			 */
+			throw new ItemException("User doesn't match the user passed!");
+		}
+		
 		collapsed = obj.getInt(Constants.JSON_COLLAPSED);
 		in_history = obj.getInt(Constants.JSON_INHISTORY);
 		priority = obj.getInt(Constants.JSON_PRIORITY);
 		item_order = obj.getInt(Constants.JSON_ITEMORDER);
 		content = obj.getString(Constants.JSON_CONTENT);
 		indent = obj.getInt(Constants.JSON_INDENT);
-		Integer project_id = obj.getInt(Constants.JSON_PROJECTID);
-		if (project == null) project = TodoistApiHandler.getInstance(user.getToken()).getProject(project_id);
-		if (project_id == project.getId()) this.project = project;
-		/**
-		 * TODO Else error?
-		 */
+		this.project = TodoistApiHandler.getInstance(user.getToken()).getProject(obj.getInt(Constants.JSON_PROJECTID));
 		id = obj.getInt(Constants.JSON_ID);
 		checked = obj.getInt(Constants.JSON_CHECKED);
 		date_string = obj.getString(Constants.JSON_DATESTRING);

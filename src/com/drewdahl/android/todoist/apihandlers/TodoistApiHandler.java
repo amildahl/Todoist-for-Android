@@ -29,6 +29,7 @@ import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.users.User;
 import com.drewdahl.android.todoist.projects.Project;
 import com.drewdahl.android.todoist.items.Item;
+import com.drewdahl.android.todoist.items.ItemException;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -348,12 +349,16 @@ public class TodoistApiHandler {
 		{
 			JSONArray jArray = new JSONArray(response); 
 			for(int i = 0; i < jArray.length(); ++i) {
-				ret.add(new Item(jArray.getJSONObject(i), user, null));
+				ret.add(new Item(jArray.getJSONObject(i), user));
 			}
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
+		}
+		catch (ItemException e)
+		{
+			//Log("ApiHandler", "User and item mismatch!");
 		}
 		return (Item[])ret.toArray();
 	}
@@ -366,12 +371,16 @@ public class TodoistApiHandler {
 		{
 			JSONArray jArray = new JSONArray(response); 
 			for(int i = 0; i < jArray.length(); ++i) {
-				ret.add(new Item(jArray.getJSONObject(i), user, null));
+				ret.add(new Item(jArray.getJSONObject(i), user));
 			}
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
+		}
+		catch (ItemException e)
+		{
+			
 		}
 		return (Item[])ret.toArray();
 	}
@@ -395,12 +404,16 @@ public class TodoistApiHandler {
 		{
 			JSONArray jArray = new JSONArray(response); 
 			for(int i = 0; i < jArray.length(); ++i) {
-				ret.add(new Item(jArray.getJSONObject(i), user, null));
+				ret.add(new Item(jArray.getJSONObject(i), user));
 			}
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
+		}
+		catch (ItemException e)
+		{
+			
 		}
 		return (Item[])ret.toArray();
 	}
@@ -421,11 +434,15 @@ public class TodoistApiHandler {
 		Item ret = null;
 		try
 		{
-			ret = new Item(new JSONObject(call(Uri)), user, null);
+			ret = new Item(new JSONObject(call(Uri)), user);
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
+		}
+		catch (ItemException e)
+		{
+			
 		}
 		return ret;
 	}
@@ -455,11 +472,15 @@ public class TodoistApiHandler {
 		Item ret = null;
 		try
 		{
-			ret = new Item(new JSONObject(call(Uri)), user, null);
+			ret = new Item(new JSONObject(call(Uri)), user);
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
+		}
+		catch (ItemException e)
+		{
+			
 		}
 		return ret;
 	}
@@ -507,12 +528,16 @@ public class TodoistApiHandler {
 		{
 			JSONArray jArray = new JSONArray(response); 
 			for(int i = 0; i < jArray.length(); ++i) {
-				ret.add(new Item(jArray.getJSONObject(i), user, null));
+				ret.add(new Item(jArray.getJSONObject(i), user));
 			}
 		}
 		catch (JSONException e)
 		{
 			e.printStackTrace();
+		}
+		catch (ItemException e)
+		{
+			
 		}
 		return (Item[])ret.toArray();
 	}
