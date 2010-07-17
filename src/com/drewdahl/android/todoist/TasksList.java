@@ -34,7 +34,7 @@
    	limitations under the License.
 */
 
-package com.android.applications.todoist.views;
+package com.drewdahl.android.todoist;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +42,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
+
+import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -55,24 +57,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.android.applications.todoist.R;
-import com.android.applications.todoist.containers.Query;
-import com.android.applications.todoist.containers.SeparatedListAdapter;
-import com.android.applications.todoist.containers.Task;
-import com.android.applications.todoist.containers.TaskListAdapter;
-import com.android.applications.todoist.containers.Tasks;
-import com.android.applications.todoist.handlers.DBHelper;
-import com.android.applications.todoist.handlers.TodoistAPIHandler;
-import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
-
 public class TasksList extends ListActivity {
 	protected HashMap<Integer, ResultCallbackIF> _callbackMap = new HashMap<Integer, ResultCallbackIF>();
-	private String token = "";
 	private ProgressDialog m_ProgressDialog = null;
-   // private ItemAdapter adapter;
     private Runnable viewTasks;
-    private TodoistAPIHandler handler;
-    private TaskListAdapter adapter;
     
     public static final int REPORT_PROBLEM = Menu.FIRST + 1;
    
@@ -80,48 +68,33 @@ public class TasksList extends ListActivity {
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        
-        handler = new TodoistAPIHandler();
-        Bundle extras = getIntent().getExtras();
-        
+        Bundle extras = getIntent().getExtras(); // TODO More at 10:00 ... back to you Andrew.
         setContentView(R.layout.main);
         
-        if(extras != null)
-        {
-        	// We're being called >.> I think it came from inside the house :|
-        	// So, get the token!
-        	// TODO: Check token
-        	handler.setToken(extras.getString("token"));
-        	this.getTasks();
+        if(extras != null) {
+        	TodoistApiHandler.getInstance(extras.getString("token"));
+        	this.getTasks(); // @note Seems wrong ...
         }
-        else
-        {
-        	// If extras is null, then most likely the app is opening
-        	// Get the token, check it, and so on...
-        	String token = this.getToken();
-        	if(token != "") 
-        	{
-        		//We're logged in!  Let's see us some tasks :*]
-            	handler.setToken(token);
-            	this.getTasks();
-            }
-        	else 
-        	{
-        		//We're not logged it... TO THE LOGINMOBILE, BATMAN
-        		this.createLogin();
-        	}
+        else if(TodoistApiHandler.getInstance().getToken() != "") {
+            this.getTasks(); // @note Seems wrong ...
+        }
+        else {
+        	this.createLogin();
         }
     }
     
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
     {
-    	populateMenu(menu);
+    	populateMenu(menu); // WTF?
     }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
+    	/**
+    	 * @note Is this ordering correct?
+    	 */
     	populateMenu(menu);
     	return (super.onCreateOptionsMenu(menu));
     }
@@ -129,11 +102,14 @@ public class TasksList extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) 
     {
-    	return(applyMenuChoice(item) || super.onContextItemSelected(item));
+    	return applyMenuChoice(item) || super.onContextItemSelected(item);
     }
     
     private void populateMenu(Menu menu)
     {
+    	/**
+    	 * TODO Put this in the layout?
+    	 */
     	menu.add(Menu.NONE, REPORT_PROBLEM, Menu.NONE, "Report a Problem");
     }
     
@@ -145,27 +121,25 @@ public class TasksList extends ListActivity {
     		this.launchActivity(SupportForm.class, new TasksList.ResultCallbackIF() {
     			
     			@Override
-    			public void resultOk(Intent data) 
-    			{
+    			public void resultOk(Intent data) {
 		        	Log.i("TasksList", "Returning on OK from SupportForm");
     			}
     			
     			@Override
-    			public void resultCancel(Intent data) 
-    			{
+    			public void resultCancel(Intent data) {
     				Log.i("TasksList", "Returning on Cancel from SupportForm");
     			}
     		});
-    		return(true);
+    		return true;
     	}
     	
-    	return (false);
+    	return false;
     }
     
     // Will probably be eventually replaced or use the SQLite3 DB
     private String getToken() 
     {
-		return TodoistApiHandler.getInstance().getUser().getApiToken();
+		return TodoistApiHandler.getInstance().getUser().getToken();
     }
     
     // Call the LoginPage Activity and deal with that
@@ -180,10 +154,8 @@ public class TasksList extends ListActivity {
 				Bundle extras = data.getExtras();
 				if(extras != null)
 		        {
-		        	Log.e("Login-resultOk():",token);
-		        	handler.setToken(token);
+		        	Log.e("Login-resultOk():", TodoistApiHandler.getInstance().getToken());
 		        	getTasks();
-		        	//createTasksList();
 		        }
 		        else
 		        {
