@@ -34,7 +34,7 @@
    	limitations under the License.
 */
 
-package com.android.applications.todoist.views;
+package com.drewdahl.android.todoist;
 
 import java.io.IOException;
 
@@ -49,9 +49,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.applications.todoist.R;
-import com.android.applications.todoist.containers.Query;
-import com.android.applications.todoist.containers.User;
+import com.drewdahl.android.todoist.users.User;
+import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
 
 /**
  * An Activity that allows the user to Login.
@@ -63,7 +62,6 @@ public class LoginPage extends Activity {
 	private Button signInButton;
     private EditText emailText;
     private EditText passText;
-    private TodoistAPIHandler handler;
     
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -77,7 +75,6 @@ public class LoginPage extends Activity {
     // Initialize the controls of the page and set event handlers
     private void initControls()
     { 
-    	handler = new TodoistAPIHandler("TOKEN");
     	rememberPass = (CheckBox)findViewById(R.id.check_rememberPass);
     	emailText = (EditText)findViewById(R.id.edit_email);
     	passText = (EditText)findViewById(R.id.edit_pass);
@@ -107,38 +104,23 @@ public class LoginPage extends Activity {
     	else
     	{
     		//Attempt Login...
-    		User user = handler.login(email, password);
+    		User user = null;
+    		try
+    		{
+    			user = TodoistApiHandler.getInstance().login(email, password);
+    		}
+    		catch (Exception e)
+    		{
+    			/**
+    			 * TODO Catch and handle ...
+    			 */
+    		}
     		
-    		if(user.isValid())
-    		{
-    			// If the user wants us to remember their password, store it
-    			if(rememberPass.isChecked())
-    			{
-	    			DBHelper help = new DBHelper(this);
-	    			try
-	    			{ help.createDB(); }
-	    			catch (IOException e)
-	    			{ throw new Error("Unable to create database");	}
-	    			
-	    			try 
-	    			{ help.openDB(); }
-	    			catch (SQLException sqle)
-	    			{ throw sqle; }
-	    			
-	    			help.storeUser(user);
-    			}
-    			
-    			// Login was successful, set user API Token in result bundle and call finish()
-    			setResult(RESULT_OK, new Intent().putExtra("token", user.getAPIToken()));
-    			finish();
-    		}
-    		else
-    		{
-    			//Login Failure...
-    			this.displayError("Failed to login! Please check your login credentials and try again.");
-    		}
-    	}
-    }
+   			// Login was successful, set user API Token in result bundle and call finish()
+   			setResult(RESULT_OK, new Intent().putExtra("token", user.getApiToken()));
+   			finish();
+   		}
+   	}
     
     // Displays error message
     private void displayError(String msg)
