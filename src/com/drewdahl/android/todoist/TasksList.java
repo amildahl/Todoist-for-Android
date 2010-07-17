@@ -1,18 +1,18 @@
 /*    
-	This file is part of Todoist for Android™.
+	This file is part of Todoist for Androidï¿½.
 
-    Todoist for Android™ is free software: you can redistribute it and/or 
+    Todoist for Androidï¿½ is free software: you can redistribute it and/or 
     modify it under the terms of the GNU General Public License as published 
     by the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Todoist for Android™ is distributed in the hope that it will be useful,
+    Todoist for Androidï¿½ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Todoist for Android™.  If not, see <http://www.gnu.org/licenses/>.
+    along with Todoist for Androidï¿½.  If not, see <http://www.gnu.org/licenses/>.
     
     This file incorporates work covered by the following copyright and  
  	permission notice:
@@ -63,6 +63,7 @@ import com.android.applications.todoist.containers.TaskListAdapter;
 import com.android.applications.todoist.containers.Tasks;
 import com.android.applications.todoist.handlers.DBHelper;
 import com.android.applications.todoist.handlers.TodoistAPIHandler;
+import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
 
 public class TasksList extends ListActivity {
 	protected HashMap<Integer, ResultCallbackIF> _callbackMap = new HashMap<Integer, ResultCallbackIF>();
@@ -164,26 +165,7 @@ public class TasksList extends ListActivity {
     // Will probably be eventually replaced or use the SQLite3 DB
     private String getToken() 
     {
-    	DBHelper help = new DBHelper(this);
-		try
-		{
-			help.createDB();
-		}
-		catch (IOException e)
-		{
-			throw new Error("Unable to create database");
-		}
-		
-		try 
-		{
-			help.openDB();
-		}
-		catch (SQLException sqle)
-		{
-			throw sqle;
-		}
-		
-		return help.getUser().getAPIToken();
+		return TodoistApiHandler.getInstance().getUser().getApiToken();
     }
     
     // Call the LoginPage Activity and deal with that

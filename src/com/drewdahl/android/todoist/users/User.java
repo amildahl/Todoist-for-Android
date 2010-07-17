@@ -39,7 +39,7 @@ package com.drewdahl.android.todoist.users;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.android.applications.todoist.Constants;
+import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
 import com.drewdahl.android.todoist.projects.Project;
 
