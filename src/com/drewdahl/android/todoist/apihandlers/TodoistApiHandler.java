@@ -41,17 +41,14 @@ import java.util.Map;
  */
 public class TodoistApiHandler {
 
-	private static TodoistApiHandler instance = null;
+	private String token = "";
+	private WebRequest browser = null;
+	private User user = null;
 	
-	private String token;
-	private WebRequest browser;
-	private User user;
+	private TodoistApiHandler() {}
 	
-	protected TodoistApiHandler()
-	{
-		browser = null;
-		user = null;
-		token = "";
+	private static class InstanceHolder {
+		private static final TodoistApiHandler INSTANCE = new TodoistApiHandler();
 	}
 
 	/**
@@ -60,10 +57,7 @@ public class TodoistApiHandler {
 	 */
 	public static TodoistApiHandler getInstance()
 	{
-		if (instance == null) {
-			instance = new TodoistApiHandler();
-		}
-		return instance;
+		return InstanceHolder.INSTANCE;
 	}
 
 	/**
