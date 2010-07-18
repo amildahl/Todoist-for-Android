@@ -1,18 +1,18 @@
 /*    
-	This file is part of Todoist for Android™.
+	This file is part of Todoist for Androidï¿½.
 
-    Todoist for Android™ is free software: you can redistribute it and/or 
+    Todoist for Androidï¿½ is free software: you can redistribute it and/or 
     modify it under the terms of the GNU General Public License as published 
     by the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Todoist for Android™ is distributed in the hope that it will be useful,
+    Todoist for Androidï¿½ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Todoist for Android™.  If not, see <http://www.gnu.org/licenses/>.
+    along with Todoist for Androidï¿½.  If not, see <http://www.gnu.org/licenses/>.
     
     This file incorporates work covered by the following copyright and  
  	permission notice:
@@ -34,7 +34,7 @@
    	limitations under the License.
 */
 
-package com.android.applications.todoist.views;
+package com.drewdahl.android.todoist;
 
 import java.net.URI;
 
@@ -60,12 +60,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
-
-import com.android.applications.todoist.R;
-import com.android.applications.todoist.R.array;
-import com.android.applications.todoist.R.id;
-import com.android.applications.todoist.R.layout;
-import com.android.applications.todoist.containers.SupportCase;
 
 public class SupportForm extends Activity {
 	private EditText nameText;
@@ -151,9 +145,9 @@ public class SupportForm extends Activity {
 		    }
 		    
 		    // Create a SupportCase w/ the information entered
-			SupportCase newCase = new SupportCase(this.nameText.getText().toString(),this.emailText.getText().toString(),
+			/*SupportCase newCase = new SupportCase(this.nameText.getText().toString(),this.emailText.getText().toString(),
 					this.problemText.getText().toString(), "", this.areaSpinner.getSelectedItem().toString(),
-					info.packageName, info.versionName);
+					info.packageName, info.versionName);*/
 			
 			// Report the problem
 			// TODO: Add something to XMLRPCMethod that checks the result of the page (in case the site is down) 
@@ -176,7 +170,7 @@ public class SupportForm extends Activity {
 			});
 			
 			Object[] params = {
-					newCase,				
+					/*newCase,*/				
 			};
 			
 			method.call(params);

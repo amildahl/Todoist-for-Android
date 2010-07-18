@@ -57,7 +57,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class TasksList extends ListActivity {
+public class ItemList extends ListActivity {
 	protected HashMap<Integer, ResultCallbackIF> _callbackMap = new HashMap<Integer, ResultCallbackIF>();
 	private ProgressDialog m_ProgressDialog = null;
     private Runnable viewTasks;
@@ -69,7 +69,7 @@ public class TasksList extends ListActivity {
     {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras(); // TODO More at 10:00 ... back to you Andrew.
-        setContentView(R.layout.main);
+        setContentView(R.layout.itemlist);
         
         if(extras != null) {
         	TodoistApiHandler.getInstance(extras.getString("token"));
@@ -118,7 +118,7 @@ public class TasksList extends ListActivity {
     	switch (item.getItemId())
     	{
     	case REPORT_PROBLEM:
-    		this.launchActivity(SupportForm.class, new TasksList.ResultCallbackIF() {
+    		this.launchActivity(SupportForm.class, new ItemList.ResultCallbackIF() {
     			
     			@Override
     			public void resultOk(Intent data) {
@@ -145,7 +145,7 @@ public class TasksList extends ListActivity {
     // Call the LoginPage Activity and deal with that
     private void createLogin()
 	{
-		this.launchActivity(LoginPage.class, new TasksList.ResultCallbackIF() {
+		this.launchActivity(LoginPage.class, new ItemList.ResultCallbackIF() {
 			
 			@Override
 			public void resultOk(Intent data) 
@@ -203,7 +203,7 @@ public class TasksList extends ListActivity {
             	Query query = new Query();        	
             	query.addDateRange(start, finish.getTime());
             	query.addOverdue();
-            	Tasks tasks = handler.query(query.getQuery());
+            	Item[] tasks = handler.query(query.getQuery());
             	
             	adapter.setTasks(tasks,query);
 
