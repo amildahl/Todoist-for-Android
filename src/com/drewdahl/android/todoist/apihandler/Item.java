@@ -17,17 +17,13 @@
  * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.drewdahl.android.todoist.items;
+package com.drewdahl.android.todoist.apihandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.drewdahl.android.todoist.Constants;
-import com.drewdahl.android.todoist.users.User;
-import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
-import com.drewdahl.android.todoist.projects.Project;
 
-import com.drewdahl.android.todoist.items.ItemException;
 
 public class Item 
 {
@@ -60,6 +56,9 @@ public class Item
 		item_order = obj.getInt(Constants.JSON_ITEMORDER);
 		content = obj.getString(Constants.JSON_CONTENT);
 		indent = obj.getInt(Constants.JSON_INDENT);
+		/**
+		 * TODO Add in the cache.
+		 */
 		this.project = TodoistApiHandler.getInstance(user.getToken()).getProject(obj.getInt(Constants.JSON_PROJECTID));
 		id = obj.getInt(Constants.JSON_ID);
 		checked = obj.getInt(Constants.JSON_CHECKED);
