@@ -20,7 +20,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 public final class TodoistProviderMetaData {
-    public static final String AUTHORITY = "com.drewdahl.android.providers.Todoist";
+    public static final String AUTHORITY = "com.drewdahl.android.todoist.provider.Todoist";
 
     public static final String DATABASE_NAME = "todoist.db";
     public static final int DATABASE_VERSION = 1;
@@ -41,6 +41,8 @@ public final class TodoistProviderMetaData {
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.drewdahl.item";
         public static final String DEFAULT_SORT_ORDER = "modified DESC";
 
+        public static final String USER_ID = "user_id";
+        public static final String PROJECT_ID = "project_id";
         public static final String DUE_DATE = "due_date";
         public static final String COLLAPSED = "collapsed";
         public static final String IN_HISTORY = "in_history";
@@ -61,6 +63,7 @@ public final class TodoistProviderMetaData {
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.drewdahl.project";
         public static final String DEFAULT_SORT_ORDER = "modified DESC";
 
+        public static final String USER_ID = "user_id";
         public static final String NAME = "name";
         public static final String COLOR = "color";
         public static final String COLLAPSED = "collapsed";

@@ -1,5 +1,6 @@
-package com.drewdahl.android.todoist.provider;
+package com.drewdahl.android.todoist;
 
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
@@ -16,7 +17,9 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.content.UriMatcher;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.ContentUris;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.net.Uri;
 
 public class TodoistProvider extends ContentProvider {
@@ -116,19 +119,55 @@ public class TodoistProvider extends ContentProvider {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE " + Items.TABLE_NAME + " ("
-				+ Items._ID + " INTEGER PRIMARY KEY,"
-				+ Items.DUE_DATE + " INTEGER,"
-				+ Items.COLLAPSED + " INTEGER,"
-				+ Items.IN_HISTORY + " INTEGER,"
-				+ Items.PRIORITY + " INTEGER,"
-				+ Items.ITEM_ORDER + " INTEGER,"
-				+ Items.CONTENT + " TEXT,"
-				+ Items.INDENT + " INTEGER,"
-				+ Items.CHECKED + " INTEGER,"
-				+ Items.DATE_STRING + " TEXT"
-				+ ");");
+					+ Items._ID + " INTEGER PRIMARY KEY,"
+					+ Items.USER_ID + " INTEGER,"
+					+ Items.PROJECT_ID + " INTEGER,"
+					+ Items.DUE_DATE + " INTEGER,"
+					+ Items.COLLAPSED + " INTEGER,"
+					+ Items.IN_HISTORY + " INTEGER,"
+					+ Items.PRIORITY + " INTEGER,"
+					+ Items.ITEM_ORDER + " INTEGER,"
+					+ Items.CONTENT + " TEXT,"
+					+ Items.INDENT + " INTEGER,"
+					+ Items.CHECKED + " INTEGER,"
+					+ Items.DATE_STRING + " TEXT"
+					+ ");");
+			db.execSQL("CREATE TABLE " + Projects.TABLE_NAME + " ("
+					+ Projects._ID + " INTEGER PRIMARY KEY,"
+					+ Projects.USER_ID + " INTEGER,"
+					+ Projects.NAME + " TEXT,"
+					+ Projects.COLOR + " TEXT,"
+					+ Projects.COLLAPSED + " INTEGER,"
+					+ Projects.ITEM_ORDER + " INTEGER,"
+					+ Projects.CACHE_COUNT + " INTEGER,"
+					+ Projects.INDENT + " INTEGER"
+					+ ");");
+			db.execSQL("CREATE TABLE " + Users.TABLE_NAME + " ("
+					+ Users._ID + "INTEGER PRIMARY KEY,"
+					+ Users.EMAIL + " TEXT,"
+					+ Users.FULL_NAME + " TEXT,"
+					+ Users.API_TOKEN + " TEXT,"
+					+ Users.START_PAGE + " TEXT,"
+					+ Users.TIMEZONE + " TEXT,"
+					// TODO Users.TZ_OFFSET.
+					+ Users.TIME_FORMAT + " INTEGER,"
+					+ Users.DATE_FORMAT + " INTEGER,"
+					+ Users.SORT_ORDER + " INTEGER,"
+					+ Users.TWITTER + " TEXT,"
+					+ Users.JABBER + " TEXT,"
+					+ Users.MSN + " TEXT,"
+					+ Users.MOBILE_NUMBER + " TEXT,"
+					+ Users.MOBILE_HOST + " TEXT,"
+					+ ");");
+			db.execSQL("CREATE TABLE " + CacheTimes.TABLE_NAME + " ("
+					+ CacheTimes._ID + " INTEGER PRIMARY KEY,"
+					+ CacheTimes.INSERTED_AT + " INTEGER,"
+					+ CacheTimes.ITEM_ID + " INTEGER,"
+					+ CacheTimes.PROJECT_ID + " INTEGER,"
+					+ CacheTimes.USER_ID + " INTEGER"
+					+ ");");
 			/**
-			 * TODO Add the other three tables and references.
+			 * TODO Read http://justatheory.com/computers/databases/sqlite/foreign_key_triggers.html
 			 */
 		}
 		
@@ -136,8 +175,10 @@ public class TodoistProvider extends ContentProvider {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.w("TodoistProvider", "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all data");
 			db.execSQL("DROP TABLE IF EXISTS " + Items.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + Projects.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + Users.TABLE_NAME);
+			db.execSQL("DROP TABLE IF EXISTS " + CacheTimes.TABLE_NAME);
 			/**
-			 * TODO DROP other tables.
 			 * TODO Create migrations and manageability.
 			 */
 			onCreate(db);
@@ -235,8 +276,49 @@ public class TodoistProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
+		Long now = Long.valueOf(System.currentTimeMillis());
+		
+		String table;
+		String column; // This column will be nulled if all values are empty.
+		
+		/**
+		 * TODO Validate input fields for each table type.
+		 */
+		switch (sUriMatcher.match(uri)) {
+		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
+			table = Items.TABLE_NAME;
+			column = Items.CONTENT;
+			break;
+		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
+			table = Projects.TABLE_NAME;
+			column = Projects.NAME;
+			break;
+		case INCOMING_USER_COLLECTION_URI_INDICATOR:
+			table = Users.TABLE_NAME;
+			column = Users.FULL_NAME;
+			break;
+		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
+			table = CacheTimes.TABLE_NAME;
+			column = CacheTimes.INSERTED_AT;
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
+		
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		long rowId = db.insert(table, column, values);
+		if (rowId > 0) {
+			Uri insertedUri = ContentUris.withAppendedId(uri, rowId);
+			getContext().getContentResolver().notifyChange(insertedUri, null);
+			return insertedUri;
+		}
+		throw new SQLException("Failed to insert row into " + uri);
+	}
+
+	@Override
+	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
 	}
 
 	@Override
@@ -244,12 +326,4 @@ public class TodoistProvider extends ContentProvider {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-	@Override
-	public int update(Uri uri, ContentValues values, String selection,
-			String[] selectionArgs) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 }
