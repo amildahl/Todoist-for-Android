@@ -24,7 +24,7 @@ import org.json.JSONObject;
 
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.users.User;
-import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.projects.Project;
 
 import com.drewdahl.android.todoist.items.ItemException;

@@ -17,7 +17,7 @@
  * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.drewdahl.android.todoist.apihandlers;
+package com.drewdahl.android.todoist.apihandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +35,48 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
+ * 
+ * TODO Froyo stuffs!
+static Bitmap downloadBitmap(String url) {
+    final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+    final HttpGet getRequest = new HttpGet(url);
+
+    try {
+        HttpResponse response = client.execute(getRequest);
+        final int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != HttpStatus.SC_OK) { 
+            Log.w("ImageDownloader", "Error " + statusCode + " while retrieving bitmap from " + url); 
+            return null;
+        }
+        
+        final HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            InputStream inputStream = null;
+            try {
+                inputStream = entity.getContent(); 
+                final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                return bitmap;
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();  
+                }
+                entity.consumeContent();
+            }
+        }
+    } catch (Exception e) {
+        // Could provide a more explicit error message for IOException or IllegalStateException
+        getRequest.abort();
+        Log.w("ImageDownloader", "Error while retrieving bitmap from " + url, e.toString());
+    } finally {
+        if (client != null) {
+            client.close();
+        }
+    }
+    return null;
+}
+ */
+
+/**
  * @author Alex Brandt <alunduil@alunduil.com>
  * 
  * TODO Is this thread safe?  I hope so ... it would be pretty awesome if so.
@@ -42,7 +84,6 @@ import java.util.Map;
 public class TodoistApiHandler {
 
 	private String token = "";
-	private WebRequest browser = null;
 	private User user = null;
 	
 	private TodoistApiHandler() {}
@@ -89,6 +130,7 @@ public class TodoistApiHandler {
 	protected String call(String Uri)
 	{
 		String ret = "";
+		WebRequest browser = null;
 		
 		try
 		{

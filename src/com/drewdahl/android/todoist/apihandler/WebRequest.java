@@ -34,7 +34,7 @@
    	limitations under the License.
 */
 
-package com.drewdahl.android.todoist.apihandlers;
+package com.drewdahl.android.todoist.apihandler;
 
 public final class WebRequest{
     // Saved response.

@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
-import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -182,7 +182,10 @@ public class ItemList extends ListActivity {
             // Getting tasks is done, so dismiss the progress dialog and
         	// set the adapter to be the list adapter
             m_ProgressDialog.dismiss();
-            setListAdapter(adapter.getAdapter());
+            /**
+             * TODO Fix this to work again.
+             */
+            //setListAdapter(adapter.getAdapter());
         }
         
     };
@@ -190,7 +193,10 @@ public class ItemList extends ListActivity {
     
     private void getTasks() 
     {   
-    	this.adapter = new TaskListAdapter(this);
+    	/**
+    	 * TODO Fix this to work again.
+    	 */
+    	//this.adapter = new TaskListAdapter(this);
     	
         viewTasks = new Runnable() {
             @Override
@@ -200,19 +206,19 @@ public class ItemList extends ListActivity {
             	Date start = new Date();
             	Calendar finish = Calendar.getInstance();
             	finish.add(Calendar.DATE, 7);
-            	Query query = new Query();        	
-            	query.addDateRange(start, finish.getTime());
-            	query.addOverdue();
-            	Item[] tasks = handler.query(query.getQuery());
+            	//Query query = new Query();        	
+            	//query.addDateRange(start, finish.getTime());
+            	//query.addOverdue();
+            	//Item[] tasks = handler.query(query.getQuery());
             	
-            	adapter.setTasks(tasks,query);
+            	//adapter.setTasks(tasks,query);
 
                 runOnUiThread(returnRes);
             }
         };
         Thread thread =  new Thread(null, viewTasks, "MagentoBackground");
         thread.start();
-        m_ProgressDialog = ProgressDialog.show(TasksList.this,    
+        m_ProgressDialog = ProgressDialog.show(this,    
               "Please wait...", "Retrieving data ...", true);
         
     }   
