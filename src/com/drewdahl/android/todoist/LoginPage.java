@@ -50,7 +50,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.drewdahl.android.todoist.users.User;
-import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 
 /**
  * An Activity that allows the user to Login.

@@ -40,7 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.drewdahl.android.todoist.Constants;
-import com.drewdahl.android.todoist.apihandlers.TodoistApiHandler;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.projects.Project;
 
 /**
