@@ -6,9 +6,13 @@ import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.CacheTimes;
 
 import java.util.HashMap;
+
+import android.text.TextUtils;
+import android.util.Log;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.content.UriMatcher;
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -115,28 +119,118 @@ public class TodoistProvider extends ContentProvider {
 				+ Items._ID + " INTEGER PRIMARY KEY,"
 				+ Items.DUE_DATE + " INTEGER,"
 				+ Items.COLLAPSED + " INTEGER,"
-			sItemsProjectionMap.put(Items.COLLAPSED, Items.COLLAPSED);
-			sItemsProjectionMap.put(Items.IN_HISTORY, Items.IN_HISTORY);
-			sItemsProjectionMap.put(Items.PRIORITY, Items.PRIORITY);
-			sItemsProjectionMap.put(Items.ITEM_ORDER, Items.ITEM_ORDER);
-			sItemsProjectionMap.put(Items.CONTENT, Items.CONTENT);
-			sItemsProjectionMap.put(Items.INDENT, Items.INDENT);
-			sItemsProjectionMap.put(Items.CHECKED, Items.CHECKED);
-			sItemsProjectionMap.put(Items.DATE_STRING, Items.DATE_STRING);
-				");");
+				+ Items.IN_HISTORY + " INTEGER,"
+				+ Items.PRIORITY + " INTEGER,"
+				+ Items.ITEM_ORDER + " INTEGER,"
+				+ Items.CONTENT + " TEXT,"
+				+ Items.INDENT + " INTEGER,"
+				+ Items.CHECKED + " INTEGER,"
+				+ Items.DATE_STRING + " TEXT"
+				+ ");");
+			/**
+			 * TODO Add the other three tables and references.
+			 */
+		}
+		
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			Log.w("TodoistProvider", "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all data");
+			db.execSQL("DROP TABLE IF EXISTS " + Items.TABLE_NAME);
+			/**
+			 * TODO DROP other tables.
+			 * TODO Create migrations and manageability.
+			 */
+			onCreate(db);
 		}
 	}
 
 	@Override
-	public int delete(Uri uri, String arg1, String[] arg2) {
-		// TODO Auto-generated method stub
-		return 0;
+	public String getType(Uri uri) {
+		switch (sUriMatcher.match(uri)) {
+		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
+			return Items.CONTENT_TYPE;
+		case INCOMING_SINGLE_ITEM_URI_INDICATOR:
+			return Items.CONTENT_ITEM_TYPE;
+		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
+			return Projects.CONTENT_TYPE;
+		case INCOMING_SINGLE_PROJECT_URI_INDICATOR:
+			return Projects.CONTENT_ITEM_TYPE;
+		case INCOMING_USER_COLLECTION_URI_INDICATOR:
+			return Users.CONTENT_TYPE;
+		case INCOMING_SINGLE_USER_URI_INDICATOR:
+			return Users.CONTENT_ITEM_TYPE;
+		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
+			return CacheTimes.CONTENT_TYPE;
+		case INCOMING_SINGLE_CACHETIME_URI_INDICATOR:
+			return CacheTimes.CONTENT_ITEM_TYPE;
+		default:
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
 	}
 
 	@Override
-	public String getType(Uri uri) {
-		// TODO Auto-generated method stub
-		return null;
+	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		
+		String orderBy;
+		
+		switch (sUriMatcher.match(uri)) {
+		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
+			qb.setTables(Items.TABLE_NAME);
+			qb.setProjectionMap(sItemsProjectionMap);
+			orderBy = Items.DEFAULT_SORT_ORDER;
+			break;
+		case INCOMING_SINGLE_ITEM_URI_INDICATOR:
+			qb.setTables(Items.TABLE_NAME);
+			qb.setProjectionMap(sItemsProjectionMap);
+			qb.appendWhere(Items._ID + "=" + uri.getPathSegments().get(1));
+			orderBy = Items.DEFAULT_SORT_ORDER;
+			break;
+		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
+			qb.setTables(Projects.TABLE_NAME);
+			qb.setProjectionMap(sProjectsProjectionMap);
+			orderBy = Projects.DEFAULT_SORT_ORDER;
+			break;
+		case INCOMING_SINGLE_PROJECT_URI_INDICATOR:
+			qb.setTables(Projects.TABLE_NAME);
+			qb.setProjectionMap(sProjectsProjectionMap);
+			qb.appendWhere(Projects._ID + "=" + uri.getPathSegments().get(1));
+			orderBy = Projects.DEFAULT_SORT_ORDER;
+			break;
+		case INCOMING_USER_COLLECTION_URI_INDICATOR:
+			qb.setTables(Users.TABLE_NAME);
+			qb.setProjectionMap(sUsersProjectionMap);
+			orderBy = Users.DEFAULT_SORT_ORDER;
+			break;
+		case INCOMING_SINGLE_USER_URI_INDICATOR:
+			qb.setTables(Users.TABLE_NAME);
+			qb.setProjectionMap(sUsersProjectionMap);
+			qb.appendWhere(Users._ID + "=" + uri.getPathSegments().get(1));
+			orderBy = Users.DEFAULT_SORT_ORDER;
+			break;
+		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
+			qb.setTables(CacheTimes.TABLE_NAME);
+			qb.setProjectionMap(sCacheTimesProjectionMap);
+			orderBy = CacheTimes.DEFAULT_SORT_ORDER;
+			break;
+		case INCOMING_SINGLE_CACHETIME_URI_INDICATOR:
+			qb.setTables(CacheTimes.TABLE_NAME);
+			qb.setProjectionMap(sCacheTimesProjectionMap);
+			qb.appendWhere(CacheTimes._ID + "=" + uri.getPathSegments().get(1));
+			orderBy = CacheTimes.DEFAULT_SORT_ORDER;
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
+		
+		if (!TextUtils.isEmpty(sortOrder)) {
+			orderBy = sortOrder; 
+		}
+		
+		SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
+		c.setNotificationUri(getContext().getContentResolver(), uri);
+		return c;
 	}
 
 	@Override
@@ -146,10 +240,9 @@ public class TodoistProvider extends ContentProvider {
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection,
-			String[] selectionArgs, String sortOrder) {
+	public int delete(Uri uri, String arg1, String[] arg2) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
 	}
 
 	@Override
