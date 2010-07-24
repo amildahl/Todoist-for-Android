@@ -359,7 +359,43 @@ public class TodoistProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String where, String[] whereArgs) {
-		// TODO Auto-generated method stub
-		return 0;
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		int count;
+		String rowId;
+		switch (sUriMatcher.match(uri)) {
+		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
+			count = db.delete(Items.TABLE_NAME, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_ITEM_URI_INDICATOR:
+			rowId = uri.getPathSegments().get(1);
+			count = db.delete(Items.TABLE_NAME, Items._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+			break;
+		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
+			count = db.delete(Projects.TABLE_NAME, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_PROJECT_URI_INDICATOR:
+			rowId = uri.getPathSegments().get(1);
+			count = db.delete(Projects.TABLE_NAME, Projects._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+			break;
+		case INCOMING_USER_COLLECTION_URI_INDICATOR:
+			count = db.delete(Users.TABLE_NAME, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_USER_URI_INDICATOR:
+			rowId = uri.getPathSegments().get(1);
+			count = db.delete(Users.TABLE_NAME, Users._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+			break;
+		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
+			count = db.delete(CacheTimes.TABLE_NAME, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_CACHETIME_URI_INDICATOR:
+			rowId = uri.getPathSegments().get(1);
+			count = db.delete(CacheTimes.TABLE_NAME, CacheTimes._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+			break;
+		default:
+			throw new IllegalArgumentException("Unkown URI " + uri);
+		}
+		
+		getContext().getContentResolver().notifyChange(uri, null);
+		return count;
 	}
 }
