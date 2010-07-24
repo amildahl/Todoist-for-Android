@@ -316,13 +316,49 @@ public class TodoistProvider extends ContentProvider {
 	}
 
 	@Override
-	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+		int count;
+		String rowId;
+		switch (sUriMatcher.match(uri)) {
+		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
+			count = db.update(Items.TABLE_NAME, values, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_ITEM_URI_INDICATOR:
+			rowId = uri.getPathSegments().get(1);
+			count = db.update(Items.TABLE_NAME, values, Items._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+			break;
+		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
+			count = db.update(Projects.TABLE_NAME, values, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_PROJECT_URI_INDICATOR:
+			rowId = uri.getPathSegments().get(1);
+			count = db.update(Projects.TABLE_NAME, values, Projects._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+			break;
+		case INCOMING_USER_COLLECTION_URI_INDICATOR:
+			count = db.update(Users.TABLE_NAME, values, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_USER_URI_INDICATOR:
+			rowId = uri.getPathSegments().get(1);
+			count = db.update(Users.TABLE_NAME, values, Users._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+			break;
+		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
+			count = db.update(CacheTimes.TABLE_NAME, values, where, whereArgs);
+			break;
+		case INCOMING_SINGLE_CACHETIME_URI_INDICATOR:
+			rowId = uri.getPathSegments().get(1);
+			count = db.update(CacheTimes.TABLE_NAME, values, CacheTimes._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
+			break;
+		default:
+			throw new IllegalArgumentException("Unkown URI " + uri);
+		}
+		
+		getContext().getContentResolver().notifyChange(uri, null);
+		return count;
 	}
 
 	@Override
-	public int delete(Uri uri, String arg1, String[] arg2) {
+	public int delete(Uri uri, String where, String[] whereArgs) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
