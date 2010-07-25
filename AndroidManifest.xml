@@ -21,5 +21,5 @@
 			android:authorities="com.drewdahl.android.todoist.provider"
 			/>
 	</application>
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7"/>
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="8"/>
 </manifest> 
