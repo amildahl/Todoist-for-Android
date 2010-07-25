@@ -36,8 +36,6 @@
 
 package com.drewdahl.android.todoist;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +47,6 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -68,9 +65,12 @@ public class ItemList extends ListActivity {
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        Bundle extras = getIntent().getExtras(); // TODO More at 10:00 ... back to you Andrew.
+        Bundle extras = getIntent().getExtras();
         setContentView(R.layout.itemlist);
         
+        /**
+         * TODO Put the entire user object in the bundle?
+         */
         if(extras != null) {
         	TodoistApiHandler.getInstance(extras.getString("token"));
         	this.getTasks(); // @note Seems wrong ...
