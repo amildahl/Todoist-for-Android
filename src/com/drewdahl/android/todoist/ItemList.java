@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.models.user.User;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -60,6 +61,8 @@ public class ItemList extends ListActivity {
     private Runnable viewTasks;
     
     public static final int REPORT_PROBLEM = Menu.FIRST + 1;
+    
+    private User user = null;
    
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -67,20 +70,12 @@ public class ItemList extends ListActivity {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         setContentView(R.layout.itemlist);
-        
-        /**
-         * TODO Put the entire user object in the bundle?
-         */
-        if(extras != null) {
-        	TodoistApiHandler.getInstance(extras.getString("token"));
-        	this.getTasks(); // @note Seems wrong ...
+        if (!extras.containsKey("com.drewdahl.android.todoist.models.user")) {
+        	/**
+        	 * TODO Error out here.
+        	 */
         }
-        else if(TodoistApiHandler.getInstance().getToken() != "") {
-            this.getTasks(); // @note Seems wrong ...
-        }
-        else {
-        	this.createLogin();
-        }
+        user = extras.getParcelable("com.drewdahl.android.todoist.models.user").getClass();
     }
     
     @Override

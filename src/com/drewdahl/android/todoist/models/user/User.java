@@ -89,6 +89,10 @@ public class User implements Parcelable {
 		return TodoistApiHandler.getInstance(token).getProjects();
 	}
 	
+	public static User login(String email, String password) {
+		return TodoistApiHandler.getInstance().login(email, password);
+	}
+	
 	/**
 	 * Getters and Setters ...
 	 */
@@ -267,6 +271,8 @@ public class User implements Parcelable {
 	
 	/**
 	 * @category Parcelable
+	 * 
+	 * TODO http://developer.android.com/reference/android/os/Parcelable.html
 	 */
 	public void writeToParcel(Parcel parcel, int flags)
 	{
