@@ -39,6 +39,8 @@ package com.drewdahl.android.todoist.models.user;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcelable;
+
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.models.project.Project;
@@ -51,7 +53,7 @@ import com.drewdahl.android.todoist.models.project.Project;
  * updates the server.  We can then update the caching times by using this
  * class as a wrapper to everything else that manages our data stores.
  */
-public class User {
+public class User implements Parcelable {
 	/**
 	 * This class should always be created from the API Handler as it should 
 	 * associate the user with an actual todoist account.  Without that what

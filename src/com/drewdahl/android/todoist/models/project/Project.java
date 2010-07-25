@@ -39,11 +39,13 @@ package com.drewdahl.android.todoist.models.project;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcelable;
+
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.models.user.User;
 
 
-public class Project {
+public class Project implements Parcelable {
 
 	public Project(JSONObject obj, User user) throws JSONException
 	{

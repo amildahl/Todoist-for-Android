@@ -22,13 +22,14 @@ package com.drewdahl.android.todoist.models.item;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcelable;
+
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.models.project.Project;
 import com.drewdahl.android.todoist.models.user.User;
 
-
-public class Item 
+public class Item implements Parcelable
 {
 	/**
 	 * 
