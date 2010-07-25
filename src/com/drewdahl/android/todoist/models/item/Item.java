@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Parcelable;
+import android.os.Parcel;
 
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
@@ -198,4 +199,22 @@ public class Item implements Parcelable
 	private Integer id;
 	private Integer checked;
 	private String date_string;
+	
+	/**
+	 * @category Parcelable
+	 */
+	public void writeToParcel(Parcel parcel, int flags)
+	{
+		/**
+		 * TODO Stub method.
+		 */
+	}
+	
+	public int describeContents()
+	{
+		/**
+		 * TODO Stub method.
+		 */
+		return 0;
+	}
 }
