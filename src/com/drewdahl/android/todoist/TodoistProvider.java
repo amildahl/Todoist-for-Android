@@ -283,6 +283,8 @@ public class TodoistProvider extends ContentProvider {
 		
 		/**
 		 * TODO Validate input fields for each table type.
+		 * 
+		 * This is where data integrity happens as this is the point of entry for our DB.
 		 */
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
