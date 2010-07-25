@@ -3,28 +3,111 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="fill_parent" 
     android:layout_width="fill_parent"
-    android:background="#ffffff">
-
-
-<RelativeLayout android:id="@+id/RelativeLayout03" android:layout_width="wrap_content" android:layout_height="wrap_content"><ImageView android:id="@+id/ImageView01" android:layout_above="@+id/EditText01" android:layout_width="wrap_content" android:layout_toRightOf="@+id/TextView01" android:src="@drawable/todoist_logo" android:layout_centerHorizontal="true" android:layout_centerVertical="true" android:layout_height="wrap_content" android:paddingTop="15px"></ImageView></RelativeLayout><RelativeLayout android:id="@+id/RelativeLayout07" android:layout_width="wrap_content" android:layout_height="wrap_content"><RelativeLayout android:layout_height="wrap_content" android:id="@+id/RelativeLayout08" android:layout_width="fill_parent"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#000000" android:text="E-Mail:" android:id="@+id/txt_email"></TextView></RelativeLayout><RelativeLayout android:id="@+id/RelativeLayout01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingLeft="2px" android:layout_below="@+id/RelativeLayout08"><EditText android:layout_height="wrap_content" android:layout_toRightOf="@+id/TextView02" android:layout_alignTop="@+id/TextView02" android:layout_width="fill_parent" android:inputType="textEmailAddress" android:id="@+id/edit_email"></EditText>
-
-
-
-
-</RelativeLayout><RelativeLayout android:layout_width="wrap_content" android:id="@+id/RelativeLayout06" android:layout_height="wrap_content" android:layout_below="@+id/RelativeLayout01"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#000000" android:text="Password:" android:layout_centerVertical="true" android:id="@+id/txt_pass"></TextView></RelativeLayout><RelativeLayout android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/RelativeLayout09" android:paddingLeft="2px" android:layout_below="@+id/RelativeLayout06"><EditText android:layout_height="wrap_content" android:layout_below="@+id/EditText01" android:layout_width="fill_parent" android:paddingTop="4px" android:inputType="textPassword" android:id="@+id/edit_pass"></EditText></RelativeLayout>
-
-</RelativeLayout><TableRow android:id="@+id/TableRow01" android:layout_width="wrap_content" android:layout_height="wrap_content">
-
-</TableRow>
-<RelativeLayout android:id="@+id/RelativeLayout02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:paddingTop="4px"></RelativeLayout>
-
-
-
-
-
-
-<RelativeLayout android:id="@+id/RelativeLayout04" android:layout_width="wrap_content" android:layout_height="wrap_content"><CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#000000" android:layout_centerHorizontal="true" android:text="Remember Password" android:id="@+id/check_rememberPass"></CheckBox></RelativeLayout>
-
-<RelativeLayout android:id="@+id/RelativeLayout05" android:layout_width="wrap_content" android:layout_height="wrap_content"><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sign In" android:layout_centerHorizontal="true" android:minWidth="120px" android:clickable="true" android:id="@+id/btn_signIn"></Button></RelativeLayout>
-
+    android:background="@color/background">
+    <RelativeLayout android:id="@+id/RelativeLayout03" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        >
+        <ImageView android:id="@+id/ImageView01" 
+            android:layout_above="@+id/EditText01" 
+            android:layout_width="wrap_content" 
+            android:layout_toRightOf="@+id/TextView01" 
+            android:src="@drawable/todoist_logo" 
+            android:layout_centerHorizontal="true" 
+            android:layout_centerVertical="true" 
+            android:layout_height="wrap_content" 
+            android:paddingTop="15px"
+            />
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/RelativeLayout07" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        >
+        <RelativeLayout android:layout_height="wrap_content" 
+            android:id="@+id/RelativeLayout08" 
+            android:layout_width="fill_parent"
+            >
+            <TextView android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
+                android:textColor="#000000" 
+                android:text="E-Mail:" 
+                android:id="@+id/txt_email"
+                />
+        </RelativeLayout>
+        <RelativeLayout android:id="@+id/RelativeLayout01" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:paddingLeft="2px" 
+            android:layout_below="@+id/RelativeLayout08"
+            >
+            <EditText android:layout_height="wrap_content" 
+                android:layout_toRightOf="@+id/TextView02" 
+                android:layout_alignTop="@+id/TextView02" 
+                android:layout_width="fill_parent" 
+                android:inputType="textEmailAddress" 
+                android:id="@+id/edit_email"
+                />
+        </RelativeLayout>
+        <RelativeLayout android:layout_width="wrap_content" 
+            android:id="@+id/RelativeLayout06" 
+            android:layout_height="wrap_content" 
+            android:layout_below="@+id/RelativeLayout01"
+            >
+            <TextView android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
+                android:textColor="#000000" 
+                android:text="Password:" 
+                android:layout_centerVertical="true" 
+                android:id="@+id/txt_pass"
+                />
+        </RelativeLayout>
+        <RelativeLayout android:layout_height="wrap_content" 
+            android:layout_width="wrap_content" 
+            android:id="@+id/RelativeLayout09" 
+            android:paddingLeft="2px" 
+            android:layout_below="@+id/RelativeLayout06"
+            >
+            <EditText android:layout_height="wrap_content" 
+                android:layout_below="@+id/EditText01" 
+                android:layout_width="fill_parent" 
+                android:paddingTop="4px" 
+                android:inputType="textPassword" 
+                android:id="@+id/edit_pass"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
+    <TableRow android:id="@+id/TableRow01" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        />
+    <RelativeLayout android:id="@+id/RelativeLayout02" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" 
+        android:paddingTop="4px"
+        />
+    <RelativeLayout android:id="@+id/RelativeLayout04" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        >
+        <CheckBox android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:textColor="#000000" 
+            android:layout_centerHorizontal="true" 
+            android:text="Remember Password" 
+            android:id="@+id/check_rememberPass"
+            />
+    </RelativeLayout>
+    <RelativeLayout android:id="@+id/RelativeLayout05" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        >
+        <Button android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:text="Sign In" 
+            android:layout_centerHorizontal="true" 
+            android:minWidth="120px" 
+            android:clickable="true" 
+            android:id="@+id/btn_signIn"
+            />
+    </RelativeLayout>
 </TableLayout>
