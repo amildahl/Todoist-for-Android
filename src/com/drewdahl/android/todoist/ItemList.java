@@ -75,7 +75,7 @@ public class ItemList extends ListActivity {
         	 * TODO Error out here.
         	 */
         }
-        user = extras.getParcelable("com.drewdahl.android.todoist.models.user").getClass();
+        user = extras.getParcelable("com.drewdahl.android.todoist.models.user");
     }
     
     @Override

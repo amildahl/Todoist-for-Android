@@ -72,7 +72,10 @@ public class User implements Parcelable {
 		api_token = obj.getString(Constants.JSON_APITOKEN);
 		start_page = obj.getString(Constants.JSON_STARTPAGE);
 		timezone = obj.getString(Constants.JSON_TIMEZONE);
+		/**
+		 * TODO Get this right.
 		tz_offset = obj.getJSONObject(Constants.JSON_TZOFFSET);
+		 */
 		time_format = obj.getInt(Constants.JSON_TIMEFORMAT);
 		date_format = obj.getInt(Constants.JSON_DATEFORMAT);
 		sort_order = obj.getInt(Constants.JSON_SORTORDER);
@@ -157,6 +160,8 @@ public class User implements Parcelable {
 		this.timezone = timezone;
 	}
 	
+	/**
+	 * TODO Get this right.
 	public JSONObject getTzOffset()
 	{
 		return tz_offset;
@@ -166,6 +171,7 @@ public class User implements Parcelable {
 	{
 		this.tz_offset = tz_offset;
 	}
+	 */
 	
 	public Integer getTimeFormat()
 	{
@@ -258,7 +264,10 @@ public class User implements Parcelable {
 	private String api_token;	  // User's API Token		d18a76ab310947100kc60fe9b3cdc466515bb3a1 -- 40-digit hex
 	private String start_page;	  // User's start_page		_info_page
 	private String timezone;	  // User's Local Timezone	US/Central
+	/**
+	 * TODO Get this right.
 	private JSONObject tz_offset;	  // User's Timezone Offset	["-5:00", -5, 0, 1] -- [GMT_STRING, HOURS, MINUTES, IS_DAYLIGHT_SAVINGS_TIME]
+	 */
 	private int time_format;	  // User's time format		0 = 13:00 else 1pm
 	private int date_format;	  // User's date format		0 = DD-MM-YYYY else MM-DD-YYYY
 	private int sort_order;	  // User's sort order		0 = Oldest dates first else Oldest dates last
@@ -274,18 +283,63 @@ public class User implements Parcelable {
 	 * 
 	 * TODO http://developer.android.com/reference/android/os/Parcelable.html
 	 */
-	public void writeToParcel(Parcel parcel, int flags)
+	public void writeToParcel(Parcel out, int flags)
 	{
+		out.writeString(email);
+		out.writeString(full_name);
+		out.writeInt(id);
+		out.writeString(api_token);
+		out.writeString(start_page);
+		out.writeString(timezone);
 		/**
-		 * TODO Stub method.
+		 * TODO Get this right.
+		parcel.writeSOMETHING(tz_offset);
 		 */
+		out.writeInt(time_format);
+		out.writeInt(date_format);
+		out.writeInt(sort_order);
+		out.writeString(twitter);
+		out.writeString(jabber);
+		out.writeString(msn);
+		out.writeString(mobile_number);
+		out.writeString(mobile_host);
+		out.writeString(token);
 	}
 	
 	public int describeContents()
 	{
-		/**
-		 * TODO Stub method.
-		 */
 		return 0;
+	}
+	
+	public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+		public User createFromParcel(Parcel in) {
+			return new User(in);
+		}
+		
+		public User[] newArray(int size) {
+			return new User[size];
+		}
+	};
+	
+	private User(Parcel in) {
+		email = in.readString();
+		full_name = in.readString();
+		id = in.readInt();
+		api_token = in.readString();
+		start_page = in.readString();
+		timezone = in.readString();
+		/**
+		 * TODO Get this right.
+		tz_offset = in.readSOMETHING();
+		 */
+		time_format = in.readInt();
+		date_format = in.readInt();
+		sort_order = in.readInt();
+		twitter = in.readString();
+		jabber = in.readString();
+		msn = in.readString();
+		mobile_number = in.readString();
+		mobile_host = in.readString();
+		token = in.readString();
 	}
 }
