@@ -145,7 +145,7 @@ public class ItemList extends ListActivity {
     // Call the LoginPage Activity and deal with that
     private void createLogin()
 	{
-		this.launchActivity(LoginPage.class, new ItemList.ResultCallbackIF() {
+		this.launchActivity(Login.class, new ItemList.ResultCallbackIF() {
 			
 			@Override
 			public void resultOk(Intent data) 

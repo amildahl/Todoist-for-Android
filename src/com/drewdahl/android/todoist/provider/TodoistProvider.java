@@ -1,8 +1,8 @@
-package com.drewdahl.android.todoist;
+package com.drewdahl.android.todoist.provider;
 
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData;
-import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.CacheTimes;
 

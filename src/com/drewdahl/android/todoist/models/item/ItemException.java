@@ -17,7 +17,7 @@
  * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.drewdahl.android.todoist.apihandler;
+package com.drewdahl.android.todoist.models.item;
 
 public class ItemException extends Exception 
 {

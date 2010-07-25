@@ -50,14 +50,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
-import com.drewdahl.android.todoist.apihandler.User;
+import com.drewdahl.android.todoist.models.user.User;
 
 /**
  * An Activity that allows the user to Login.
  *
  * @see     android.app.Activity
  */
-public class LoginPage extends Activity {
+public class Login extends Activity {
 	private CheckBox rememberPass;
 	private Button signInButton;
     private EditText emailText;
