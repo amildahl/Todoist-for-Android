@@ -39,6 +39,7 @@ package com.drewdahl.android.todoist.models.user;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.drewdahl.android.todoist.Constants;
@@ -263,4 +264,22 @@ public class User implements Parcelable {
 	private String mobile_number; // User's mobile number	
 	private String mobile_host;	  // User's mobile host
 	private String token;         // The login session token from the API.
+	
+	/**
+	 * @category Parcelable
+	 */
+	public void writeToParcel(Parcel parcel, int flags)
+	{
+		/**
+		 * TODO Stub method.
+		 */
+	}
+	
+	public int describeContents()
+	{
+		/**
+		 * TODO Stub method.
+		 */
+		return 0;
+	}
 }

@@ -136,12 +136,6 @@ public class ItemList extends ListActivity {
     	return false;
     }
     
-    // Will probably be eventually replaced or use the SQLite3 DB
-    private String getToken() 
-    {
-		return TodoistApiHandler.getInstance().getUser().getToken();
-    }
-    
     // Call the LoginPage Activity and deal with that
     private void createLogin()
 	{

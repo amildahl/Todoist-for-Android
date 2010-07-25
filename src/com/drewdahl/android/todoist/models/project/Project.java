@@ -40,10 +40,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Parcelable;
+import android.os.Parcel;
 
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.models.user.User;
-
 
 public class Project implements Parcelable {
 
@@ -156,4 +156,22 @@ public class Project implements Parcelable {
 	private int cache_count;
 	private int indent;
 	private int id;
+	
+	/**
+	 * @category Parcelable
+	 */
+	public void writeToParcel(Parcel parcel, int flags)
+	{
+		/**
+		 * TODO Stub method.
+		 */
+	}
+	
+	public int describeContents()
+	{
+		/**
+		 * TODO Stub method.
+		 */
+		return 0;
+	}
 }
