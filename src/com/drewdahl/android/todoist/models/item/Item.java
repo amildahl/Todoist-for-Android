@@ -17,12 +17,15 @@
  * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package com.drewdahl.android.todoist.apihandler;
+package com.drewdahl.android.todoist.models.item;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.drewdahl.android.todoist.Constants;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.models.project.Project;
+import com.drewdahl.android.todoist.models.user.User;
 
 
 public class Item 

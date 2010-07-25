@@ -11,15 +11,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 		</activity>
-		<activity android:name="com.drewdahl.android.todoist.LoginPage" 
+		<activity android:name="com.drewdahl.android.todoist.Login" 
 			android:label="@string/login" 
-			/>
+			>
+			<intent-filter>
+				<action android:name="android.intent.action.LOGIN" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<!-- TODO Move this to a Github application (Hubroid) that exports an intent for submitting an issue. -->
 		<activity android:name="com.drewdahl.android.todoist.SupportForm"
 			android:label="@string/app_name"
 			/>
-		<provider android:name="TodoistProvider"
+		<provider android:name="com.drewdahl.android.todoist.provider.TodoistProvider"
 			android:authorities="com.drewdahl.android.todoist.provider"
 			/>
 	</application>
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="8"/>
+
 </manifest> 

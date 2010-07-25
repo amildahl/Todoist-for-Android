@@ -26,6 +26,10 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.drewdahl.android.todoist.Constants;
+import com.drewdahl.android.todoist.models.item.Item;
+import com.drewdahl.android.todoist.models.item.ItemException;
+import com.drewdahl.android.todoist.models.project.Project;
+import com.drewdahl.android.todoist.models.user.User;
 
 import java.util.ArrayList;
 import java.util.Map;

@@ -34,12 +34,14 @@
    	limitations under the License.
 */
 
-package com.drewdahl.android.todoist.apihandler;
+package com.drewdahl.android.todoist.models.user;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.drewdahl.android.todoist.Constants;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.models.project.Project;
 
 /**
  * 
