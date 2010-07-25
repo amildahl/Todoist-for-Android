@@ -159,6 +159,8 @@ public class Project implements Parcelable {
 	
 	/**
 	 * @category Parcelable
+	 * 
+	 * TODO http://developer.android.com/reference/android/os/Parcelable.html
 	 */
 	public void writeToParcel(Parcel parcel, int flags)
 	{

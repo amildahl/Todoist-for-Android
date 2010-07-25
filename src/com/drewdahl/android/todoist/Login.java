@@ -36,104 +36,72 @@
 
 package com.drewdahl.android.todoist;
 
-import java.io.IOException;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.models.user.User;
 
 /**
  * An Activity that allows the user to Login.
  *
+ * TODO Implement error dialogs.
+ * TODO Implement remember password.
+ *
  * @see     android.app.Activity
  */
 public class Login extends Activity {
-	private CheckBox rememberPass;
-	private Button signInButton;
-    private EditText emailText;
-    private EditText passText;
+	private String email;
+	private String password;
     
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        // Initiate Controls
-        initControls();
+        findViewById(R.id.btn_signIn).setOnClickListener(new Button.OnClickListener() {
+        	public void onClick(View view) {
+        		signIn();
+        	}
+        });
     }
     
-    // Initialize the controls of the page and set event handlers
-    private void initControls()
-    { 
-    	rememberPass = (CheckBox)findViewById(R.id.check_rememberPass);
-    	emailText = (EditText)findViewById(R.id.edit_email);
-    	passText = (EditText)findViewById(R.id.edit_pass);
-    	signInButton = (Button)findViewById(R.id.btn_signIn);
-    	
-    	// Call signIn() when button is clicked
-    	signInButton.setOnClickListener(new Button.OnClickListener() { public void onClick (View view){ signIn(); } } ); 
-    }
-    
-    // Perform user sign-in
     private void signIn()
     {
-    	//Get E-mail and Password, then check their length...
-    	String email = emailText.getText().toString();
-    	String password = passText.getText().toString();
+    	email = ((EditText)findViewById(R.id.edit_email)).getText().toString();
+    	password = ((EditText)findViewById(R.id.edit_pass)).getText().toString();
 
-    	if(email.length() == 0)
-    	{
-    		//email is empty.. problem
-    		this.showToast("Your E-Mail address cannot be empty.");
-    	}
-    	else if(password.length() == 0)
-    	{
-    		//password is empty.. problem
-    		this.showToast("Your Password cannot be empty.");
-    	}
-    	else
-    	{
-    		//Attempt Login...
+    	if (email.length() < 1) {
+    		showToast("Please, input your e-mail address.");
+    	} else if (password.length() < 1) {
+    		this.showToast("Please, input your password.");
+    	} else {
     		User user = null;
-    		try
-    		{
-    			user = TodoistApiHandler.getInstance().login(email, password);
+    		try {
+    			user = User.login(email, password);
     		}
-    		catch (Exception e)
-    		{
+    		catch (Exception e) { 
     			/**
-    			 * TODO Catch and handle ...
+    			 * TODO Catch and handle a specific exception ...
     			 */
     		}
     		
-   			// Login was successful, set user API Token in result bundle and call finish()
-   			setResult(RESULT_OK, new Intent().putExtra("token", user.getApiToken()));
+    		Intent intent = new Intent("com.drewdahl.todoist.ItemList");
+    		intent.putExtra("com.drewdahl.todoist.model.user", user);
+    		startActivity(intent);
    			finish();
    		}
    	}
     
-    // Displays error message
-    private void displayError(String msg)
-    {
-    	// TODO: We need an OK Button on this Dialog, or some way to exit out w/o having to hit back
-    	AlertDialog alert = new AlertDialog.Builder(this).create();
-		alert.setTitle(msg);
-		alert.show();
-    }
-    
-    // Displays Toast... YUMMY!
-	private void showToast(CharSequence msg)
-	{
+    /**
+     * TODO What is toast?
+     * @param msg
+     */
+	private void showToast(CharSequence msg) {
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 }
