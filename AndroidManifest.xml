@@ -3,19 +3,18 @@
 	package="com.drewdahl.android.todoist" android:versionName="@string/app_version" android:versionCode="1">
     <uses-permission android:name="android.permission.INTERNET" /> 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
-    	<activity android:name="com.drewdahl.android.todoist.ItemList" 
+    	<activity android:name="ItemList" 
     		android:label="@string/app_name"
     		>
-    		<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+    		<!-- TODO Make project list main or configurable main? -->
             <intent-filter>
             	<action android:name="android.intent.action.VIEW" />
             	<data android:mimeType="vnd.android.cursor.dir/vnd.drewdahl.item" />
             </intent-filter>
 		</activity>
-		<activity android:name="com.drewdahl.android.todoist.ProjectList"
+		<!--
+		TODO Make this work.
+		<activity android:name="ProjectList"
 			android:label="@string/app_name"
 			>
 			<intent-filter>
@@ -23,18 +22,15 @@
 				<data android:mimeType="vnd.android.cursor.dir/vnd.drewdahl.project" />
 			</intent-filter>
 		</activity>
-		<activity android:name="com.drewdahl.android.todoist.Login" 
+		-->
+		<activity android:name="Login" 
 			android:label="@string/login" 
 			>
 			<intent-filter>
-				<action android:name="android.intent.action.LOGIN" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 		</activity>
-		<!-- TODO Move this to a Github application (Hubroid) that exports an intent for submitting an issue. -->
-		<activity android:name="com.drewdahl.android.todoist.SupportForm"
-			android:label="@string/app_name"
-			/>
 		<provider android:name="com.drewdahl.android.todoist.provider.TodoistProvider"
 			android:authorities="com.drewdahl.android.todoist.provider"
 			/>
