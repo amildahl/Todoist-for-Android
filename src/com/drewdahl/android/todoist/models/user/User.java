@@ -44,7 +44,9 @@ import android.os.Parcelable;
 
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
 import com.drewdahl.android.todoist.models.project.Project;
+import com.drewdahl.android.todoist.models.user.UserException;
 
 /**
  * 
@@ -92,8 +94,17 @@ public class User implements Parcelable {
 		return TodoistApiHandler.getInstance(token).getProjects();
 	}
 	
-	public static User login(String email, String password) {
-		return TodoistApiHandler.getInstance().login(email, password);
+	public static User login(String email, String password) throws UserException {
+		User user = null;
+		try
+		{
+			user = TodoistApiHandler.getInstance().login(email, password);
+		}
+		catch (TodoistApiHandlerException e)
+		{
+			throw new UserException("Login Failure.");
+		}
+		return user;
 	}
 	
 	/**

@@ -46,6 +46,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.drewdahl.android.todoist.models.user.User;
+import com.drewdahl.android.todoist.models.user.UserException;
 
 /**
  * An Activity that allows the user to Login.
@@ -88,7 +89,9 @@ public class Login extends Activity {
     			Log.d("com.drewdahl.android.todoist.Login", "User login returned.");
     			Log.d("com.drewdahl.android.todoist.Login", "User's token: " + user.getToken());
     		}
-    		catch (Exception e) { 
+    		catch (UserException e) {
+    			showToast("Exception thrown and I'm confused.");
+    			return;
     			/**
     			 * TODO Catch and handle a specific exception ...
     			 */
