@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.drewdahl.android.todoist.Constants;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
 import com.drewdahl.android.todoist.models.item.Item;
 import com.drewdahl.android.todoist.models.item.ItemException;
 import com.drewdahl.android.todoist.models.project.Project;
@@ -170,7 +171,7 @@ public class TodoistApiHandler {
 	 * Error returns:
 	 *   "LOGIN_ERROR"
 	 */
-	public User login(String email, String password)
+	public User login(String email, String password) throws TodoistApiHandlerException
 	{
 		try
 		{
@@ -178,7 +179,9 @@ public class TodoistApiHandler {
 		}
 		catch (JSONException e)
 		{
+			Log.e("com.drewdahl.android.todoist.apihandler", "JSONException Occurred during Login.");
 			e.printStackTrace();
+			throw new TodoistApiHandlerException("Login failure!");
 		}
 		token = user.getToken();
 		return user;

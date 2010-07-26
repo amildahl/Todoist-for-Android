@@ -143,7 +143,7 @@ public class ItemList extends ListActivity {
 				Bundle extras = data.getExtras();
 				if(extras != null)
 		        {
-		        	Log.e("Login-resultOk():", TodoistApiHandler.getInstance().getToken());
+		        	Log.e("Login-resultOk():", user.getToken());
 		        	getTasks();
 		        }
 		        else
