@@ -86,7 +86,7 @@ public class User implements Parcelable {
 		msn = obj.getString(Constants.JSON_MSN);
 		mobile_number = obj.getString(Constants.JSON_MOBILENUMBER);
 		mobile_host = obj.getString(Constants.JSON_MOBILEHOST);
-		token = obj.getString(Constants.JSON_TOKEN);
+		token = api_token;
 	}
 	
 	public Project[] GetProjects()
