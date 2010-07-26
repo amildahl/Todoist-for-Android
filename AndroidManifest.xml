@@ -11,6 +11,10 @@
             	<action android:name="android.intent.action.VIEW" />
             	<data android:mimeType="vnd.android.cursor.dir/vnd.drewdahl.item" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 		</activity>
 		<!--
 		TODO Make this work.
@@ -21,15 +25,15 @@
 				<action android:name="android.intent.action.VIEW" />
 				<data android:mimeType="vnd.android.cursor.dir/vnd.drewdahl.project" />
 			</intent-filter>
+			<intent-filter>
+			     <action android:name="android.intent.action.MAIN" />
+			     <category android:name="android.intent.category.LAUNCHER" />
+			 </intent-filter>
 		</activity>
 		-->
 		<activity android:name="Login" 
 			android:label="@string/login" 
 			>
-			<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 		</activity>
 		<provider android:name="com.drewdahl.android.todoist.provider.TodoistProvider"
 			android:authorities="com.drewdahl.android.todoist.provider"

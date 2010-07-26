@@ -39,12 +39,16 @@ package com.drewdahl.android.todoist.models.user;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
+import com.drewdahl.android.todoist.provider.TodoistProvider;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 import com.drewdahl.android.todoist.models.project.Project;
 import com.drewdahl.android.todoist.models.user.UserException;
 
@@ -96,6 +100,7 @@ public class User implements Parcelable {
 	
 	public static User login(String email, String password) throws UserException {
 		User user = null;
+		
 		try
 		{
 			user = TodoistApiHandler.getInstance().login(email, password);
@@ -105,6 +110,29 @@ public class User implements Parcelable {
 			throw new UserException("Login Failure.");
 		}
 		return user;
+	}
+	
+	public void save(ContentResolver resolver) {
+		ContentValues values = new ContentValues();
+		values.put(Users.EMAIL, email);
+		values.put(Users.FULL_NAME, full_name);
+		values.put(Users._ID, id);
+		values.put(Users.API_TOKEN, api_token);
+		values.put(Users.START_PAGE, start_page);
+		values.put(Users.TIMEZONE, timezone);
+		/**
+		 * TODO Get this right.
+		values.put(Users.TZ_OFFSET, tz_offset);	  // User's Timezone Offset	["-5:00", -5, 0, 1] -- [GMT_STRING, HOURS, MINUTES, IS_DAYLIGHT_SAVINGS_TIME]
+		 */
+		values.put(Users.TIME_FORMAT, time_format);
+		values.put(Users.DATE_FORMAT, date_format);
+		values.put(Users.SORT_ORDER, sort_order);
+		values.put(Users.TWITTER, twitter);
+		values.put(Users.JABBER, jabber);
+		values.put(Users.MSN, msn);
+		values.put(Users.MOBILE_NUMBER, mobile_number);
+		values.put(Users.MOBILE_HOST, mobile_host);
+		resolver.insert(Users.CONTENT_URI, values);
 	}
 	
 	/**

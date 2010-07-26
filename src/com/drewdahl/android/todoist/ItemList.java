@@ -41,28 +41,31 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
-import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.models.user.User;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SimpleCursorAdapter;
 
 public class ItemList extends ListActivity {
-	protected HashMap<Integer, ResultCallbackIF> _callbackMap = new HashMap<Integer, ResultCallbackIF>();
 	private ProgressDialog m_ProgressDialog = null;
     private Runnable viewTasks;
     
     public static final int REPORT_PROBLEM = Menu.FIRST + 1;
     
     private User user = null;
+	private HashMap<Integer, ResultCallbackIF> callbackMap = new HashMap<Integer, ResultCallbackIF>();
+    private SimpleCursorAdapter adapter;
    
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -70,12 +73,34 @@ public class ItemList extends ListActivity {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         setContentView(R.layout.itemlist);
-        if (!extras.containsKey("com.drewdahl.android.todoist.models.user")) {
-        	/**
-        	 * TODO Error out here.
-        	 */
+        if (extras == null || !extras.containsKey("com.drewdahl.android.todoist.models.user")) {
+    		Intent intent = new Intent("com.drewdahl.android.todoist.Login");
+    		startActivityWithCallback(intent, new ResultCallbackIF() {
+    			@Override
+    			public void resultOk(Intent data) {
+    				Bundle extras = data.getExtras();
+  		        	user = extras.getParcelable("com.drewdahl.android.todoist.models.user");
+  		        	connectAdapter();
+    			}
+    			
+    			@Override
+    			public void resultCancel(Intent data) {
+    				finish();
+    			}
+    		});
+        } else {
+            user = extras.getParcelable("com.drewdahl.android.todoist.models.user");
+            connectAdapter();
         }
-        user = extras.getParcelable("com.drewdahl.android.todoist.models.user");
+    }
+    
+    private void connectAdapter() {
+        Cursor c = getContentResolver().query(Items.CONTENT_URI, null, null, null, null);
+        startManagingCursor(c);
+        String[] cols = new String[]{Items.CONTENT,Items.PROJECT_ID};
+        int[] names = new int[]{R.id.TextViewItemContent,R.id.TextViewItemCategory};
+        adapter = new SimpleCursorAdapter(this, R.layout.item, c, cols, names);
+        setListAdapter(adapter);
     }
     
     @Override
@@ -113,6 +138,8 @@ public class ItemList extends ListActivity {
     	switch (item.getItemId())
     	{
     	case REPORT_PROBLEM:
+    		/**
+    		 * TODO Figure this out later.
     		this.launchActivity(SupportForm.class, new ItemList.ResultCallbackIF() {
     			
     			@Override
@@ -125,45 +152,13 @@ public class ItemList extends ListActivity {
     				Log.i("TasksList", "Returning on Cancel from SupportForm");
     			}
     		});
+    		*/
     		return true;
     	}
     	
     	return false;
     }
     
-    // Call the LoginPage Activity and deal with that
-    private void createLogin()
-	{
-		this.launchActivity(Login.class, new ItemList.ResultCallbackIF() {
-			
-			@Override
-			public void resultOk(Intent data) 
-			{
-				//We're good! Get to token, set it to the API, and show tasks
-				Bundle extras = data.getExtras();
-				if(extras != null)
-		        {
-		        	Log.e("Login-resultOk():", user.getToken());
-		        	getTasks();
-		        }
-		        else
-		        {
-		        	//TODO: I don't think we should EVER get here, but we should
-		        	// show some seriously awesome errors if we do :-)
-		        	Log.e("Login-resultOk():","No Token!!!");
-		        }
-			}
-			
-			@Override
-			public void resultCancel(Intent data) 
-			{
-				// Most likely, we got here only by the user hitting the back button, so quit.
-				Log.e("Login-resultCancel:", "Login Canceled!");
-				finish();
-			}
-		});
-	}    
-	
     private Runnable returnRes = new Runnable() {
 
         @Override
@@ -212,45 +207,31 @@ public class ItemList extends ListActivity {
         
     }   
     
-    @SuppressWarnings("unchecked")
-	public void launchActivity(Class subActivityClass, ResultCallbackIF callback, Bundle bundle) 
+	public void startActivityWithCallback(Intent intent, ResultCallbackIF callback) 
 	{
-		  int correlationId = new Random().nextInt();
-		  _callbackMap.put(correlationId, callback);
-		  startActivityForResult(new Intent(this, subActivityClass).putExtras(bundle), correlationId);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void launchActivity(Class subActivityClass, ResultCallbackIF resultCallbackIF) 
-	{
-		launchActivity(subActivityClass, resultCallbackIF, new Bundle());
+		int correlationId = new Random().nextInt();
+		callbackMap.put(correlationId, callback);
+		startActivityForResult(intent, correlationId);
 	}
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
 		super.onActivityResult(requestCode, resultCode, data); 
-		try 
-		{
-			ResultCallbackIF callback = _callbackMap.get(requestCode);
+		ResultCallbackIF callback = callbackMap.get(requestCode);
 
-			switch (resultCode) 
-			{
-			case Activity.RESULT_CANCELED:
-				callback.resultCancel(data);
-				_callbackMap.remove(requestCode);
-				break;
-			case Activity.RESULT_OK:
-				callback.resultOk(data);
-				_callbackMap.remove(requestCode);
-				break;
-			default:
-				Log.e("Error:","requestCode not found in hash");
-			}
-		}
-		catch (Exception e) 
+		switch (resultCode) 
 		{
-			Log.e("ERROR:","Issue processing Activity", e);
+		case Activity.RESULT_CANCELED:
+			callback.resultCancel(data);
+			callbackMap.remove(requestCode);
+			break;
+		case Activity.RESULT_OK:
+			callback.resultOk(data);
+			callbackMap.remove(requestCode);
+			break;
+		default:
+			Log.e("Error:","requestCode not found in hash");
 		}
 	}
 
@@ -258,6 +239,5 @@ public class ItemList extends ListActivity {
 	{
 	  public void resultOk(Intent data);
 	  public void resultCancel(Intent data);
-
 	}
 }

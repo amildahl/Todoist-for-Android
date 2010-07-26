@@ -53,6 +53,7 @@ import com.drewdahl.android.todoist.models.user.UserException;
  *
  * TODO Implement error dialogs.
  * TODO Implement remember password.
+ * TODO Make this back into a callback activity?
  *
  * @see     android.app.Activity
  */
@@ -65,7 +66,7 @@ public class Login extends Activity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        findViewById(R.id.btn_signIn).setOnClickListener(new Button.OnClickListener() {
+        findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
         	public void onClick(View view) {
         		signIn();
         	}
@@ -74,8 +75,11 @@ public class Login extends Activity {
     
     private void signIn()
     {
-    	email = ((EditText)findViewById(R.id.edit_email)).getText().toString();
-    	password = ((EditText)findViewById(R.id.edit_pass)).getText().toString();
+    	/**
+    	 * TODO Change the email to an autocomplete textview that suggests currently stored users.
+    	 */
+    	email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
+    	password = ((EditText)findViewById(R.id.EditTextPassword)).getText().toString();
 
     	if (email.length() < 1) {
     		showToast("Please, input your e-mail address.");
@@ -90,16 +94,11 @@ public class Login extends Activity {
     			Log.d("com.drewdahl.android.todoist.Login", "User's token: " + user.getToken());
     		}
     		catch (UserException e) {
-    			showToast("Exception thrown and I'm confused.");
+    			showToast("Exception thrown and I'm confused.  Probably, an incorrect password.");
     			return;
-    			/**
-    			 * TODO Catch and handle a specific exception ...
-    			 */
     		}
-    		
-    		Intent intent = new Intent("com.drewdahl.todoist.ItemList");
-    		intent.putExtra("com.drewdahl.todoist.model.user", user);
-    		startActivity(intent);
+
+    		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.todoist.model.user", user));
    			finish();
    		}
    	}
