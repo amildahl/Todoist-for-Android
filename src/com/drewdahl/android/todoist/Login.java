@@ -68,40 +68,32 @@ public class Login extends Activity {
         setContentView(R.layout.login);
         findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
         	public void onClick(View view) {
-        		signIn();
+            	email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
+            	password = ((EditText)findViewById(R.id.EditTextPassword)).getText().toString();
+
+            	if (email.length() < 1) {
+            		showToast("Please, input your e-mail address.");
+            	} else if (password.length() < 1) {
+            		showToast("Please, input your password.");
+            	} else {
+            		User user = null;
+            		try {
+            			Log.d("com.drewdahl.android.todoist.Login", "User login being called ...");
+            			user = User.login(email, password);
+            			Log.d("com.drewdahl.android.todoist.Login", "User login returned.");
+            			Log.d("com.drewdahl.android.todoist.Login", "User's token: " + user.getToken());
+            		}
+            		catch (UserException e) {
+            			showToast("Exception thrown and I'm confused.  Probably, an incorrect password.");
+            			return;
+            		}
+
+            		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.todoist.models.user", user));
+           			finish();
+           		}
         	}
         });
     }
-    
-    private void signIn()
-    {
-    	/**
-    	 * TODO Change the email to an autocomplete textview that suggests currently stored users.
-    	 */
-    	email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
-    	password = ((EditText)findViewById(R.id.EditTextPassword)).getText().toString();
-
-    	if (email.length() < 1) {
-    		showToast("Please, input your e-mail address.");
-    	} else if (password.length() < 1) {
-    		this.showToast("Please, input your password.");
-    	} else {
-    		User user = null;
-    		try {
-    			Log.d("com.drewdahl.android.todoist.Login", "User login being called ...");
-    			user = User.login(email, password);
-    			Log.d("com.drewdahl.android.todoist.Login", "User login returned.");
-    			Log.d("com.drewdahl.android.todoist.Login", "User's token: " + user.getToken());
-    		}
-    		catch (UserException e) {
-    			showToast("Exception thrown and I'm confused.  Probably, an incorrect password.");
-    			return;
-    		}
-
-    		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.todoist.model.user", user));
-   			finish();
-   		}
-   	}
     
     /**
      * TODO What is toast?

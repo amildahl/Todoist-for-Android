@@ -36,8 +36,6 @@
 
 package com.drewdahl.android.todoist;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -46,7 +44,6 @@ import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
 import android.app.Activity;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -58,21 +55,18 @@ import android.view.View;
 import android.widget.SimpleCursorAdapter;
 
 public class ItemList extends ListActivity {
-	private ProgressDialog m_ProgressDialog = null;
-    private Runnable viewTasks;
-    
     public static final int REPORT_PROBLEM = Menu.FIRST + 1;
     
-    private User user = null;
+    //private User user = null;
 	private HashMap<Integer, ResultCallbackIF> callbackMap = new HashMap<Integer, ResultCallbackIF>();
     private SimpleCursorAdapter adapter;
+    private User user = null;
    
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
-        setContentView(R.layout.itemlist);
         if (extras == null || !extras.containsKey("com.drewdahl.android.todoist.models.user")) {
     		Intent intent = new Intent("com.drewdahl.android.todoist.Login");
     		startActivityWithCallback(intent, new ResultCallbackIF() {
@@ -159,58 +153,13 @@ public class ItemList extends ListActivity {
     	return false;
     }
     
-    private Runnable returnRes = new Runnable() {
-
-        @Override
-        public void run() {
-            // Getting tasks is done, so dismiss the progress dialog and
-        	// set the adapter to be the list adapter
-            m_ProgressDialog.dismiss();
-            /**
-             * TODO Fix this to work again.
-             */
-            //setListAdapter(adapter.getAdapter());
-        }
-        
-    };
-    
-    
-    private void getTasks() 
-    {   
-    	/**
-    	 * TODO Fix this to work again.
-    	 */
-    	//this.adapter = new TaskListAdapter(this);
-    	
-        viewTasks = new Runnable() {
-            @Override
-            public void run() 
-            {
-            	//Run the query, set the adapter task, return to to UI Thread
-            	Date start = new Date();
-            	Calendar finish = Calendar.getInstance();
-            	finish.add(Calendar.DATE, 7);
-            	//Query query = new Query();        	
-            	//query.addDateRange(start, finish.getTime());
-            	//query.addOverdue();
-            	//Item[] tasks = handler.query(query.getQuery());
-            	
-            	//adapter.setTasks(tasks,query);
-
-                runOnUiThread(returnRes);
-            }
-        };
-        Thread thread =  new Thread(null, viewTasks, "MagentoBackground");
-        thread.start();
-        m_ProgressDialog = ProgressDialog.show(this,    
-              "Please wait...", "Retrieving data ...", true);
-        
-    }   
-    
 	public void startActivityWithCallback(Intent intent, ResultCallbackIF callback) 
 	{
 		int correlationId = new Random().nextInt();
 		callbackMap.put(correlationId, callback);
+		/**
+		 * TODO Force Close here, but why?
+		 */
 		startActivityForResult(intent, correlationId);
 	}
 	
