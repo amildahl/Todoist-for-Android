@@ -53,7 +53,6 @@ import com.drewdahl.android.todoist.models.user.UserException;
  *
  * TODO Implement error dialogs.
  * TODO Implement remember password.
- * TODO Make this back into a callback activity?
  *
  * @see     android.app.Activity
  */
