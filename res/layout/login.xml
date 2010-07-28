@@ -18,15 +18,17 @@
         android:orientation="horizontal"
         >
         <TextView android:id="@+id/TextViewEmail"
-            android:layout_width="wrap_content"
+            android:layout_width="80px"
             android:layout_height="wrap_content"
             android:textColor="@color/default_font_color"
             android:text="E-Mail: "
+            android:gravity="right"
             />
         <EditText android:id="@+id/EditTextEmail"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:layout_weight="1.0"
             />
     </LinearLayout>
     <LinearLayout
@@ -35,15 +37,17 @@
         android:orientation="horizontal"
         >
         <TextView android:id="@+id/TextViewPassword"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/default_font_color"
             android:text="Password: "
+            android:layout_width="80px"
+            android:gravity="right"
             />
         <EditText android:id="@+id/EditTextPassword"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:layout_weight="1.0"
             />
     </LinearLayout>
     <CheckBox android:id="@+id/CheckBoxRememberPassword"
@@ -54,9 +58,10 @@
         />
     <Button android:id="@+id/ButtonSubmit"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:text="Sign In"
         android:clickable="true"
         android:minWidth="120px"
+        android:layout_gravity="center"
         />
 </LinearLayout>

@@ -15,11 +15,14 @@
         android:layout_width="wrap_content"
         android:textColor="@color/default_font_color"
         android:text="Content"
+        android:layout_weight="1.0"
+        android:padding="5px"
         />
     <TextView android:id="@+id/TextViewItemCategory"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android_textColor="@color/default_font_color"
         android:text="Category"
+        android:padding="5px"
         />
 </LinearLayout>
