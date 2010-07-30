@@ -55,12 +55,11 @@ import android.view.View;
 import android.widget.SimpleCursorAdapter;
 
 public class ItemList extends ListActivity {
-    public static final int REPORT_PROBLEM = Menu.FIRST + 1;
-    
-    //private User user = null;
 	private HashMap<Integer, ResultCallbackIF> callbackMap = new HashMap<Integer, ResultCallbackIF>();
     private SimpleCursorAdapter adapter;
     private User user = null;
+    
+    private static final int REPORT_PROBLEM = Menu.FIRST;
    
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -98,44 +97,26 @@ public class ItemList extends ListActivity {
     }
     
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    public boolean onCreateOptionsMenu(Menu menu)
     {
-    	populateMenu(menu); // WTF?
+    	super.onCreateOptionsMenu(menu);
+    	// TODO Make report a problem occur when something happens.
+    	//menu.add(Menu.NONE, REPORT_PROBLEM, Menu.NONE, "Report a Problem");
+    	return true;
     }
     
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
     {
-    	/**
-    	 * @note Is this ordering correct?
-    	 */
-    	populateMenu(menu);
-    	return (super.onCreateOptionsMenu(menu));
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) 
     {
-    	return applyMenuChoice(item) || super.onContextItemSelected(item);
-    }
-    
-    private void populateMenu(Menu menu)
-    {
-    	/**
-    	 * TODO Put this in the layout?
-    	 */
-    	menu.add(Menu.NONE, REPORT_PROBLEM, Menu.NONE, "Report a Problem");
-    }
-    
-    private boolean applyMenuChoice(MenuItem item)
-    {
     	switch (item.getItemId())
     	{
     	case REPORT_PROBLEM:
-    		/**
-    		 * TODO Figure this out later.
-    		this.launchActivity(SupportForm.class, new ItemList.ResultCallbackIF() {
-    			
+    		startActivityWithCallback(new Intent("com.drewdahl.android.todoist.SupportForm"), new ItemList.ResultCallbackIF() {
     			@Override
     			public void resultOk(Intent data) {
 		        	Log.i("TasksList", "Returning on OK from SupportForm");
@@ -146,11 +127,10 @@ public class ItemList extends ListActivity {
     				Log.i("TasksList", "Returning on Cancel from SupportForm");
     			}
     		});
-    		*/
     		return true;
+    	default:
+    		return super.onOptionsItemSelected(item);
     	}
-    	
-    	return false;
     }
     
 	public void startActivityWithCallback(Intent intent, ResultCallbackIF callback) 
