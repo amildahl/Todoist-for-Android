@@ -94,10 +94,6 @@ public class Login extends Activity {
         });
     }
     
-    /**
-     * TODO What is toast?
-     * @param msg
-     */
 	private void showToast(CharSequence msg) {
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
