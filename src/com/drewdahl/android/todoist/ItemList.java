@@ -101,13 +101,8 @@ public class ItemList extends ListActivity {
     {
     	super.onCreateOptionsMenu(menu);
     	// TODO Make report a problem occur when something happens.
-    	//menu.add(Menu.NONE, REPORT_PROBLEM, Menu.NONE, "Report a Problem");
+    	menu.add(Menu.NONE, REPORT_PROBLEM, Menu.FIRST, "Report a Problem");
     	return true;
-    }
-    
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
-    {
     }
     
     @Override
@@ -130,6 +125,20 @@ public class ItemList extends ListActivity {
     		return true;
     	default:
     		return super.onOptionsItemSelected(item);
+    	}
+    }
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+    }
+    
+    @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+    	switch (item.getItemId()) {
+    	default:
+    		return super.onContextItemSelected(item);
     	}
     }
     
@@ -166,7 +175,7 @@ public class ItemList extends ListActivity {
 
 	public static interface ResultCallbackIF 
 	{
-	  public void resultOk(Intent data);
-	  public void resultCancel(Intent data);
+		public void resultOk(Intent data);
+		public void resultCancel(Intent data);
 	}
 }
