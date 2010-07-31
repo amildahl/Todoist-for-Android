@@ -17,6 +17,7 @@
         android:text="Content"
         android:layout_weight="1.0"
         android:padding="5px"
+        android:layout_marginLeft="5px"
         />
     <TextView android:id="@+id/TextViewItemCategory"
         android:layout_height="wrap_content"

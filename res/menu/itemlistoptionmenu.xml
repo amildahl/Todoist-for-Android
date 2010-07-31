@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/menuGroup_Main">
+        <item android:id="@+id/menu_newItem"
+            android:orderInCategory="3"
+            android:title="New Item"
+            />
+        <item android:id="@+id/menu_reportProblem"
+            android:orderInCategory="5"
+            android:title="Report Problem"
+            />
+    </group>
+</menu>
