@@ -50,17 +50,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SimpleCursorAdapter;
 
 public class ItemList extends ListActivity {
-	private HashMap<Integer, ResultCallbackIF> callbackMap = new HashMap<Integer, ResultCallbackIF>();
+	private HashMap<Integer, ResultCallback> callbackMap = new HashMap<Integer, ResultCallback>();
     private SimpleCursorAdapter adapter;
     private User user = null;
     
-    private static final int REPORT_PROBLEM = Menu.FIRST;
-   
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -68,7 +67,7 @@ public class ItemList extends ListActivity {
         Bundle extras = getIntent().getExtras();
         if (extras == null || !extras.containsKey("com.drewdahl.android.todoist.models.user")) {
     		Intent intent = new Intent("com.drewdahl.android.todoist.Login");
-    		startActivityWithCallback(intent, new ResultCallbackIF() {
+    		startActivityWithCallback(intent, new ResultCallback() {
     			@Override
     			public void resultOk(Intent data) {
     				Bundle extras = data.getExtras();
@@ -100,8 +99,9 @@ public class ItemList extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu)
     {
     	super.onCreateOptionsMenu(menu);
-    	// TODO Make report a problem occur when something happens.
-    	menu.add(Menu.NONE, REPORT_PROBLEM, Menu.FIRST, "Report a Problem");
+    	
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.itemlistoptionmenu, menu);
     	return true;
     }
     
@@ -110,8 +110,10 @@ public class ItemList extends ListActivity {
     {
     	switch (item.getItemId())
     	{
-    	case REPORT_PROBLEM:
-    		startActivityWithCallback(new Intent("com.drewdahl.android.todoist.SupportForm"), new ItemList.ResultCallbackIF() {
+    	case R.id.menu_newItem:
+    		return true;
+    	case R.id.menu_reportProblem:
+    		startActivityWithCallback(new Intent("com.drewdahl.android.todoist.SupportForm"), new ResultCallback() {
     			@Override
     			public void resultOk(Intent data) {
 		        	Log.i("TasksList", "Returning on OK from SupportForm");
@@ -131,6 +133,10 @@ public class ItemList extends ListActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
     {
+    	super.onCreateContextMenu(menu, v, menuInfo);
+    	
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.itemlistcontextmenu, menu);
     }
     
     @Override
@@ -142,7 +148,7 @@ public class ItemList extends ListActivity {
     	}
     }
     
-	public void startActivityWithCallback(Intent intent, ResultCallbackIF callback) 
+	public void startActivityWithCallback(Intent intent, ResultCallback callback) 
 	{
 		int correlationId = new Random().nextInt();
 		callbackMap.put(correlationId, callback);
@@ -156,7 +162,7 @@ public class ItemList extends ListActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) 
 	{
 		super.onActivityResult(requestCode, resultCode, data); 
-		ResultCallbackIF callback = callbackMap.get(requestCode);
+		ResultCallback callback = callbackMap.get(requestCode);
 
 		switch (resultCode) 
 		{
@@ -173,7 +179,7 @@ public class ItemList extends ListActivity {
 		}
 	}
 
-	public static interface ResultCallbackIF 
+	public static interface ResultCallback 
 	{
 		public void resultOk(Intent data);
 		public void resultCancel(Intent data);
