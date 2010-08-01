@@ -36,9 +36,6 @@
 
 package com.drewdahl.android.todoist;
 
-import java.util.HashMap;
-import java.util.Random;
-
 import com.drewdahl.android.todoist.models.user.User;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
@@ -56,9 +53,10 @@ import android.view.View;
 import android.widget.SimpleCursorAdapter;
 
 public class ItemList extends ListActivity {
-	private HashMap<Integer, ResultCallback> callbackMap = new HashMap<Integer, ResultCallback>();
     private SimpleCursorAdapter adapter;
     private User user = null;
+    
+    private static final int LOGIN_REQUEST = 0; 
     
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -67,19 +65,7 @@ public class ItemList extends ListActivity {
         Bundle extras = getIntent().getExtras();
         if (extras == null || !extras.containsKey("com.drewdahl.android.todoist.models.user")) {
     		Intent intent = new Intent("com.drewdahl.android.todoist.Login");
-    		startActivityWithCallback(intent, new ResultCallback() {
-    			@Override
-    			public void resultOk(Intent data) {
-    				Bundle extras = data.getExtras();
-  		        	user = extras.getParcelable("com.drewdahl.android.todoist.models.user");
-  		        	connectAdapter();
-    			}
-    			
-    			@Override
-    			public void resultCancel(Intent data) {
-    				finish();
-    			}
-    		});
+    		startActivityForResult(intent, LOGIN_REQUEST);
         } else {
             user = extras.getParcelable("com.drewdahl.android.todoist.models.user");
             connectAdapter();
@@ -95,6 +81,29 @@ public class ItemList extends ListActivity {
         setListAdapter(adapter);
     }
     
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) 
+	{
+		super.onActivityResult(requestCode, resultCode, data); 
+
+		switch (requestCode) {
+		case LOGIN_REQUEST:
+			switch (resultCode) {
+			case Activity.RESULT_CANCELED:
+				finish();
+				break;
+			case Activity.RESULT_OK:
+				user = data.getExtras().getParcelable("com.drewdahl.android.todoist.models.user");
+				connectAdapter();
+				break;
+			default:
+				Log.e("Error:","requestCode not found in hash");
+			}
+		default:
+			Log.d("com.drewdahl.android.todoist.ItemList", "Invalid Request!");
+		}
+	}
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -113,6 +122,7 @@ public class ItemList extends ListActivity {
     	case R.id.menu_newItem:
     		return true;
     	case R.id.menu_reportProblem:
+    		/*
     		startActivityWithCallback(new Intent("com.drewdahl.android.todoist.SupportForm"), new ResultCallback() {
     			@Override
     			public void resultOk(Intent data) {
@@ -124,6 +134,7 @@ public class ItemList extends ListActivity {
     				Log.i("TasksList", "Returning on Cancel from SupportForm");
     			}
     		});
+    		*/
     		return true;
     	default:
     		return super.onOptionsItemSelected(item);
@@ -147,41 +158,4 @@ public class ItemList extends ListActivity {
     		return super.onContextItemSelected(item);
     	}
     }
-    
-	public void startActivityWithCallback(Intent intent, ResultCallback callback) 
-	{
-		int correlationId = new Random().nextInt();
-		callbackMap.put(correlationId, callback);
-		/**
-		 * TODO Force Close here, but why?
-		 */
-		startActivityForResult(intent, correlationId);
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) 
-	{
-		super.onActivityResult(requestCode, resultCode, data); 
-		ResultCallback callback = callbackMap.get(requestCode);
-
-		switch (resultCode) 
-		{
-		case Activity.RESULT_CANCELED:
-			callback.resultCancel(data);
-			callbackMap.remove(requestCode);
-			break;
-		case Activity.RESULT_OK:
-			callback.resultOk(data);
-			callbackMap.remove(requestCode);
-			break;
-		default:
-			Log.e("Error:","requestCode not found in hash");
-		}
-	}
-
-	public static interface ResultCallback 
-	{
-		public void resultOk(Intent data);
-		public void resultCancel(Intent data);
-	}
 }

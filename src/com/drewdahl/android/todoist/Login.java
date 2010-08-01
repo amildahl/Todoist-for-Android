@@ -57,9 +57,6 @@ import com.drewdahl.android.todoist.models.user.UserException;
  * @see     android.app.Activity
  */
 public class Login extends Activity {
-	private String email;
-	private String password;
-    
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -67,8 +64,8 @@ public class Login extends Activity {
         setContentView(R.layout.login);
         findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
         	public void onClick(View view) {
-            	email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
-            	password = ((EditText)findViewById(R.id.EditTextPassword)).getText().toString();
+            	String email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
+            	String password = ((EditText)findViewById(R.id.EditTextPassword)).getText().toString();
 
             	if (email.length() < 1) {
             		showToast("Please, input your e-mail address.");
