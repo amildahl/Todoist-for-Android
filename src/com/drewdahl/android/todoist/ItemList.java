@@ -64,7 +64,7 @@ public class ItemList extends ListActivity {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         if (extras == null || !extras.containsKey("com.drewdahl.android.todoist.models.user")) {
-    		Intent intent = new Intent("com.drewdahl.android.todoist.Login");
+    		Intent intent = new Intent(this, Login.class);
     		startActivityForResult(intent, LOGIN_REQUEST);
         } else {
             user = extras.getParcelable("com.drewdahl.android.todoist.models.user");
