@@ -83,8 +83,7 @@ public class Login extends Activity {
             			showToast("Exception thrown and I'm confused.  Probably, an incorrect password.");
             			return;
             		}
-
-            		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.todoist.models.user", user));
+            		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.android.todoist.models.user", user));
            			finish();
            		}
         	}
