@@ -87,12 +87,15 @@ public class Login extends Activity {
             		User user = null;
             		try {
             			user = User.login(email, password);
+                		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.android.todoist.models.user", user));
+                		/**
+                		 * TODO Save the user information if we want to remember.
+                		 */
             		}
             		catch (UserException e) {
             			showToast("Incorrect Password!");
             			return;
             		}
-            		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.android.todoist.models.user", user));
            			finish();
            		}
         	}
