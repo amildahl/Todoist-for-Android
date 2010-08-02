@@ -39,9 +39,9 @@ package com.drewdahl.android.todoist;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -51,8 +51,7 @@ import com.drewdahl.android.todoist.models.user.UserException;
 /**
  * An Activity that allows the user to Login.
  *
- * TODO Implement error dialogs.
- * TODO Implement remember password.
+ * TODO Implement remember password.  Placing the User info in the database and reading it if the perm is set.
  *
  * @see     android.app.Activity
  */
@@ -61,7 +60,20 @@ public class Login extends Activity {
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.login);
+
+        /**
+         * TODO Check option to see if the user is remembered.
+         * TODO If the user is remembered get the user from the provider.
+         */
+        
+        if (((CheckBox)findViewById(R.id.CheckBoxRememberPassword)).isChecked()) {
+        	/**
+        	 * TODO Set Option to remember.
+        	 */
+        }
+        
         findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
         	public void onClick(View view) {
             	String email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
@@ -74,13 +86,10 @@ public class Login extends Activity {
             	} else {
             		User user = null;
             		try {
-            			Log.d("com.drewdahl.android.todoist.Login", "User login being called ...");
             			user = User.login(email, password);
-            			Log.d("com.drewdahl.android.todoist.Login", "User login returned.");
-            			Log.d("com.drewdahl.android.todoist.Login", "User's token: " + user.getToken());
             		}
             		catch (UserException e) {
-            			showToast("Exception thrown and I'm confused.  Probably, an incorrect password.");
+            			showToast("Incorrect Password!");
             			return;
             		}
             		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.android.todoist.models.user", user));

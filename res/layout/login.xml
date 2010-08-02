@@ -50,9 +50,10 @@
     </TableLayout>
     <CheckBox android:id="@+id/CheckBoxRememberPassword"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:textColor="@color/default_font_color"
         android:text="Remember Password"
+        android:layout_gravity="center"
         />
     <Button android:id="@+id/ButtonSubmit"
         android:layout_height="wrap_content"
