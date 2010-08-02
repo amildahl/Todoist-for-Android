@@ -57,8 +57,7 @@ import com.drewdahl.android.todoist.models.user.UserException;
  */
 public class Login extends Activity {
     @Override
-    public void onCreate(Bundle savedInstanceState) 
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.login);
@@ -84,19 +83,18 @@ public class Login extends Activity {
             	} else if (password.length() < 1) {
             		showToast("Please, input your password.");
             	} else {
-            		User user = null;
             		try {
+            			User user = null;
             			user = User.login(email, password);
                 		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.android.todoist.models.user", user));
                 		/**
                 		 * TODO Save the user information if we want to remember.
                 		 */
+                		finish();
             		}
             		catch (UserException e) {
             			showToast("Incorrect Password!");
-            			return;
             		}
-           			finish();
            		}
         	}
         });
