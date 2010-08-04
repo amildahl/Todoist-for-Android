@@ -36,7 +36,7 @@
 
 package com.drewdahl.android.todoist;
 
-import com.drewdahl.android.todoist.models.user.User;
+import com.drewdahl.android.todoist.models.User;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
 import android.app.Activity;

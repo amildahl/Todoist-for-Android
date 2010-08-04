@@ -27,10 +27,10 @@ import android.util.Log;
 
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
-import com.drewdahl.android.todoist.models.item.Item;
-import com.drewdahl.android.todoist.models.item.ItemException;
-import com.drewdahl.android.todoist.models.project.Project;
-import com.drewdahl.android.todoist.models.user.User;
+import com.drewdahl.android.todoist.models.Item;
+import com.drewdahl.android.todoist.models.ItemException;
+import com.drewdahl.android.todoist.models.Project;
+import com.drewdahl.android.todoist.models.User;
 
 import java.util.ArrayList;
 import java.util.Map;

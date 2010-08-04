@@ -39,14 +39,15 @@ package com.drewdahl.android.todoist;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.drewdahl.android.todoist.models.user.User;
-import com.drewdahl.android.todoist.models.user.UserException;
+import com.drewdahl.android.todoist.models.User;
+import com.drewdahl.android.todoist.models.UserException;
 
 /**
  * An Activity that allows the user to Login.
@@ -62,37 +63,43 @@ public class Login extends Activity {
         
         setContentView(R.layout.login);
 
-        /**
-         * TODO Check option to see if the user is remembered.
-         * TODO If the user is remembered get the user from the provider.
-         */
-        
         if (((CheckBox)findViewById(R.id.CheckBoxRememberPassword)).isChecked()) {
+        	Log.d(this.toString(), "Remember Me Checked");
+        	Log.d(this.toString(), "Setting remember me option");
         	/**
         	 * TODO Set Option to remember.
         	 */
         }
         
         findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
-        	public void onClick(View view) {
+            	public void onClick(View view) {
             	String email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
             	String password = ((EditText)findViewById(R.id.EditTextPassword)).getText().toString();
 
             	if (email.length() < 1) {
+            		Log.d(this.toString(), "E-Mail too short");
             		showToast("Please, input your e-mail address.");
             	} else if (password.length() < 1) {
+            		Log.d(this.toString(), "Password too short");
             		showToast("Please, input your password.");
             	} else {
             		try {
             			User user = null;
+            			Log.d(this.toString(), "Logging in");
             			user = User.login(email, password);
-                		setResult(RESULT_OK, new Intent().putExtra("com.drewdahl.android.todoist.models.user", user));
+            			Log.d(this.toString(), "Logged in");
+            			Log.d(this.toString(), "Notifying calling activity");
+                		setResult(RESULT_OK, new Intent().putExtra(User.KEY, user));
                 		/**
                 		 * TODO Save the user information if we want to remember.
                 		 */
-                		finish();
-            		}
-            		catch (UserException e) {
+                		finish(); // Kill this activity so we don't listen anymore.
+            		} catch (UserException e) {
+            			Log.d(this.toString(), "Caught exception during login");
+            			/**
+            			 * TODO if the following isn't expected we should support request it.
+            			 */
+            			Log.e(this.toString(), e.getStackTrace().toString());
             			showToast("Incorrect Password!");
             		}
            		}
