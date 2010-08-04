@@ -64,6 +64,7 @@ import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
  */
 public class User implements Parcelable {
 	public static final String KEY = "com.drewdahl.android.todoist.models.User";
+	
 	/**
 	 * @param JSONObject obj Just so we never get confused.
 	 */
@@ -106,6 +107,13 @@ public class User implements Parcelable {
 		{
 			throw new UserException("Login Failure.");
 		}
+		return user;
+	}
+	
+	public static User getUser() {
+		User user = null;
+		
+		user = TodoistApiHandler.getInstance().getUser();
 		return user;
 	}
 	
