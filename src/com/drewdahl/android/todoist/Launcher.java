@@ -56,7 +56,7 @@ public class Launcher extends Activity {
 		 * TODO Fix this query.
 		 */
 		User user = User.getUser();
-		Log.d(this.toString(), "User's start page: " + user.startPage());
+		Log.d(this.toString(), "User's start page: " + user.getStartPage());
 		Intent intent = new Intent(this, ItemList.class);
 		intent.putExtra(User.KEY, user);
 		startActivity(intent);
