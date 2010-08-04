@@ -2,15 +2,15 @@ package com.drewdahl.android.todoist;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.drewdahl.android.todoist.models.User;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 
 public class Launcher extends Activity {
 	private static final int LOGIN_REQUEST = 1;
-	
-	private User user = null;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,6 @@ public class Launcher extends Activity {
 				break;
 			case Activity.RESULT_OK:
 				Log.d(this.toString(), "Login Activity Ok");
-				user = data.getExtras().getParcelable(User.KEY);
-				Log.d(this.toString(), "User extracted from bundle");
 				startActivityUserStartPage();
 				break;
 			default:
@@ -55,8 +53,10 @@ public class Launcher extends Activity {
 	private void startActivityUserStartPage() {
 		/**
 		 * TODO Start user's start page.
+		 * TODO Fix this query.
 		 */
-		Log.d(this.toString(), "User's start page: " + user.getStartPage());
+		User user = User.getUser();
+		Log.d(this.toString(), "User's start page: " + user.startPage());
 		Intent intent = new Intent(this, ItemList.class);
 		intent.putExtra(User.KEY, user);
 		startActivity(intent);

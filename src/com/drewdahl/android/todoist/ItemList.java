@@ -36,6 +36,7 @@
 
 package com.drewdahl.android.todoist;
 
+import com.drewdahl.android.todoist.models.Item;
 import com.drewdahl.android.todoist.models.User;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
@@ -54,25 +55,15 @@ import android.widget.SimpleCursorAdapter;
 
 public class ItemList extends ListActivity {
     private SimpleCursorAdapter adapter;
-    private User user = null;
-    
-    private static final int LOGIN_REQUEST = 0; 
     
     @Override
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
-        if (extras == null || !extras.containsKey("com.drewdahl.android.todoist.models.user")) {
-    		Intent intent = new Intent(this, Login.class);
-    		startActivityForResult(intent, LOGIN_REQUEST);
-        } else {
-            user = extras.getParcelable("com.drewdahl.android.todoist.models.user");
-            connectAdapter();
-        }
-    }
-    
-    private void connectAdapter() {
+        /**
+         * TODO Roll this into the Item interface?
+         */
         Cursor c = getContentResolver().query(Items.CONTENT_URI, null, null, null, null);
         startManagingCursor(c);
         String[] cols = new String[]{Items.CONTENT,Items.PROJECT_ID};
@@ -81,29 +72,6 @@ public class ItemList extends ListActivity {
         setListAdapter(adapter);
     }
     
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) 
-	{
-		super.onActivityResult(requestCode, resultCode, data); 
-
-		switch (requestCode) {
-		case LOGIN_REQUEST:
-			switch (resultCode) {
-			case Activity.RESULT_CANCELED:
-				finish();
-				break;
-			case Activity.RESULT_OK:
-				user = data.getExtras().getParcelable("com.drewdahl.android.todoist.models.user");
-				connectAdapter();
-				break;
-			default:
-				Log.e("Error:","requestCode not found in hash");
-			}
-		default:
-			Log.d("com.drewdahl.android.todoist.ItemList", "Invalid Request!");
-		}
-	}
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -121,21 +89,9 @@ public class ItemList extends ListActivity {
     	{
     	case R.id.menu_newItem:
     		return true;
-    	case R.id.menu_reportProblem:
-    		/*
-    		startActivityWithCallback(new Intent("com.drewdahl.android.todoist.SupportForm"), new ResultCallback() {
-    			@Override
-    			public void resultOk(Intent data) {
-		        	Log.i("TasksList", "Returning on OK from SupportForm");
-    			}
-    			
-    			@Override
-    			public void resultCancel(Intent data) {
-    				Log.i("TasksList", "Returning on Cancel from SupportForm");
-    			}
-    		});
-    		*/
-    		return true;
+    	case R.id.menu_projectList:
+    		Intent intent = new Intent(this, ProjectList.class);
+    		startActivity(intent);
     	default:
     		return super.onOptionsItemSelected(item);
     	}
