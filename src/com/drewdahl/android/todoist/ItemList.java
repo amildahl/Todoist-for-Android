@@ -36,16 +36,12 @@
 
 package com.drewdahl.android.todoist;
 
-import com.drewdahl.android.todoist.models.Item;
-import com.drewdahl.android.todoist.models.User;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -60,7 +56,6 @@ public class ItemList extends ListActivity {
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        Bundle extras = getIntent().getExtras();
         /**
          * TODO Roll this into the Item interface?
          */
@@ -92,6 +87,17 @@ public class ItemList extends ListActivity {
     	case R.id.menu_projectList:
     		Intent intent = new Intent(this, ProjectList.class);
     		startActivity(intent);
+    		return true;
+    	case R.id.menu_logout:
+    		/**
+    		 * TODO Unset the remember me option.
+    		 */
+    		return true;
+    	case R.id.menu_sortDate:
+    		/**
+    		 * TODO Recreate the adapter with the new qeury?
+    		 */
+    		return true;
     	default:
     		return super.onOptionsItemSelected(item);
     	}
@@ -110,6 +116,24 @@ public class ItemList extends ListActivity {
     public boolean onContextItemSelected(MenuItem item)
     {
     	switch (item.getItemId()) {
+    	case R.id.menu_deleteItem:
+    		/**
+    		 * TODO Create a proper query and or change User interface to handle this.
+    		 * TODO Run through a picker first?  Will look into this.
+    		 */
+    		//this.getContentResolver().delete(Items.CONTENT_URI, where, selectionArgs);
+    		return true;
+    	case R.id.menu_editItem:
+    		/**
+    		 * TODO make this a picker and take it out of context?
+    		 */
+    		new Intent(this, ItemEdit.class);
+    		return true;
+    	case R.id.menu_moveItem:
+    		/**
+    		 * TODO Pop a response dialog to get the new project and update the item.
+    		 */
+    		return true;
     	default:
     		return super.onContextItemSelected(item);
     	}
