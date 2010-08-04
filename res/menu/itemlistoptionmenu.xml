@@ -4,9 +4,28 @@
             android:orderInCategory="3"
             android:title="New Item"
             />
-        <item android:id="@+id/menu_reportProblem"
-            android:orderInCategory="5"
-            android:title="Report Problem"
+        <item android:id="@+id/menu_projectList"
+            android:orderInCategory="4"
+            android:title="Projects"
             />
+        <item android:id="@+id/menu_logout"
+            android:orderInCategory="5"
+            android:title="Logout"
+            />
+        <item android:id="@+id/menu_sortMenu"
+            android:orderInCategory="3"
+            android:title="Sort"
+            >
+            <menu>
+                <item android:id="@+id/menu_sortPriority"
+                    android:orderInCategory="3"
+                    android:title="Sort by Date"
+                    />
+                <item android:id="@+id/menu_sortDate"
+                    android:orderInCategory="3"
+                    android:title="Sort by Priority"
+                    />
+            </menu>
+        </item>
     </group>
 </menu>

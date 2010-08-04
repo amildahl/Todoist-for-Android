@@ -89,7 +89,8 @@ public class Login extends Activity {
             			user = User.login(email, password);
             			Log.d(this.toString(), "Logged in");
             			Log.d(this.toString(), "Notifying calling activity");
-                		setResult(RESULT_OK, new Intent().putExtra(User.KEY, user));
+            			user.save();
+                		setResult(RESULT_OK, new Intent());
                 		/**
                 		 * TODO Save the user information if we want to remember.
                 		 */

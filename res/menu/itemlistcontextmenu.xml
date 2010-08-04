@@ -4,6 +4,10 @@
             android:orderInCategory="5"
             android:title="Edit Item"
             />
+        <item android:id="@+id/menu_moveItem"
+            android:orderInCategory="5"
+            android:title="Move to another Project"
+            />
         <item android:id="@+id/menu_deleteItem"
             android:orderInCategory="5"
             android:title="Delete Item"
