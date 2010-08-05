@@ -281,27 +281,70 @@ public class TodoistProvider extends ContentProvider {
 		String table;
 		String column; // This column will be nulled if all values are empty.
 		
-		/**
-		 * TODO Validate input fields for each table type.
-		 * 
-		 * This is where data integrity happens as this is the point of entry for our DB.
-		 */
+		String where = null;
+		String[] whereArgs = null;
+		
+		ContentValues cache_values = new ContentValues();
+		
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
 			table = Items.TABLE_NAME;
 			column = Items.CONTENT;
+			
+			where = CacheTimes.ITEM_ID + "=" + values.getAsInteger(Items._ID);
+			
+			cache_values.put(CacheTimes.ITEM_ID, values.getAsInteger(Items._ID));
+			cache_values.put(CacheTimes.INSERTED_AT, now);
+			
 			break;
 		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
 			table = Projects.TABLE_NAME;
 			column = Projects.NAME;
+
+			where = CacheTimes.PROJECT_ID + "=" + values.getAsInteger(Projects._ID);
+			
+			cache_values.put(CacheTimes.PROJECT_ID, values.getAsInteger(Projects._ID));
+			cache_values.put(CacheTimes.INSERTED_AT, now);
+			
 			break;
 		case INCOMING_USER_COLLECTION_URI_INDICATOR:
 			table = Users.TABLE_NAME;
 			column = Users.FULL_NAME;
+
+			if (
+					!values.containsKey(Users.EMAIL) ||
+					!values.containsKey(Users.FULL_NAME) ||
+					!values.containsKey(Users._ID) ||
+					!values.containsKey(Users.API_TOKEN) ||
+					!values.containsKey(Users.START_PAGE) ||
+					!values.containsKey(Users.TIMEZONE) ||
+					//!values.containsKey(Users.TZ_OFFSET) ||
+					!values.containsKey(Users.TIME_FORMAT) ||
+					!values.containsKey(Users.DATE_FORMAT) ||
+					!values.containsKey(Users.SORT_ORDER)
+					) {
+				throw new IllegalArgumentException("Missing required value");
+			}
+			
+			where = CacheTimes.USER_ID + "=" + values.getAsInteger(Users._ID);
+			
+			cache_values.put(CacheTimes.USER_ID, values.getAsInteger(Users._ID));
+			cache_values.put(CacheTimes.INSERTED_AT, now);
+			
 			break;
 		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
 			table = CacheTimes.TABLE_NAME;
 			column = CacheTimes.INSERTED_AT;
+			
+			if (!values.containsKey(CacheTimes.INSERTED_AT) || (
+					!values.containsKey(CacheTimes.ITEM_ID) &&
+					!values.containsKey(CacheTimes.PROJECT_ID) &&
+					!values.containsKey(CacheTimes.USER_ID)
+					)
+				) {
+				throw new IllegalArgumentException("Missing required value");
+			}
+			
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
@@ -312,6 +355,15 @@ public class TodoistProvider extends ContentProvider {
 		if (rowId > 0) {
 			Uri insertedUri = ContentUris.withAppendedId(uri, rowId);
 			getContext().getContentResolver().notifyChange(insertedUri, null);
+
+			if (sUriMatcher.match(uri) != INCOMING_CACHETIME_COLLECTION_URI_INDICATOR) {
+				/**
+				 * Update the cache times.
+				 */
+				this.delete(CacheTimes.CONTENT_URI, where, whereArgs);
+				this.insert(CacheTimes.CONTENT_URI, cache_values);
+			}
+			
 			return insertedUri;
 		}
 		throw new SQLException("Failed to insert row into " + uri);
