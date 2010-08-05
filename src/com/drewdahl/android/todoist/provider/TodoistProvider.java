@@ -291,6 +291,17 @@ public class TodoistProvider extends ContentProvider {
 			table = Items.TABLE_NAME;
 			column = Items.CONTENT;
 			
+			if (
+					!values.containsKey(Items._ID) ||
+					!values.containsKey(Items.USER_ID) ||
+					!values.containsKey(Items.DUE_DATE) ||
+					!values.containsKey(Items.DATE_STRING) ||
+					!values.containsKey(Items.COLLAPSED) ||
+					!values.containsKey(Items.INDENT)
+					) {
+				throw new IllegalArgumentException("Missing required value");
+			}
+
 			where = CacheTimes.ITEM_ID + "=" + values.getAsInteger(Items._ID);
 			
 			cache_values.put(CacheTimes.ITEM_ID, values.getAsInteger(Items._ID));
@@ -300,6 +311,19 @@ public class TodoistProvider extends ContentProvider {
 		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
 			table = Projects.TABLE_NAME;
 			column = Projects.NAME;
+
+			if (
+					!values.containsKey(Projects._ID) ||
+					!values.containsKey(Projects.USER_ID) ||
+					!values.containsKey(Projects.NAME) ||
+					!values.containsKey(Projects.CACHE_COUNT) ||
+					!values.containsKey(Projects.COLOR) ||
+					!values.containsKey(Projects.INDENT) ||
+					!values.containsKey(Projects.ITEM_ORDER) ||
+					!values.containsKey(Projects.COLLAPSED)
+					) {
+				throw new IllegalArgumentException("Missing required value");
+			}
 
 			where = CacheTimes.PROJECT_ID + "=" + values.getAsInteger(Projects._ID);
 			
