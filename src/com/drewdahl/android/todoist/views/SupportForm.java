@@ -34,7 +34,7 @@
    	limitations under the License.
 */
 
-package com.drewdahl.android.todoist;
+package com.drewdahl.android.todoist.views;
 
 import java.net.URI;
 
@@ -42,6 +42,11 @@ import org.apache.http.conn.HttpHostConnectException;
 import org.xmlrpc.android.XMLRPCClient;
 import org.xmlrpc.android.XMLRPCException;
 import org.xmlrpc.android.XMLRPCFault;
+
+import com.drewdahl.android.todoist.R;
+import com.drewdahl.android.todoist.R.array;
+import com.drewdahl.android.todoist.R.id;
+import com.drewdahl.android.todoist.R.layout;
 
 import android.app.Activity;
 import android.app.AlertDialog;

@@ -1,4 +1,4 @@
-package com.drewdahl.android.todoist;
+package com.drewdahl.android.todoist.controllers;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.drewdahl.android.todoist.models.User;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
+import com.drewdahl.android.todoist.views.ItemList;
+import com.drewdahl.android.todoist.views.Login;
 
 public class Launcher extends Activity {
 	private static final int LOGIN_REQUEST = 1;
