@@ -41,13 +41,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Map;
 
 /**
  * 
- * TODO Froyo stuffs!
+ * TODO Froyo stuffs:
 static Bitmap downloadBitmap(String url) {
     final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
     final HttpGet getRequest = new HttpGet(url);
