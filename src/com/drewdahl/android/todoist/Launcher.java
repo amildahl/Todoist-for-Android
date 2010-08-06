@@ -60,5 +60,6 @@ public class Launcher extends Activity {
 		Intent intent = new Intent(this, ItemList.class);
 		intent.putExtra(User.KEY, user);
 		startActivity(intent);
+		finish();
 	}
 }
