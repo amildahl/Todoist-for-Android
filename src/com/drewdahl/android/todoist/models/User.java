@@ -99,13 +99,24 @@ public class User implements Parcelable {
 	public static User login(String email, String password) throws UserException {
 		User user = null;
 		
-		try
-		{
+		try {
 			user = TodoistApiHandler.getInstance().login(email, password);
-		}
-		catch (TodoistApiHandlerException e)
-		{
+		} catch (TodoistApiHandlerException e) {
 			throw new UserException("Login Failure.");
+		}
+		return user;
+	}
+	
+	public static User register(String email, String full_name, String password, String timezone) {
+		User user = null;
+		
+		try {
+			user = TodoistApiHandler.getInstance().register(email, full_name, password, timezone)
+		} catch (TodoistApiHandlerException e) {
+			/**
+			 * TODO Better error handling.
+			 */
+			throw new UserException("Registry Failure.");
 		}
 		return user;
 	}
