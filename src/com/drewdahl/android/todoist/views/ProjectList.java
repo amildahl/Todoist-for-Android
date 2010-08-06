@@ -1,4 +1,4 @@
-package com.drewdahl.android.todoist;
+package com.drewdahl.android.todoist.views;
 
 import android.app.ListActivity;
 

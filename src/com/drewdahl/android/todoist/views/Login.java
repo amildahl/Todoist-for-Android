@@ -34,7 +34,7 @@
    	limitations under the License.
 */
 
-package com.drewdahl.android.todoist;
+package com.drewdahl.android.todoist.views;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -46,6 +46,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.drewdahl.android.todoist.R;
+import com.drewdahl.android.todoist.R.id;
+import com.drewdahl.android.todoist.R.layout;
 import com.drewdahl.android.todoist.models.User;
 import com.drewdahl.android.todoist.models.UserException;
 
