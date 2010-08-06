@@ -168,6 +168,7 @@ public class TodoistProvider extends ContentProvider {
 					+ ");");
 			/**
 			 * TODO Read http://justatheory.com/computers/databases/sqlite/foreign_key_triggers.html
+			 * TODO Start the sync service syncing manually here.
 			 */
 		}
 		
@@ -305,7 +306,10 @@ public class TodoistProvider extends ContentProvider {
 			where = CacheTimes.ITEM_ID + "=" + values.getAsInteger(Items._ID);
 			
 			cache_values.put(CacheTimes.ITEM_ID, values.getAsInteger(Items._ID));
-			cache_values.put(CacheTimes.INSERTED_AT, now);
+			
+			/**
+			 * TODO Call sync service to input the items upstream.
+			 */
 			
 			break;
 		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
@@ -328,7 +332,10 @@ public class TodoistProvider extends ContentProvider {
 			where = CacheTimes.PROJECT_ID + "=" + values.getAsInteger(Projects._ID);
 			
 			cache_values.put(CacheTimes.PROJECT_ID, values.getAsInteger(Projects._ID));
-			cache_values.put(CacheTimes.INSERTED_AT, now);
+			
+			/**
+			 * TODO Call sync service to load items upstream.
+			 */
 			
 			break;
 		case INCOMING_USER_COLLECTION_URI_INDICATOR:
@@ -353,7 +360,10 @@ public class TodoistProvider extends ContentProvider {
 			where = CacheTimes.USER_ID + "=" + values.getAsInteger(Users._ID);
 			
 			cache_values.put(CacheTimes.USER_ID, values.getAsInteger(Users._ID));
-			cache_values.put(CacheTimes.INSERTED_AT, now);
+			
+			/**
+			 * TODO Call sync service to load upstream.
+			 */
 			
 			break;
 		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
@@ -384,6 +394,7 @@ public class TodoistProvider extends ContentProvider {
 				/**
 				 * Update the cache times.
 				 */
+				cache_values.put(CacheTimes.INSERTED_AT, now);
 				this.delete(CacheTimes.CONTENT_URI, where, whereArgs);
 				this.insert(CacheTimes.CONTENT_URI, cache_values);
 			}
@@ -398,9 +409,19 @@ public class TodoistProvider extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int count;
 		String rowId;
+		
+		Long now = Long.valueOf(System.currentTimeMillis());
+		ContentValues cache_values = new ContentValues();
+		
+		String cache_where = null;
+
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
 			count = db.update(Items.TABLE_NAME, values, where, whereArgs);
+			/**
+			 * TODO Make the cache refresh for all items affected.
+			 */
+			//cache_where = 
 			break;
 		case INCOMING_SINGLE_ITEM_URI_INDICATOR:
 			rowId = uri.getPathSegments().get(1);
@@ -431,6 +452,12 @@ public class TodoistProvider extends ContentProvider {
 			throw new IllegalArgumentException("Unkown URI " + uri);
 		}
 		
+		/**
+		 * TODO get cache_where correct or this refreshes all cache values.
+		 */
+		cache_values.put(CacheTimes.INSERTED_AT, now);
+		db.update(CacheTimes.TABLE_NAME, cache_values, cache_where, null);
+		
 		getContext().getContentResolver().notifyChange(uri, null);
 		return count;
 	}
@@ -440,6 +467,9 @@ public class TodoistProvider extends ContentProvider {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int count;
 		String rowId;
+		/**
+		 * TODO Same stuff as update, except delete the stuff.
+		 */
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
 			count = db.delete(Items.TABLE_NAME, where, whereArgs);
