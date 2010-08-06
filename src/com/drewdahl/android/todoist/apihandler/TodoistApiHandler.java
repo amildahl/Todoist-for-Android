@@ -19,6 +19,11 @@
 
 package com.drewdahl.android.todoist.apihandler;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +37,11 @@ import com.drewdahl.android.todoist.models.ItemException;
 import com.drewdahl.android.todoist.models.Project;
 import com.drewdahl.android.todoist.models.User;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -122,7 +132,11 @@ public class TodoistApiHandler {
 	{
 		return token;
 	}
-
+	
+	private final HttpClient client = new DefaultHttpClient();
+	private final HttpGet getRequest = new HttpGet();
+	private final HttpPost postRequest = new HttpPost();
+	
 	/**
 	 * Call a Todoist RESTful function.
 	 * @param Uri The resource locater.
@@ -130,22 +144,40 @@ public class TodoistApiHandler {
 	 */
 	protected String call(String Uri)
 	{
-		String ret = "";
-		WebRequest browser = null;
+		BufferedReader in = null;
 		
-		try
-		{
-			browser = new WebRequest(Uri);
-			ret = (String)browser.getContent();
-			if (browser.getResponseCode() != 200) {
-				throw new Exception("Not a 200 response");
+		String ret = "";
+		
+		try {
+			getRequest.setURI(new URI(Uri));
+			HttpResponse response = client.execute(getRequest);
+			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			
+			StringBuffer sb = new StringBuffer("");
+			String line = "";
+			String NL = System.getProperty("line.separator");
+			while ((line = in.readLine()) != null) {
+				sb.append(line + NL);
+			}
+			in.close();
+			
+			String page = sb.toString();
+			ret = page;
+		} catch (Exception e) {
+			/**
+			 * TODO Raise support issue or throw up.
+			 */
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					/**
+					 * TODO Raise a support issue.
+					 */
+				}
 			}
 		}
-		catch (Exception e)
-		{
-			Log.e("Todoist WebRequest: ",e.getMessage());
-		}
-		
 		return ret;
 	}
 	
