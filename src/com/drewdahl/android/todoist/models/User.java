@@ -110,14 +110,7 @@ public class User implements Parcelable {
 	public static User register(String email, String full_name, String password, String timezone) {
 		User user = null;
 		
-		try {
-			user = TodoistApiHandler.getInstance().register(email, full_name, password, timezone)
-		} catch (TodoistApiHandlerException e) {
-			/**
-			 * TODO Better error handling.
-			 */
-			throw new UserException("Registry Failure.");
-		}
+		user = TodoistApiHandler.getInstance().register(email, full_name, password, timezone);
 		return user;
 	}
 	
