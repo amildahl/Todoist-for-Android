@@ -67,44 +67,24 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SupportForm extends Activity {
-	private EditText nameText;
-	private EditText emailText;
-	private EditText problemText;
-	private Spinner areaSpinner;
 	private ArrayAdapter<CharSequence> m_adapterForSpinner;
-	private Button submitButton;
 	private XMLRPCClient client;
-	private URI uri;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.support);
-		initControls();
-	}
-	
-	//Initialize Controls
-	private void initControls()
-	{
+
 		//URI of the XMLRPC Server-Side Script
-		this.uri = URI.create("http://dev.drewdahl.com/server.php");
-		this.client = new XMLRPCClient(uri);
-		
-		this.nameText = (EditText)findViewById(R.id.EditText_Name);
-		this.emailText = (EditText)findViewById(R.id.EditText_Email);
-		this.problemText = (EditText)findViewById(R.id.EditText_Problem);
-		this.areaSpinner = (Spinner)findViewById(R.id.Spinner_Area);
-		this.submitButton = (Button)findViewById(R.id.Button_Submit);
+		client = new XMLRPCClient(URI.create("http://dev.drewdahl.com/server.php"));
 		
 		//Call rpcCall() on button click
-		this.submitButton.setOnClickListener(new Button.OnClickListener() 
-				{
-					public void onClick(View view)
-					{ 
-						rpcCall();
-					}
-				});
+		((Button)findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
+			public void onClick(View view) { 
+				rpcCall();
+			}
+		});
 		
 		m_adapterForSpinner = ArrayAdapter.createFromResource(this, R.array.support_areas, android.R.layout.simple_spinner_item);
 		m_adapterForSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

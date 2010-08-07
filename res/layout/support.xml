@@ -1,10 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-
-
-
-<RelativeLayout android:id="@+id/RelativeLayout01" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextView_Name" android:text="Name:"></TextView><EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/EditText_Name" android:layout_below="@+id/TextView_Name"></EditText><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextView_Email" android:layout_below="@+id/EditText_Name" android:text="E-Mail: *"></TextView><EditText android:layout_height="wrap_content" android:id="@+id/EditText_Email" android:layout_width="fill_parent" android:layout_below="@+id/TextView_Email"></EditText><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextView_Area" android:layout_below="@+id/EditText_Email" android:text="Area: **"></TextView><Spinner android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/Spinner_Area" android:layout_below="@+id/TextView_Area"></Spinner><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextView_Problem" android:layout_below="@+id/Spinner_Area" android:text="Problem: **"></TextView><EditText android:layout_height="wrap_content" android:scrollbars="vertical" android:lines="5" android:id="@+id/EditText_Problem" android:layout_below="@+id/TextView_Problem" android:layout_width="fill_parent" android:gravity="top"></EditText><TextView android:layout_below="@+id/EditText_Problem" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="* Required if feedback is desired" android:id="@+id/TextView_Instruct1"></TextView>
-<TextView android:layout_below="@+id/TextView_Instruct1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/TextView_Instruct2" android:text="** Required Fields"></TextView>
-<Button android:layout_below="@+id/TextView_Instruct2" android:layout_height="wrap_content" android:text="Submit" android:id="@+id/Button_Submit" android:layout_centerHorizontal="true" android:layout_width="fill_parent"></Button>
-</RelativeLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    >
+    <ImageView android:id="@id/ImageViewLogo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/todoist_logo"
+        android:padding="15px"
+        />
+    <TableLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        >
+        <TableRow>
+            <TextView android:id="@+id/TextViewName"
+                android:layout_height="wrap_content"
+                android:textColor="@color/default_font_color"
+                android:text="Name: "
+                android:layout_width="wrap_content"
+                android:gravity="right"
+                />
+            <EditText android:id="@+id/EditTextName"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:id="@+id/TextViewEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/default_font_color"
+                android:text="E-Mail: "
+                android:gravity="right"
+                />
+            <EditText android:id="@+id/EditTextEmail"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:layout_weight="1.0"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:id="@+id/TextViewIDontKnow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/default_font_color"
+                android:text="Category? "
+                android:gravity="right"
+                android:layout_gravity="center"
+                />
+            <Spinner android:id="@+id/SpinnerIDontKnow"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                />
+        </TableRow>
+    </TableLayout>
+    <TextView android:id="@+id/TextViewDoing"
+        android:layout_height="wrap_content"
+        android:textColor="@color/default_font_color"
+        android:text="What were you doing? "
+        android:layout_width="wrap_content"
+        android:gravity="right"
+        />
+    <EditText android:id="@+id/EditTextDoing"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:minHeight="100px"
+        />
+    <Button android:id="@+id/ButtonSubmit"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Sign In"
+        android:clickable="true"
+        android:minWidth="120px"
+        android:layout_gravity="center"
+        />
+</LinearLayout>

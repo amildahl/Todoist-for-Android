@@ -51,8 +51,8 @@
                  <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
 		</activity>
-		<provider android:name="com.drewdahl.android.todoist.provider.TodoistProvider"
-			android:authorities="com.drewdahl.android.todoist.provider"
+		<provider android:name=".provider.TodoistProvider"
+			android:authorities=".provider"
 			/>
 	</application>
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="8"/>
