@@ -2,12 +2,10 @@ package com.drewdahl.android.todoist.controllers;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.drewdahl.android.todoist.models.User;
-import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 import com.drewdahl.android.todoist.views.ItemList;
 import com.drewdahl.android.todoist.views.Login;
 

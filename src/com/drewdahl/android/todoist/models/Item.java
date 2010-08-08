@@ -62,7 +62,7 @@ public class Item implements Parcelable
 		/**
 		 * TODO Add in the cache.
 		 */
-		this.project = TodoistApiHandler.getInstance(user.getToken()).getProject(obj.getInt(Constants.JSON_PROJECTID));
+		this.project = TodoistApiHandler.getInstance().getProject(obj.getInt(Constants.JSON_PROJECTID));
 		id = obj.getInt(Constants.JSON_ID);
 		checked = obj.getInt(Constants.JSON_CHECKED);
 		date_string = obj.getString(Constants.JSON_DATESTRING);
