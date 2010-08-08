@@ -44,9 +44,6 @@ import org.xmlrpc.android.XMLRPCException;
 import org.xmlrpc.android.XMLRPCFault;
 
 import com.drewdahl.android.todoist.R;
-import com.drewdahl.android.todoist.R.array;
-import com.drewdahl.android.todoist.R.id;
-import com.drewdahl.android.todoist.R.layout;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -58,97 +55,61 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SupportForm extends Activity {
-	private ArrayAdapter<CharSequence> m_adapterForSpinner;
 	private XMLRPCClient client;
 	
+	private URI uri;
+	
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.support);
 
 		//URI of the XMLRPC Server-Side Script
-		client = new XMLRPCClient(URI.create("http://dev.drewdahl.com/server.php"));
+		uri = URI.create("http://dev.drewdahl.com/server.php");
+		client = new XMLRPCClient(uri);
 		
 		//Call rpcCall() on button click
-		((Button)findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
+		((Button)findViewById(R.id.ButtonSubmit)).setOnClickListener(new Button.OnClickListener() {
 			public void onClick(View view) { 
 				rpcCall();
 			}
 		});
-		
-		m_adapterForSpinner = ArrayAdapter.createFromResource(this, R.array.support_areas, android.R.layout.simple_spinner_item);
-		m_adapterForSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		areaSpinner.setAdapter(m_adapterForSpinner);
-		/*areaSpinner.setOnItemSelectedListener(
-				new OnItemSelectedListener() {
-					
-					@Override
-					public void onItemSelected(AdapterView<?> parent, View view,
-							int position, long id) {
-						//Do Nothing
-					}
-
-					@Override
-					public void onNothingSelected(AdapterView<?> parent) {
-						//Do Nothing
-					}
-					
-				});*/
 	}
 	
-	private void showToast(CharSequence msg)
-	{
+	private void showToast(CharSequence msg) {
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 	
-	private void rpcCall()
-	{
+	private void rpcCall() {
 		if(checkValues())
 		{
 			Context context = getApplicationContext();
 			PackageInfo info;
 			
 			try {
-	            // read current version information about this package
 	            PackageManager manager = context.getPackageManager();
 	            info = manager.getPackageInfo(context.getPackageName(), 0);
-	
 		    } catch(Exception e) {
 		    	//TODO: Something better here :-D
 		        Log.e("SupportCase", "Couldn't find package information in PackageManager", e);
 		        return;
 		    }
 		    
-		    // Create a SupportCase w/ the information entered
-			/*SupportCase newCase = new SupportCase(this.nameText.getText().toString(),this.emailText.getText().toString(),
-					this.problemText.getText().toString(), "", this.areaSpinner.getSelectedItem().toString(),
-					info.packageName, info.versionName);*/
-			
-			// Report the problem
 			// TODO: Add something to XMLRPCMethod that checks the result of the page (in case the site is down) 
 			XMLRPCMethod method = new XMLRPCMethod("reportproblem", new XMLRPCMethodCallback() {
-				public void callFinished(Object result, String str)
-				{
-					if((Boolean)result && emailText.getText().length() != 0)
-					{
-						showAlert("Success!","The problem was reported successfully. \n\nYou should receive an automated e-mail in the next few hours.","OK",true);
-					}
-					else if((Boolean)result)
-					{
+				public void callFinished(Object result, String str) {
+					if((Boolean)result) {
+						String alert = "The problem was reported successfully.";
+						if (((EditText)findViewById(R.id.EditTextEmail)).getText().length() != 0) {
+							showAlert("Success!", alert + "\n\nYou should receive an automated e-mail in the next few hours.","OK",true);
+						}
 						showAlert("Success!","The problem was reported successfully. \n\nNotice: Since you did not enter your e-mail address, there will be no correspondance.","OK",true);
-					}
-					else
-					{
+					} else {
 						showAlert("Failure!","The problem failed to be reported.  Please try again shortly.  If this problem persists, please contact Admin@DrewDahl.com.","OK",false);
 					}
 				}
@@ -162,31 +123,25 @@ public class SupportForm extends Activity {
 		}
 	}
 	
-	private boolean checkValues()
-	{
-		if(this.problemText.getText().toString().replaceAll(" ", "") == "")
-		{
+	private boolean checkValues() {
+		if (((EditText)findViewById(R.id.EditTextDoing)).getText().toString().replaceAll(" ", "") == "") {
 			showToast("Problem Text cannot be blank.");
 			return false;
 		}
-		
 		return true;
 	}
 	
 	private void showAlert(String title, String message, String button_text, Boolean finish)
 	{
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this).setTitle(title).setMessage(message);
-		if(finish)
-		{
+		if (finish) {
 			dialog.setNeutralButton(button_text, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					finish();							
 				}
 			});
-		}
-		else
-		{
+		} else {
 			dialog.setNeutralButton(button_text, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -194,7 +149,6 @@ public class SupportForm extends Activity {
 				}
 			});
 		}
-		
 		dialog.show();
 	}
 	

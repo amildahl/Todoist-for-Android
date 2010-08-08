@@ -4,9 +4,13 @@
     <string name="app_version">Abas</string>
 	<string name="main_no_items">No items to display</string>
 	<string name="login">Login</string>
+	<!-- TODO Necessary if we include this in the stacktrace we e-mail? -->
 	<string-array name="support_areas">
-		<item>Login Page</item>
-		<item>Tasks List</item>
-		<item>Projects List</item>
+		<item>Login</item>
+		<item>Registration</item>
+		<item>Item List</item>
+		<item>Item Editor</item>
+		<item>Project List</item>
+		<item>Project Editor</item>
 	</string-array>
 </resources>

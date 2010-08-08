@@ -39,6 +39,7 @@
                 android:text="E-Mail: "
                 android:gravity="right"
                 />
+            <!-- TODO Make this autocomplete. -->
             <EditText android:id="@+id/EditTextEmail"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -46,6 +47,7 @@
                 android:layout_weight="1.0"
                 />
         </TableRow>
+        <!-- 
         <TableRow>
             <TextView android:id="@+id/TextViewIDontKnow"
                 android:layout_width="wrap_content"
@@ -62,6 +64,7 @@
                 android:layout_weight="1"
                 />
         </TableRow>
+        -->
     </TableLayout>
     <TextView android:id="@+id/TextViewDoing"
         android:layout_height="wrap_content"
