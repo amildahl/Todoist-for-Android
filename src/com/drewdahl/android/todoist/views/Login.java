@@ -47,8 +47,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.drewdahl.android.todoist.R;
-import com.drewdahl.android.todoist.R.id;
-import com.drewdahl.android.todoist.R.layout;
 import com.drewdahl.android.todoist.models.User;
 import com.drewdahl.android.todoist.models.UserException;
 
@@ -90,6 +88,7 @@ public class Login extends Activity {
             			User user = null;
             			Log.d(this.toString(), "Logging in");
             			user = User.login(email, password);
+            			//user.save();
             			Log.d(this.toString(), "Logged in");
             			Log.d(this.toString(), "Notifying calling activity");
                 		setResult(RESULT_OK, new Intent());

@@ -37,9 +37,6 @@
 package com.drewdahl.android.todoist.views;
 
 import com.drewdahl.android.todoist.R;
-import com.drewdahl.android.todoist.R.id;
-import com.drewdahl.android.todoist.R.layout;
-import com.drewdahl.android.todoist.R.menu;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
 import android.app.ListActivity;

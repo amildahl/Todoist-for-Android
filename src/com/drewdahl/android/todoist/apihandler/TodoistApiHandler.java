@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2008 by Alex Brandt <alunduil@alunduil.com>
  * 
  * This program is free software; you can redistribute it and#or modify
@@ -28,8 +28,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
 import com.drewdahl.android.todoist.models.Item;
@@ -45,57 +43,56 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
+ * @note This API needs to be finalized before the 1.0 release.
  * 
- * TODO Froyo stuffs:
-static Bitmap downloadBitmap(String url) {
-    final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-    final HttpGet getRequest = new HttpGet(url);
-
-    try {
-        HttpResponse response = client.execute(getRequest);
-        final int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != HttpStatus.SC_OK) { 
-            Log.w("ImageDownloader", "Error " + statusCode + " while retrieving bitmap from " + url); 
-            return null;
-        }
-        
-        final HttpEntity entity = response.getEntity();
-        if (entity != null) {
-            InputStream inputStream = null;
-            try {
-                inputStream = entity.getContent(); 
-                final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                return bitmap;
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();  
-                }
-                entity.consumeContent();
-            }
-        }
-    } catch (Exception e) {
-        // Could provide a more explicit error message for IOException or IllegalStateException
-        getRequest.abort();
-        Log.w("ImageDownloader", "Error while retrieving bitmap from " + url, e.toString());
-    } finally {
-        if (client != null) {
-            client.close();
-        }
-    }
-    return null;
-}
+ * This should be implemented for the froyo release following the patterns
+ * outlined in: 
+ * http://feedproxy.google.com/~r/blogspot/hsDu/~3/9WEwRp2NWlY/how-to-have-your-cupcake-and-eat-it-too.html
+ * 
+ * TODO froyo stuffs:
+ * 
+ * static Bitmap downloadBitmap(String url) {
+ *   final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+ *   final HttpGet getRequest = new HttpGet(url);
+ *   
+ *   try {
+ *     HttpResponse response = client.execute(getRequest);
+ *     final int statusCode = response.getStatusLine().getStatusCode();
+ *     if (statusCode != HttpStatus.SC_OK) {
+ *       Log.w("ImageDownloader", "Error " + statusCode + " while retrieving bitmap from " + url);
+ *       return null;
+ *     }
+ *     
+ *     final HttpEntity entity = response.getEntity();
+ *     if (entity != null) {
+ *       InputStream inputStream = null;
+ *       try {
+ *         inputStream = entity.getContent();
+ *         final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+ *         return bitmap;
+ *       } finally {
+ *         if (inputStream != null) {
+ *           inputStream.close();
+ *         }
+ *         entity.consumeContent();
+ *       }
+ *     }
+ *   } catch (Exception e) {
+ *     // Could provide a more explicit error message for IOException or IllegalStateException
+ *     getRequest.abort();
+ *     Log.w("ImageDownloader", "Error while retrieving bitmap from " + url, e.toString());
+ *   } finally {
+ *     if (client != null) {
+ *       client.close();
+ *     }
+ *   }
+ *   return null;
+ * }
+ * 
  */
 
-/**
- * @author Alex Brandt <alunduil@alunduil.com>
- * 
- * TODO Is this thread safe?  I hope so ... it would be pretty awesome if so.
- */
 public class TodoistApiHandler {
-
-	private String token = "";
 	private User user = null;
-	
 	private TodoistApiHandler() {}
 	
 	private static class InstanceHolder {
@@ -103,8 +100,8 @@ public class TodoistApiHandler {
 	}
 
 	/**
-	 * Get the instance of the ApiHandler.
-	 * @return The single copy of the ApiHandler.
+	 * Get the single instance of the ApiHandler.
+	 * @return TodoistApiHandler single instance.
 	 */
 	public static TodoistApiHandler getInstance()
 	{
@@ -112,24 +109,35 @@ public class TodoistApiHandler {
 	}
 
 	/**
-	 * Get the instance of the ApiHandler with a particular token.
-	 * @param token The token we got from logging in.
+	 * Get the instance of the ApiHandler and associate it with a different
+	 * API token and user.
+	 * 
+	 * @deprecated 
+	 * 
+	 * @param token The API token of the user to associate with.
 	 * @return The single copy of the ApiHandler.
 	 */
+	@Deprecated
 	public static TodoistApiHandler getInstance(String token)
 	{
 		TodoistApiHandler tmp = getInstance();
-		tmp.token = token;
+		/**
+		 * TODO Find the user with the ApiToken specified.
+		 */
 		return tmp;
 	}
 	
 	/**
 	 * Get the authentication token being used by this instance.
-	 * @return Authentication token.
+	 * 
+	 * @deprecated
+	 * 
+	 * @return String Authentication token.
 	 */
+	@Deprecated
 	public String getToken()
 	{
-		return token;
+		return user.getApiToken();
 	}
 	
 	private final HttpClient client = new DefaultHttpClient();
@@ -139,10 +147,16 @@ public class TodoistApiHandler {
 	/**
 	 * Call a Todoist RESTful function.
 	 * @param Uri The resource locater.
-	 * @return The response string.
+	 * @return String The response string.
 	 */
 	protected String call(String Uri)
 	{
+		/**
+		 * TODO 2048 Character limit on Uri good enough?
+		 * TODO Think about moving to calling a URI with a parameter map for post and get.
+		 * TODO Read pg. 292 in Pro Android 2 for more information.
+		 * TODO Make this thread safe pg. 299 in Pro Android 2.
+		 */
 		BufferedReader in = null;
 		
 		String ret = "";
@@ -182,11 +196,6 @@ public class TodoistApiHandler {
 	
 	/**
 	 * Login as the user and return that user.
-	 * @param email The email address of the user.
-	 * @param password The password for the user.
-	 * @return The user that was successfully logged in.
-	 * 
-	 * TODO Catch failed logins ...
 	 * 
 	 * /API/login should be HTTPS
 	 * Login user into Todoist to get a token. Required to do any communication.
@@ -201,20 +210,21 @@ public class TodoistApiHandler {
 	 * 
 	 * Error returns:
 	 *   "LOGIN_ERROR"
+	 *
+	 * @param email The email address of the user.
+	 * @param password The password for the user.
+	 * @return The user that was successfully logged in.
 	 */
 	public User login(String email, String password) throws TodoistApiHandlerException
 	{
-		try
-		{
+		try {
 			user = new User(new JSONObject(call(LOGIN.replace(PARAM_EMAIL, email).replace(PARAM_PASSWORD, password))));
-		}
-		catch (JSONException e)
-		{
-			Log.e("com.drewdahl.android.todoist.apihandler", "JSONException Occurred during Login.");
-			e.printStackTrace();
+		} catch (JSONException e) {
+			/**
+			 * TODO Better handling of failed logins.
+			 */
 			throw new TodoistApiHandlerException("Login failure!");
 		}
-		token = user.getToken();
 		return user;
 	}
 	
@@ -229,25 +239,20 @@ public class TodoistApiHandler {
 	 *   HTTP 200 OK with a JSON object with timezone names:
 	 *     ["US/Alaska", "US/Arizona", "US/Central", "US/Eastern", ...]
 	 */
-	public String[] getTimezones()
+	public ArrayList<String> getTimezones()
 	{
-		String response = call(GET_TIMEZONES);
 		ArrayList<String> ret = new ArrayList<String>();
-		JSONArray jArray = null;
-		try
-		{
-			jArray = new JSONArray(response);
-			for(int i = 0; i < jArray.length(); ++i) {
-				JSONObject obj = jArray.getJSONObject(i);
-				ret.add(obj.getString(Constants.JSON_TIMEZONE));
+		try {
+			JSONArray jArray = new JSONArray(call(GET_TIMEZONES));
+			for (int i = 0; i < jArray.length(); ++i) {
+				ret.add(jArray.getJSONObject(i).getString(Constants.JSON_TIMEZONE));
 			}
+		} catch (JSONException e) {
+			/**
+			 * TODO Error handling.
+			 */
 		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-
-		return (String[])ret.toArray();
+		return ret;
 	}
 	
 	/**
@@ -262,21 +267,19 @@ public class TodoistApiHandler {
 	 */
 	public User register(String email, String full_name, String password, String timezone)
 	{
-		try
-		{
+		try {
 			user = new User(new JSONObject(call(REGISTER.replace(PARAM_EMAIL, email).replace(PARAM_FULLNAME, full_name).replace(PARAM_PASSWORD, password).replace(PARAM_TIMEZONE, timezone))));
+		} catch (JSONException e) {
+			/**
+			 * TODO Error handling.
+			 */
 		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		token = user.getToken();
 		return user;
 	}
 	
 	public User updateUser(Map.Entry<String, String>...entries)
 	{
-		String Uri = UPDATE_USER.replace(PARAM_TOKEN, token);
+		String Uri = UPDATE_USER.replace(PARAM_TOKEN, user.getApiToken());
 		for (Map.Entry<String, String> n : entries) {
 			if (n.getKey().toLowerCase() == "email") {
 				Uri += OPTIONAL_EMAIL.replace(PARAM_EMAIL, n.getValue());
@@ -291,47 +294,41 @@ public class TodoistApiHandler {
 				Uri += OPTIONAL_TIMEZONE.replace(PARAM_TIMEZONE, n.getValue());
 			}
 		}
-		try 
-		{
+		try {
 			user = new User(new JSONObject(call(Uri)));
+		} catch (JSONException e) {
+			/**
+			 * TODO Error handling.
+			 */
 		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		token = user.getToken();
 		return user;
 	}
 
-	public Project[] getProjects()
+	public ArrayList<Project> getProjects()
 	{
-		String response = call(GET_PROJECTS.replace(PARAM_TOKEN, token));
 		ArrayList<Project> ret = new ArrayList<Project>();
-		JSONArray jArray = null;
-		try
-		{
-			jArray = new JSONArray(response); 
+		try {
+			JSONArray jArray = new JSONArray(call(GET_PROJECTS.replace(PARAM_TOKEN, user.getApiToken()))); 
 			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Project(jArray.getJSONObject(i), user));
 			}
+		} catch (JSONException e) {
+			/**
+			 * TODO Error Handling.
+			 */
 		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		return (Project[])ret.toArray();
+		return ret;
 	}
 	
 	public Project getProject(Integer project_id)
 	{
 		Project ret = null;
-		try
-		{
-			ret = new Project(new JSONObject(call(GET_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()))), user);
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
+		try {
+			ret = new Project(new JSONObject(call(GET_PROJECT.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()))), user);
+		} catch (JSONException e) {
+			/**
+			 * TODO Error handling.
+			 */
 		}
 		return ret;
 	}
@@ -339,23 +336,21 @@ public class TodoistApiHandler {
 	public Project addProject(String name)
 	{
 		Project ret = null;
-		try
-		{
-			ret = new Project(new JSONObject(call(ADD_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_NAME, name))), user);
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
+		try {
+			ret = new Project(new JSONObject(call(ADD_PROJECT.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_NAME, name))), user);
+		} catch (JSONException e) {
+			/**
+			 * TODO Error Handling.
+			 */
 		}
 		return ret;
 	}
 	
 	public Project updateProject(Map.Entry<String, String>...entries)
 	{
-		String Uri = UPDATE_PROJECT.replace(PARAM_TOKEN, token);
-		/**
-		 * TODO If there is no projectid we need to error out somehow!
-		 */
+		String Uri = UPDATE_PROJECT.replace(PARAM_TOKEN, user.getApiToken());
+		boolean id_found = false;
+		
 		for (Map.Entry<String, String> n : entries) {
 			if (n.getKey().toLowerCase() == "name") {
 				Uri += OPTIONAL_NAME.replace(PARAM_NAME, n.getValue());
@@ -368,94 +363,95 @@ public class TodoistApiHandler {
 			}
 			else if (n.getKey().toLowerCase() == "projectid") { // REQUIRED!
 				Uri += PARAM_PROJECTID.replace(PARAM_PROJECTID, n.getValue());
+				id_found = true;
 			}
 		}
-		Project ret = null;
-		try
-		{
-			ret = new Project(new JSONObject(call(Uri)), user);
+		
+		if (!id_found) {
+			throw new IllegalArgumentException();
 		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
+		
+		Project ret = null;
+		try {
+			ret = new Project(new JSONObject(call(Uri)), user);
+		} catch (JSONException e) {
+			/**
+			 * TODO ErrorHandling
+			 */
 		}
 		return ret;
 	}
 	
 	public void deleteProject(Integer project_id)
 	{
-		call(DELETE_PROJECT.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()));
+		call(DELETE_PROJECT.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()));
 	}
 	
 	/**
-	 * TODO Implement label items from the API.
-	 */
-	
-	/**
-	 * TODO Verify documentation of API.
 	 * @param project_id
 	 * @return
 	 */
-	/*
-	public String[] getLabels(Integer project_id)
+	public ArrayList<String> getLabels(Integer project_id)
 	{
-		String response = call(GET_LABELS.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()));
 		ArrayList<String> ret = new ArrayList<String>();
-		JSONArray jArray = new JSONArray(response); 
-		for(int i = 0; i < jArray.length(); ++i)
-		{
-			JSONObject obj = jArray.getJSONObject(i);
-			ret.add(obj.getString(Constants.JSON_LABEL));
+		try {
+			JSONArray jArray = new JSONArray(call(GET_LABELS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()))); 
+			for (int i = 0; i < jArray.length(); ++i) {
+				ret.add(jArray.getJSONObject(i).getString(Constants.JSON_LABELID));
+			}
+		} catch (JSONException e) {
+			/**
+			 * TODO ErrorHandling
+			 */
 		}
-		return (String[])ret.toArray();
+		return ret;
 	}
-	*/
 	
-	public Item[] getUncompletedItems(Integer project_id)
+	public void updateLabel(String old_name, String new_name) {
+		call(UPDATE_LABEL.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_OLDNAME, old_name).replace(PARAM_NEWNAME, new_name));
+	}
+	
+	public void deleteLavel(String name) {
+		call(DELETE_LABEL.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_NAME, name));
+	}
+	
+	public ArrayList<Item> getUncompletedItems(Integer project_id)
 	{
-		String response = call(GET_UNCOMPLETED_ITEMS.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()));
 		ArrayList<Item> ret = new ArrayList<Item>();
-		try
-		{
-			JSONArray jArray = new JSONArray(response); 
+		try {
+			JSONArray jArray = new JSONArray(call(GET_UNCOMPLETED_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()))); 
 			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Item(jArray.getJSONObject(i), user));
 			}
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ItemException e)
-		{
+		} catch (JSONException e) {
+			/**
+			 * TODO Error Handling.
+			 */
+		} catch (ItemException e) {
 			//Log("ApiHandler", "User and item mismatch!");
 		}
-		return (Item[])ret.toArray();
+		return ret;
 	}
 	
-	public Item[] getCompletedItems(Integer project_id)
+	public ArrayList<Item> getCompletedItems(Integer project_id)
 	{
-		String response = call(GET_COMPLETED_ITEMS.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()));
 		ArrayList<Item> ret = new ArrayList<Item>();
-		try
-		{
-			JSONArray jArray = new JSONArray(response); 
+		try {
+			JSONArray jArray = new JSONArray(call(GET_COMPLETED_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()))); 
 			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Item(jArray.getJSONObject(i), user));
 			}
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ItemException e)
-		{
+		} catch (JSONException e) {
+			/**
+			 * Error Handling.
+			 */
+		} catch (ItemException e) {
 			
 		}
-		return (Item[])ret.toArray();
+		return ret;
 	}
 	
-	public Item[] getItemsById(Integer...ids)
+	public ArrayList<Item> getItemsById(Integer...ids)
 	{
 		boolean first = true;
 		String idstring = "[";
@@ -468,7 +464,7 @@ public class TodoistApiHandler {
 		}
 		idstring += "]";
 		
-		String response = call(GET_ITEMS_BY_ID.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring));
+		String response = call(GET_ITEMS_BY_ID.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
 		ArrayList<Item> ret = new ArrayList<Item>();
 		try
 		{
@@ -485,12 +481,12 @@ public class TodoistApiHandler {
 		{
 			
 		}
-		return (Item[])ret.toArray();
+		return ret;
 	}
 	
 	public Item addItem(Integer project_id, String content, Map.Entry<String, String>...entries)
 	{
-		String Uri = ADD_ITEM.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()).replace(PARAM_CONTENT, content);
+		String Uri = ADD_ITEM.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()).replace(PARAM_CONTENT, content);
 
 		for (Map.Entry<String, String> n : entries) {
 			if (n.getKey().toLowerCase() == "date_string") {
@@ -519,7 +515,7 @@ public class TodoistApiHandler {
 	
 	public Item updateItem(Integer item_id, Map.Entry<String, String>...entries)
 	{
-		String Uri = UPDATE_ITEM.replace(PARAM_TOKEN, token).replace(PARAM_ITEMID, item_id.toString());
+		String Uri = UPDATE_ITEM.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_ITEMID, item_id.toString());
 		
 		for (Map.Entry<String, String> n : entries) {
 			if (n.getKey().toLowerCase() == "content") {
@@ -570,7 +566,7 @@ public class TodoistApiHandler {
 		}
 		idstring += "]";
 		
-		call(UPDATE_ORDERS.replace(PARAM_TOKEN, token).replace(PARAM_PROJECTID, project_id.toString()).replace(PARAM_IDS, idstring));
+		call(UPDATE_ORDERS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()).replace(PARAM_IDS, idstring));
 	}
 	
 	/**
@@ -592,7 +588,7 @@ public class TodoistApiHandler {
 		}
 		idstring += "]";
 		
-		String response = call(UPDATE_RECURRING_DATE.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring));
+		String response = call(UPDATE_RECURRING_DATE.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
 		ArrayList<Item> ret = new ArrayList<Item>();
 		try
 		{
@@ -627,7 +623,7 @@ public class TodoistApiHandler {
 		}
 		idstring += "]";
 		
-		call(DELETE_ITEMS.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring));
+		call(DELETE_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
 	}
 	
 	public void completeItems(boolean in_history, Integer...item_ids)
@@ -648,7 +644,7 @@ public class TodoistApiHandler {
 		}
 		idstring += "]";
 		
-		String Uri = COMPLETE_ITEMS.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring);
+		String Uri = COMPLETE_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring);
 		if (!in_history) Uri += OPTIONAL_INHISTORY.replace(PARAM_INHISTORY, "0");
 		call(Uri);
 	}
@@ -668,7 +664,24 @@ public class TodoistApiHandler {
 		}
 		idstring += "]";
 		
-		call(UNCOMPLETE_ITEMS.replace(PARAM_TOKEN, token).replace(PARAM_IDS, idstring));
+		call(UNCOMPLETE_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
+	}
+	
+	public void query(String...queries)
+	{
+		boolean first = true;
+		String idstring = "[";
+		for (String n : queries) {
+			if (first) {
+				idstring += n.toString();
+				first = false;
+			} else {
+				idstring += "," + n.toString();
+			}
+		}
+		idstring += "]";
+		
+		call(QUERY.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_QUERIES, idstring));
 	}
 	
 	public User getUser()

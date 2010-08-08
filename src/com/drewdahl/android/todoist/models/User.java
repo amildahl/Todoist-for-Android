@@ -36,6 +36,8 @@
 
 package com.drewdahl.android.todoist.models;
 
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,7 +49,6 @@ import android.os.Parcelable;
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
-import com.drewdahl.android.todoist.provider.TodoistProvider;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 
 /**
@@ -88,12 +89,11 @@ public class User implements Parcelable {
 		msn = obj.getString(Constants.JSON_MSN);
 		mobile_number = obj.getString(Constants.JSON_MOBILENUMBER);
 		mobile_host = obj.getString(Constants.JSON_MOBILEHOST);
-		token = api_token;
 	}
 	
-	public Project[] GetProjects()
+	public ArrayList<Project> GetProjects()
 	{
-		return TodoistApiHandler.getInstance(token).getProjects();
+		return TodoistApiHandler.getInstance().getProjects();
 	}
 	
 	public static User login(String email, String password) throws UserException {
