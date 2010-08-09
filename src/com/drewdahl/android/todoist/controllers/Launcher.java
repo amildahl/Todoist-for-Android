@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.drewdahl.android.todoist.models.User;
+import com.drewdahl.android.todoist.service.TodoistService;
 import com.drewdahl.android.todoist.views.ItemList;
 import com.drewdahl.android.todoist.views.Login;
 
@@ -17,7 +18,6 @@ public class Launcher extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		/**
-		 * TODO Start syncing service.
 		 * TODO Maybe: If option remember me is set and we have credentials just go to view.
 		 */
 		
@@ -51,6 +51,8 @@ public class Launcher extends Activity {
 	}
 	
 	private void startActivityUserStartPage() {
+		//startService(new Intent(this, TodoistService.class));
+
 		/**
 		 * TODO Start user's start page.
 		 * TODO Fix this query.
@@ -60,6 +62,7 @@ public class Launcher extends Activity {
 		Intent intent = new Intent(this, ItemList.class);
 		intent.putExtra(User.KEY, user);
 		startActivity(intent);
+		
 		finish();
 	}
 }
