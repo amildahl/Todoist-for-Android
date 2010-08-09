@@ -42,6 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -122,6 +123,9 @@ public class User implements Parcelable {
 	}
 	
 	public void save(ContentResolver resolver) {
+		/**
+		 * TODO Move this to the service's API and let Service be the gatekeeper.
+		 */
 		ContentValues values = new ContentValues();
 		values.put(Users.EMAIL, email);
 		values.put(Users.FULL_NAME, full_name);

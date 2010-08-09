@@ -39,10 +39,15 @@ package com.drewdahl.android.todoist.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.os.Parcelable;
 import android.os.Parcel;
 
 import com.drewdahl.android.todoist.Constants;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 
 public class Project implements Parcelable {
 
@@ -57,6 +62,24 @@ public class Project implements Parcelable {
 		cache_count = obj.getInt(Constants.JSON_CACHECOUNT);
 		indent = obj.getInt(Constants.JSON_INDENT);
 		id = obj.getInt(Constants.JSON_ID);
+	}
+
+	public void save(ContentResolver resolver) {
+		/**
+		 * TODO Move this to the service's API and let Service be the gatekeeper.
+		 */
+		ContentValues values = new ContentValues();
+		
+		values.put(Projects.USER_ID, user.getId());
+		values.put(Projects.NAME, name);
+		values.put(Projects.COLOR, color);
+		values.put(Projects.COLLAPSED, collapsed);
+		values.put(Projects.ITEM_ORDER, item_order);
+		values.put(Projects.CACHE_COUNT, cache_count);
+		values.put(Projects.INDENT, indent);
+		values.put(Projects._ID, id);
+
+		resolver.insert(ContentUris.withAppendedId(Projects.CONTENT_URI, id), values);
 	}
 
 	/**

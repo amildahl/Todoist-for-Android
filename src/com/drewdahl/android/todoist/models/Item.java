@@ -22,11 +22,17 @@ package com.drewdahl.android.todoist.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.os.Parcelable;
 import android.os.Parcel;
 
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 
 public class Item implements Parcelable
 {
@@ -66,6 +72,28 @@ public class Item implements Parcelable
 		id = obj.getInt(Constants.JSON_ID);
 		checked = obj.getInt(Constants.JSON_CHECKED);
 		date_string = obj.getString(Constants.JSON_DATESTRING);
+	}
+
+	public void save(ContentResolver resolver) {
+		/**
+		 * TODO Move this to the service's API and let Service be the gatekeeper.
+		 */
+		ContentValues values = new ContentValues();
+
+		values.put(Items.DUE_DATE, due_date);
+		values.put(Items.USER_ID, user.getId());
+		values.put(Items.COLLAPSED, collapsed);
+		values.put(Items.IN_HISTORY, in_history);
+		values.put(Items.PRIORITY, priority);
+		values.put(Items.ITEM_ORDER, item_order);
+		values.put(Items.CONTENT, content);
+		values.put(Items.INDENT, indent);
+		values.put(Items.PROJECT_ID, project.getId());
+		values.put(Items._ID, id);
+		values.put(Items.CHECKED, checked);
+		values.put(Items.DATE_STRING, date_string);
+
+		resolver.insert(ContentUris.withAppendedId(Items.CONTENT_URI, id), values);
 	}
 
 	/**
