@@ -22,11 +22,12 @@ package com.drewdahl.android.todoist.apihandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
@@ -115,7 +116,7 @@ public class TodoistApiHandler {
 	 * @deprecated 
 	 * 
 	 * @param token The API token of the user to associate with.
-	 * @return The single copy of the ApiHandler.
+	 * @return TodoistApiHandler single instance.
 	 */
 	@Deprecated
 	public static TodoistApiHandler getInstance(String token)
@@ -131,6 +132,7 @@ public class TodoistApiHandler {
 	 * Get the authentication token being used by this instance.
 	 * 
 	 * @deprecated
+	 * @see getUser
 	 * 
 	 * @return String Authentication token.
 	 */
@@ -142,12 +144,13 @@ public class TodoistApiHandler {
 	
 	private final HttpClient client = new DefaultHttpClient();
 	private final HttpGet getRequest = new HttpGet();
-	private final HttpPost postRequest = new HttpPost();
+	//private final HttpPost postRequest = new HttpPost();
 	
 	/**
 	 * Call a Todoist RESTful function.
+	 * 
 	 * @param Uri The resource locater.
-	 * @return String The response string.
+	 * @return String The raw JSON response string.
 	 */
 	protected String call(String Uri)
 	{
@@ -178,7 +181,7 @@ public class TodoistApiHandler {
 			ret = page;
 		} catch (Exception e) {
 			/**
-			 * TODO Raise support issue or throw up.
+			 * TODO Raise support issue or throw up?
 			 */
 		} finally {
 			if (in != null) {
@@ -186,11 +189,12 @@ public class TodoistApiHandler {
 					in.close();
 				} catch (IOException e) {
 					/**
-					 * TODO Raise a support issue.
+					 * TODO Raise a support issue or throw up?
 					 */
 				}
 			}
 		}
+		Log.d(this.toString(), "Web Result: " + ret);
 		return ret;
 	}
 	
@@ -667,8 +671,10 @@ public class TodoistApiHandler {
 		call(UNCOMPLETE_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
 	}
 	
-	public void query(String...queries)
+	/*
+	public ArrayList<Item> query(String...queries)
 	{
+		// TODO Double check API.
 		boolean first = true;
 		String idstring = "[";
 		for (String n : queries) {
@@ -683,6 +689,7 @@ public class TodoistApiHandler {
 		
 		call(QUERY.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_QUERIES, idstring));
 	}
+	*/
 	
 	public User getUser()
 	{

@@ -1,5 +1,8 @@
 package com.drewdahl.android.todoist.provider;
 
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.models.Item;
+import com.drewdahl.android.todoist.models.Project;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
