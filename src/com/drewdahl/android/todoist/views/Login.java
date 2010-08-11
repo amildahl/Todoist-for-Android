@@ -90,8 +90,9 @@ public class Login extends Activity {
             			user = User.login(email, password);
             			/**
             			 * TODO Make this actually save the user information.
+            			 * TODO Only if we want to remember information?
             			 */
-//            			user.save(Login.this.getContentResolver());
+            			user.save(Login.this.getContentResolver());
             			Log.d(this.toString(), "Logged in");
             			Log.d(this.toString(), "Notifying calling activity");
                 		setResult(RESULT_OK, new Intent());

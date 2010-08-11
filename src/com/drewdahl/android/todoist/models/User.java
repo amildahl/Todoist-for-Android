@@ -42,7 +42,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -129,7 +128,7 @@ public class User implements Parcelable {
 		ContentValues values = new ContentValues();
 		values.put(Users.EMAIL, email);
 		values.put(Users.FULL_NAME, full_name);
-		values.put(Users._ID, id);
+		//values.put(Users._ID, id);
 		values.put(Users.API_TOKEN, api_token);
 		values.put(Users.START_PAGE, start_page);
 		values.put(Users.TIMEZONE, timezone);
