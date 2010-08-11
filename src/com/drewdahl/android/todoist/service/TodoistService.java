@@ -1,5 +1,8 @@
 package com.drewdahl.android.todoist.service;
 
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.models.Item;
 import com.drewdahl.android.todoist.models.Project;
@@ -20,24 +23,25 @@ public class TodoistService extends Service {
 			/**
 			 * TODO Make this check the cache so it only grabs items to update that it should be.
 			 */
-			for (Project p : TodoistApiHandler.getInstance().getProjects()) {
-				p.save(TodoistService.this.getContentResolver());
-				for (Item i : TodoistApiHandler.getInstance().getUncompletedItems(p.getId())) {
-					i.save(TodoistService.this.getContentResolver());
+			if (TodoistApiHandler.getInstance().getUser() != null) {
+				for (Project p : TodoistApiHandler.getInstance().getProjects()) {
+					p.save(TodoistService.this.getContentResolver());
+					for (Item i : TodoistApiHandler.getInstance().getUncompletedItems(p.getId())) {
+						i.save(TodoistService.this.getContentResolver());
+					}
 				}
 			}
 		}
 	}
 	
 	private void startSync() {
-		Thread child = new Thread(null, new TodoistWorker(), "TodoistService");
-		child.start();
+		ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
+		scheduler.scheduleAtFixedRate(new TodoistWorker(), 0, 360, TimeUnit.SECONDS);
 	}
 	
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		startSync();
 	}
 	
 	@Override

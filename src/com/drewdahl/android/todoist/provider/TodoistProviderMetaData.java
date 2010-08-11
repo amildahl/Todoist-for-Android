@@ -23,7 +23,7 @@ public final class TodoistProviderMetaData {
     public static final String AUTHORITY = "com.drewdahl.android.todoist.provider.Todoist";
 
     public static final String DATABASE_NAME = "todoist.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     
     public static final String ITEMS_TABLE_NAME = "items";
     public static final String PROJECTS_TABLE_NAME = "projects";

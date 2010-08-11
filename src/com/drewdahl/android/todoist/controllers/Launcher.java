@@ -51,7 +51,7 @@ public class Launcher extends Activity {
 	}
 	
 	private void startActivityUserStartPage() {
-		//startService(new Intent(this, TodoistService.class));
+		startService(new Intent(this, TodoistService.class));
 
 		/**
 		 * TODO Start user's start page.

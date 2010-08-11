@@ -1,8 +1,5 @@
 package com.drewdahl.android.todoist.provider;
 
-import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
-import com.drewdahl.android.todoist.models.Item;
-import com.drewdahl.android.todoist.models.Project;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
@@ -146,7 +143,7 @@ public class TodoistProvider extends ContentProvider {
 					+ Projects.INDENT + " INTEGER"
 					+ ");");
 			db.execSQL("CREATE TABLE " + Users.TABLE_NAME + " ("
-					+ Users._ID + "INTEGER PRIMARY KEY,"
+					+ Users._ID + " INTEGER PRIMARY KEY,"
 					+ Users.EMAIL + " TEXT,"
 					+ Users.FULL_NAME + " TEXT,"
 					+ Users.API_TOKEN + " TEXT,"
