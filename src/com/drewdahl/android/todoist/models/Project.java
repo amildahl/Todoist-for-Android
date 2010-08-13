@@ -42,32 +42,24 @@ import org.json.JSONObject;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.os.Parcelable;
-import android.os.Parcel;
 
-import com.drewdahl.android.todoist.Constants;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.JSON;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
-import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 
-public class Project implements Parcelable {
+public class Project {
 
-	public Project(JSONObject obj, User user) throws JSONException
-	{
-		Integer user_id = obj.getInt(Constants.JSON_USERID);
-		if (user_id == user.getId()) this.user = user;
-		name = obj.getString(Constants.JSON_NAME);
-		color = obj.getString(Constants.JSON_COLOR);
-		collapsed = obj.getInt(Constants.JSON_COLLAPSED);
-		item_order = obj.getInt(Constants.JSON_ITEMORDER);
-		cache_count = obj.getInt(Constants.JSON_CACHECOUNT);
-		indent = obj.getInt(Constants.JSON_INDENT);
-		id = obj.getInt(Constants.JSON_ID);
+	public Project(JSONObject obj, User user) throws JSONException {
+		this.user = user;
+		name = obj.getString(JSON.NAME);
+		color = obj.getString(JSON.COLOR);
+		collapsed = obj.getInt(JSON.COLLAPSED);
+		item_order = obj.getInt(JSON.ITEM_ORDER);
+		cache_count = obj.getInt(JSON.CACHE_COUNT);
+		indent = obj.getInt(JSON.INDENT);
+		id = obj.getInt(JSON.ID);
 	}
 
 	public void save(ContentResolver resolver) {
-		/**
-		 * TODO Move this to the service's API and let Service be the gatekeeper.
-		 */
 		ContentValues values = new ContentValues();
 		
 		values.put(Projects.USER_ID, user.getId());
@@ -85,78 +77,63 @@ public class Project implements Parcelable {
 	/**
 	 * Setters and Getters.
 	 */
-	public User getUser()
-	{
+	public User getUser() {
 		return user;
 	}
 	
-	public void setUser(User user)
-	{
+	public void setUser(User user) {
 		this.user = user;
 	}
 	
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 	
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
 	
-	public String getColor()
-	{
+	public String getColor() {
 		return color;
 	}
-	
-	public void setColor(String color)
-	{
+	 
+	public void setColor(String color) {
 		this.color = color;
 	}
 	
-	public Integer getCollapsed()
-	{
+	public Integer getCollapsed() {
 		return collapsed;
 	}
 	
-	public void setCollapsed(Integer collapsed)
-	{
+	public void setCollapsed(Integer collapsed) {
 		this.collapsed = collapsed;
 	}
 	
-	public Integer getItemOrder()
-	{
+	public Integer getItemOrder() {
 		return item_order;
 	}
 	
-	public void setItemOrder(Integer item_order)
-	{
+	public void setItemOrder(Integer item_order) {
 		this.item_order = item_order;
 	}
 	
-	public Integer getCacheCount()
-	{
+	public Integer getCacheCount() {
 		return cache_count;
 	}
 	
-	public void setCacheCount(Integer cache_count)
-	{
+	public void setCacheCount(Integer cache_count) {
 		this.cache_count = cache_count;
 	}
 	
-	public Integer getIndent()
-	{
+	public Integer getIndent() {
 		return indent;
 	}
 	
-	public void setIndent(Integer indent)
-	{
+	public void setIndent(Integer indent) {
 		this.indent = indent;
 	}
 	
-	public Integer getId()
-	{
+	public Integer getId() {
 		return id;
 	}
 	
@@ -178,24 +155,4 @@ public class Project implements Parcelable {
 	private int cache_count;
 	private int indent;
 	private int id;
-	
-	/**
-	 * @category Parcelable
-	 * 
-	 * TODO http://developer.android.com/reference/android/os/Parcelable.html
-	 */
-	public void writeToParcel(Parcel parcel, int flags)
-	{
-		/**
-		 * TODO Stub method.
-		 */
-	}
-	
-	public int describeContents()
-	{
-		/**
-		 * TODO Stub method.
-		 */
-		return 0;
-	}
 }

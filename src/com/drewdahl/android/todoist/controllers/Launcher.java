@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.drewdahl.android.todoist.models.User;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.service.TodoistService;
 import com.drewdahl.android.todoist.views.ItemList;
 import com.drewdahl.android.todoist.views.Login;
@@ -55,12 +55,11 @@ public class Launcher extends Activity {
 
 		/**
 		 * TODO Start user's start page.
-		 * TODO Fix this query.
 		 */
-		User user = User.getUser();
-		Log.d(this.toString(), "User's start page: " + user.getStartPage());
+		Log.d(this.toString(), "User's start page: " + TodoistApiHandler.getInstance().getUser().getStartPage());
+
 		Intent intent = new Intent(this, ItemList.class);
-		intent.putExtra(User.KEY, user);
+		
 		startActivity(intent);
 		
 		finish();

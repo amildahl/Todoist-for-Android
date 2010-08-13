@@ -157,7 +157,7 @@ public class TodoistProvider extends ContentProvider {
 					+ Users.JABBER + " TEXT,"
 					+ Users.MSN + " TEXT,"
 					+ Users.MOBILE_NUMBER + " TEXT,"
-					+ Users.MOBILE_HOST + " TEXT,"
+					+ Users.MOBILE_HOST + " TEXT"
 					+ ");");
 			db.execSQL("CREATE TABLE " + CacheTimes.TABLE_NAME + " ("
 					+ CacheTimes._ID + " INTEGER PRIMARY KEY,"
@@ -168,7 +168,6 @@ public class TodoistProvider extends ContentProvider {
 					+ ");");
 			/**
 			 * TODO Read http://justatheory.com/computers/databases/sqlite/foreign_key_triggers.html
-			 * TODO Start the sync service syncing manually here.
 			 */
 		}
 		
@@ -307,10 +306,6 @@ public class TodoistProvider extends ContentProvider {
 			
 			cache_values.put(CacheTimes.ITEM_ID, values.getAsInteger(Items._ID));
 			
-			/**
-			 * TODO Call sync service to input the items upstream.
-			 */
-			
 			break;
 		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
 			table = Projects.TABLE_NAME;
@@ -332,10 +327,6 @@ public class TodoistProvider extends ContentProvider {
 			where = CacheTimes.PROJECT_ID + "=" + values.getAsInteger(Projects._ID);
 			
 			cache_values.put(CacheTimes.PROJECT_ID, values.getAsInteger(Projects._ID));
-			
-			/**
-			 * TODO Call sync service to load items upstream.
-			 */
 			
 			break;
 		case INCOMING_USER_COLLECTION_URI_INDICATOR:
@@ -360,10 +351,6 @@ public class TodoistProvider extends ContentProvider {
 			where = CacheTimes.USER_ID + "=" + values.getAsInteger(Users._ID);
 			
 			cache_values.put(CacheTimes.USER_ID, values.getAsInteger(Users._ID));
-			
-			/**
-			 * TODO Call sync service to load upstream.
-			 */
 			
 			break;
 		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
@@ -390,15 +377,14 @@ public class TodoistProvider extends ContentProvider {
 			Uri insertedUri = ContentUris.withAppendedId(uri, rowId);
 			getContext().getContentResolver().notifyChange(insertedUri, null);
 
+			/**
+			 * TODO Verify if this is an issue.
 			if (sUriMatcher.match(uri) != INCOMING_CACHETIME_COLLECTION_URI_INDICATOR) {
-				/**
-				 * Update the cache times.
-				 */
 				cache_values.put(CacheTimes.INSERTED_AT, now);
 				this.delete(CacheTimes.CONTENT_URI, where, whereArgs);
 				this.insert(CacheTimes.CONTENT_URI, cache_values);
 			}
-			
+			*/
 			return insertedUri;
 		}
 		throw new SQLException("Failed to insert row into " + uri);

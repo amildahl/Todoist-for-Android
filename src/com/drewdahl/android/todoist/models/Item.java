@@ -25,59 +25,31 @@ import org.json.JSONObject;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.os.Parcelable;
-import android.os.Parcel;
 
-import com.drewdahl.android.todoist.Constants;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.JSON;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
-import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
-import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 
-public class Item implements Parcelable
-{
-	/**
-	 * 
-	 * @param obj
-	 * @param user
-	 * @param project Can be null and will be filled in by constructor.
-	 * @throws JSONException
-	 */
-	public Item(JSONObject obj, User user) throws JSONException, ItemException
-	{
-		due_date = obj.getInt(Constants.JSON_DUEDATE);
-		Integer user_id = obj.getInt(Constants.JSON_USERID);
-		
-		if (user_id == user.getId()) {
-			this.user = user;
-		}
-		else {
-			/**
-			 * This will probably never happen but I don't feel like
-			 * proving it.
-			 */
-			throw new ItemException("User doesn't match the user passed!");
-		}
-		
-		collapsed = obj.getInt(Constants.JSON_COLLAPSED);
-		in_history = obj.getInt(Constants.JSON_INHISTORY);
-		priority = obj.getInt(Constants.JSON_PRIORITY);
-		item_order = obj.getInt(Constants.JSON_ITEMORDER);
-		content = obj.getString(Constants.JSON_CONTENT);
-		indent = obj.getInt(Constants.JSON_INDENT);
+public class Item {
+	public Item(JSONObject obj, User user) throws JSONException {
+		due_date = obj.getInt(JSON.DUE_DATE);
+		this.user = user;
+		collapsed = obj.getInt(JSON.COLLAPSED);
+		in_history = obj.getInt(JSON.IN_HISTORY);
+		priority = obj.getInt(JSON.PRIORITY);
+		item_order = obj.getInt(JSON.ITEM_ORDER);
+		content = obj.getString(JSON.CONTENT);
+		indent = obj.getInt(JSON.INDENT);
 		/**
-		 * TODO Add in the cache.
+		 * TODO Move this object get to the Provider somehow?
 		 */
-		this.project = TodoistApiHandler.getInstance().getProject(obj.getInt(Constants.JSON_PROJECTID));
-		id = obj.getInt(Constants.JSON_ID);
-		checked = obj.getInt(Constants.JSON_CHECKED);
-		date_string = obj.getString(Constants.JSON_DATESTRING);
+		this.project = TodoistApiHandler.getInstance().getProject(obj.getInt(JSON.PROJECT_ID));
+		id = obj.getInt(JSON.ID);
+		checked = obj.getInt(JSON.CHECKED);
+		date_string = obj.getString(JSON.DATE_STRING);
 	}
 
 	public void save(ContentResolver resolver) {
-		/**
-		 * TODO Move this to the service's API and let Service be the gatekeeper.
-		 */
 		ContentValues values = new ContentValues();
 
 		values.put(Items.DUE_DATE, due_date);
@@ -99,18 +71,15 @@ public class Item implements Parcelable
 	/**
 	 * Setters and Getters.
 	 */
-	public Integer getDueDate()
-	{
+	public Integer getDueDate() {
 		return due_date;
 	}
 	
-	public void setDueDate(Integer due_date)
-	{
+	public void setDueDate(Integer due_date) {
 		this.due_date = due_date;
 	}
 	
-	public User getUser()
-	{
+	public User getUser() {
 		return user;
 	}
 	
@@ -118,98 +87,79 @@ public class Item implements Parcelable
 	 * TODO Have a public setUser() method?
 	 */
 	
-	public Integer getCollapsed()
-	{
+	public Integer getCollapsed() {
 		return collapsed;
 	}
 	
-	public void setCollapsed(Integer collapsed)
-	{
+	public void setCollapsed(Integer collapsed) {
 		this.collapsed = collapsed;
 	}
 	
-	public Integer getInHistory()
-	{
+	public Integer getInHistory() {
 		return in_history;
 	}
 	
-	public void setInHistory(Integer in_history)
-	{
+	public void setInHistory(Integer in_history) {
 		this.in_history = in_history;
 	}
 	
-	public Integer getPriority()
-	{
+	public Integer getPriority() {
 		return priority;
 	}
 	
-	public void setPriority(Integer priority)
-	{
+	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
 	
-	public Integer getItemOrder()
-	{
+	public Integer getItemOrder() {
 		return item_order;
 	}
 	
-	public void setItemOrder(Integer item_order)
-	{
+	public void setItemOrder(Integer item_order) {
 		this.item_order = item_order;
 	}
 	
-	public String getContent()
-	{
+	public String getContent() {
 		return content;
 	}
 	
-	public void setContent(String content)
-	{
+	public void setContent(String content) {
 		this.content = content;
 	}
 	
-	public Integer getIndent()
-	{
+	public Integer getIndent() {
 		return indent;
 	}
 	
-	public void setIndent(Integer indent)
-	{
+	public void setIndent(Integer indent) {
 		this.indent = indent;
 	}
 	
-	public Project getProject()
-	{
+	public Project getProject() {
 		return project;
 	}
 	
-	public void setProject(Project project)
-	{
+	public void setProject(Project project) {
 		this.project = project;
 	}
 	
-	public Integer getId()
-	{
+	public Integer getId() {
 		return id;
 	}
 	
-	public Integer getChecked()
-	{
+	public Integer getChecked() {
 		return checked;
 	}
 	
-	public void setChecked(Integer checked)
-	{
+	public void setChecked(Integer checked) {
 		this.checked = checked;
 	}
 	
-	public String getDateString()
-	{
+	public String getDateString() {
 		return date_string;
 	}
 	
-	public void setDateString(String date_string)
-	{
+	public void setDateString(String date_string) {
 		this.date_string = date_string;
 	}
 	
@@ -225,24 +175,4 @@ public class Item implements Parcelable
 	private Integer id;
 	private Integer checked;
 	private String date_string;
-	
-	/**
-	 * @category Parcelable
-	 * 
-	 * TODO http://developer.android.com/reference/android/os/Parcelable.html
-	 */
-	public void writeToParcel(Parcel parcel, int flags)
-	{
-		/**
-		 * TODO Stub method.
-		 */
-	}
-	
-	public int describeContents()
-	{
-		/**
-		 * TODO Stub method.
-		 */
-		return 0;
-	}
 }

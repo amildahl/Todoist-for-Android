@@ -29,10 +29,10 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.drewdahl.android.todoist.Constants;
-import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.JSON;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.OPTIONAL_PARAMETERS;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.PARAMETERS;
 import com.drewdahl.android.todoist.models.Item;
-import com.drewdahl.android.todoist.models.ItemException;
 import com.drewdahl.android.todoist.models.Project;
 import com.drewdahl.android.todoist.models.User;
 
@@ -45,55 +45,11 @@ import java.util.Map;
 
 /**
  * @note This API needs to be finalized before the 1.0 release.
- * 
- * This should be implemented for the froyo release following the patterns
- * outlined in: 
- * http://feedproxy.google.com/~r/blogspot/hsDu/~3/9WEwRp2NWlY/how-to-have-your-cupcake-and-eat-it-too.html
- * 
- * TODO froyo stuffs:
- * 
- * static Bitmap downloadBitmap(String url) {
- *   final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
- *   final HttpGet getRequest = new HttpGet(url);
- *   
- *   try {
- *     HttpResponse response = client.execute(getRequest);
- *     final int statusCode = response.getStatusLine().getStatusCode();
- *     if (statusCode != HttpStatus.SC_OK) {
- *       Log.w("ImageDownloader", "Error " + statusCode + " while retrieving bitmap from " + url);
- *       return null;
- *     }
- *     
- *     final HttpEntity entity = response.getEntity();
- *     if (entity != null) {
- *       InputStream inputStream = null;
- *       try {
- *         inputStream = entity.getContent();
- *         final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
- *         return bitmap;
- *       } finally {
- *         if (inputStream != null) {
- *           inputStream.close();
- *         }
- *         entity.consumeContent();
- *       }
- *     }
- *   } catch (Exception e) {
- *     // Could provide a more explicit error message for IOException or IllegalStateException
- *     getRequest.abort();
- *     Log.w("ImageDownloader", "Error while retrieving bitmap from " + url, e.toString());
- *   } finally {
- *     if (client != null) {
- *       client.close();
- *     }
- *   }
- *   return null;
- * }
- * 
  */
 
 public class TodoistApiHandler {
 	private User user = null;
+
 	private TodoistApiHandler() {}
 	
 	private static class InstanceHolder {
@@ -104,43 +60,66 @@ public class TodoistApiHandler {
 	 * Get the single instance of the ApiHandler.
 	 * @return TodoistApiHandler single instance.
 	 */
-	public static TodoistApiHandler getInstance()
-	{
+	public static TodoistApiHandler getInstance() {
 		return InstanceHolder.INSTANCE;
 	}
-
-	/**
-	 * Get the instance of the ApiHandler and associate it with a different
-	 * API token and user.
-	 * 
-	 * @deprecated 
-	 * 
-	 * @param token The API token of the user to associate with.
-	 * @return TodoistApiHandler single instance.
-	 */
-	@Deprecated
-	public static TodoistApiHandler getInstance(String token)
+	
+	public User getUser()
 	{
-		TodoistApiHandler tmp = getInstance();
-		/**
-		 * TODO Find the user with the ApiToken specified.
-		 */
-		return tmp;
+		return user;
 	}
 	
-	/**
-	 * Get the authentication token being used by this instance.
-	 * 
-	 * @deprecated
-	 * @see getUser
-	 * 
-	 * @return String Authentication token.
-	 */
-	@Deprecated
-	public String getToken()
+	public void setUser(User user)
 	{
-		return user.getApiToken();
+		this.user = user;
 	}
+
+	/*
+	 * This should be implemented for the froyo release following the patterns
+	 * outlined in: 
+	 * http://feedproxy.google.com/~r/blogspot/hsDu/~3/9WEwRp2NWlY/how-to-have-your-cupcake-and-eat-it-too.html
+	 * 
+	 * TODO froyo stuffs:
+	 * 
+	 * static Bitmap downloadBitmap(String url) {
+	 *   final AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+	 *   final HttpGet getRequest = new HttpGet(url);
+	 *   
+	 *   try {
+	 *     HttpResponse response = client.execute(getRequest);
+	 *     final int statusCode = response.getStatusLine().getStatusCode();
+	 *     if (statusCode != HttpStatus.SC_OK) {
+	 *       Log.w("ImageDownloader", "Error " + statusCode + " while retrieving bitmap from " + url);
+	 *       return null;
+	 *     }
+	 *     
+	 *     final HttpEntity entity = response.getEntity();
+	 *     if (entity != null) {
+	 *       InputStream inputStream = null;
+	 *       try {
+	 *         inputStream = entity.getContent();
+	 *         final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+	 *         return bitmap;
+	 *       } finally {
+	 *         if (inputStream != null) {
+	 *           inputStream.close();
+	 *         }
+	 *         entity.consumeContent();
+	 *       }
+	 *     }
+	 *   } catch (Exception e) {
+	 *     // Could provide a more explicit error message for IOException or IllegalStateException
+	 *     getRequest.abort();
+	 *     Log.w("ImageDownloader", "Error while retrieving bitmap from " + url, e.toString());
+	 *   } finally {
+	 *     if (client != null) {
+	 *       client.close();
+	 *     }
+	 *   }
+	 *   return null;
+	 * }
+	 * 
+	 */
 	
 	private final HttpClient client = new DefaultHttpClient();
 	private final HttpGet getRequest = new HttpGet();
@@ -152,8 +131,7 @@ public class TodoistApiHandler {
 	 * @param Uri The resource locater.
 	 * @return String The raw JSON response string.
 	 */
-	protected String call(String Uri)
-	{
+	protected String call(String Uri) {
 		/**
 		 * TODO 2048 Character limit on Uri good enough?
 		 * TODO Think about moving to calling a URI with a parameter map for post and get.
@@ -168,6 +146,10 @@ public class TodoistApiHandler {
 			getRequest.setURI(new URI(Uri));
 			HttpResponse response = client.execute(getRequest);
 			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			
+			/**
+			 * TODO Return status code to requester?
+			 */
 			
 			StringBuffer sb = new StringBuffer("");
 			String line = "";
@@ -199,8 +181,7 @@ public class TodoistApiHandler {
 	}
 	
 	/**
-	 * Login as the user and return that user.
-	 * 
+	 * <pre>
 	 * /API/login should be HTTPS
 	 * Login user into Todoist to get a token. Required to do any communication.
 	 * 
@@ -214,44 +195,52 @@ public class TodoistApiHandler {
 	 * 
 	 * Error returns:
 	 *   "LOGIN_ERROR"
+	 * </pre>
 	 *
 	 * @param email The email address of the user.
 	 * @param password The password for the user.
 	 * @return The user that was successfully logged in.
 	 */
-	public User login(String email, String password) throws TodoistApiHandlerException
-	{
+	public User login(String email, String password) {
+		String query = TodoistApiHandlerConstants.LOGIN
+			.replace(PARAMETERS.EMAIL, email)
+			.replace(PARAMETERS.PASSWORD, password);
+		String response = call(query); 
 		try {
-			user = new User(new JSONObject(call(LOGIN.replace(PARAM_EMAIL, email).replace(PARAM_PASSWORD, password))));
+			user = new User(new JSONObject(response));
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
-			 * TODO Better handling of failed logins.
+			 * TODO Error Handling.
 			 */
-			throw new TodoistApiHandlerException("Login failure!");
+			throw new RuntimeException("Failed to create the user object!");
 		}
 		return user;
 	}
 	
 	/**
-	 * Get the list of timezones that Todoist supports.
-	 * @return An array of Strings (each is a timezone string).
-	 * 
+	 * <pre> 
 	 * /API/getTimezones
 	 * Returns the timezones Todoist supports.
 	 * 
 	 * Successful return:
 	 *   HTTP 200 OK with a JSON object with timezone names:
 	 *     ["US/Alaska", "US/Arizona", "US/Central", "US/Eastern", ...]
+	 * </pre>
+	 * 
+	 * @return An array of Strings (each is a timezone string).
 	 */
-	public ArrayList<String> getTimezones()
-	{
+	public ArrayList<String> getTimezones() {
+		String query = TodoistApiHandlerConstants.GET_TIMEZONES;
+		String response = call(query); 
 		ArrayList<String> ret = new ArrayList<String>();
 		try {
-			JSONArray jArray = new JSONArray(call(GET_TIMEZONES));
+			JSONArray jArray = new JSONArray(response);
 			for (int i = 0; i < jArray.length(); ++i) {
-				ret.add(jArray.getJSONObject(i).getString(Constants.JSON_TIMEZONE));
+				ret.add(jArray.getJSONObject(i).getString(JSON.TIMEZONE));
 			}
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
 			 * TODO Error handling.
 			 */
@@ -260,20 +249,46 @@ public class TodoistApiHandler {
 	}
 	
 	/**
+	 * <pre>
+	 *  /API/register should be HTTPS
+	 *  Required parameters:
+	 *    email: User's email
+	 *    full_name: User's full name
+	 *    password: User's password, should be at least 5 characters long
+	 *    timezone: User's timezone (check /API/getTimezones)
+	 *    
+	 *    Successful return:
+	 *      HTTP 200 OK with a JSON object with user info:
+	 *        {"email": "...", "token": ..., ...}
+	 *    
+	 *    Error returns:
+	 *      "ALREADY_REGISTRED"
+	 *      "TOO_SHORT_PASSWORD"
+	 *      "INVALID_EMAIL"
+	 *      "INVALID_TIMEZONE"
+	 *      "INVALID_FULL_NAME"
+	 *      "UNKNOWN_ERROR"
+	 * </pre>
+	 *      
+	 * @param email User's email
+	 * @param full_name User's full name
+	 * @param password User's password, should be at least 5 characters long
+	 * @param timezone User's timezone (check /API/getTimezones)
 	 * 
-	 * @param email
-	 * @param full_name
-	 * @param password
-	 * @param timezone
-	 * @return
-	 * 
-	 * TODO Proper error handling.
+	 * @return The user that was successfully registered. 
 	 */
 	public User register(String email, String full_name, String password, String timezone)
 	{
+		String query = TodoistApiHandlerConstants.REGISTER
+			.replace(PARAMETERS.EMAIL, email)
+			.replace(PARAMETERS.FULL_NAME, full_name)
+			.replace(PARAMETERS.PASSWORD, password)
+			.replace(PARAMETERS.TIMEZONE, timezone);
+		String response = call(query);
 		try {
-			user = new User(new JSONObject(call(REGISTER.replace(PARAM_EMAIL, email).replace(PARAM_FULLNAME, full_name).replace(PARAM_PASSWORD, password).replace(PARAM_TIMEZONE, timezone))));
+			user = new User(new JSONObject(response));
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
 			 * TODO Error handling.
 			 */
@@ -281,26 +296,55 @@ public class TodoistApiHandler {
 		return user;
 	}
 	
+	/**
+	 * <pre>
+	 * /API/updateUser should be HTTPS
+	 * 
+	 * You can just update full_name if you like, don't send parameters that 
+	 * you don't want to change.
+	 * 
+	 * Required parameters:
+	 *   token: The user's token (received on login)
+	 *   Optional parameters:
+	 *     email: User's email
+	 *     full_name: User's full name
+	 *     password: User's password, should be at least 5 characters long
+	 *     timezone: User's timezone (check /API/getTimezones)
+	 * 
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with user info:
+	 *     {"email": "...", "token": ..., ...}
+	 *     
+	 * Error returns:
+	 *   "ERROR_PASSWORD_TOO_SHORT"
+	 *   "ERROR_EMAIL_FOUND"
+	 * </pre>
+	 * 
+	 * @param entries The optional parameters to change.
+	 * @return The updated user.
+	 */
 	public User updateUser(Map.Entry<String, String>...entries)
 	{
-		String Uri = UPDATE_USER.replace(PARAM_TOKEN, user.getApiToken());
+		String query = TodoistApiHandlerConstants.UPDATE_USER
+			.replace(PARAMETERS.TOKEN, user.getApiToken());
+		
 		for (Map.Entry<String, String> n : entries) {
 			if (n.getKey().toLowerCase() == "email") {
-				Uri += OPTIONAL_EMAIL.replace(PARAM_EMAIL, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "full_name") {
-				Uri += OPTIONAL_FULLNAME.replace(PARAM_FULLNAME, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "password") {
-				Uri += OPTIONAL_PASSWORD.replace(PARAM_PASSWORD, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "timezone") {
-				Uri += OPTIONAL_TIMEZONE.replace(PARAM_TIMEZONE, n.getValue());
+				query += OPTIONAL_PARAMETERS.EMAIL.replace(PARAMETERS.EMAIL, n.getValue());
+			} else if (n.getKey().toLowerCase() == "full_name") {
+				query += OPTIONAL_PARAMETERS.FULL_NAME.replace(PARAMETERS.FULL_NAME, n.getValue());
+			} else if (n.getKey().toLowerCase() == "password") {
+				query += OPTIONAL_PARAMETERS.PASSWORD.replace(PARAMETERS.PASSWORD, n.getValue());
+			} else if (n.getKey().toLowerCase() == "timezone") {
+				query += OPTIONAL_PARAMETERS.TIMEZONE.replace(PARAMETERS.TIMEZONE, n.getValue());
 			}
 		}
+		
+		String response = call(query);
 		try {
-			user = new User(new JSONObject(call(Uri)));
+			user = new User(new JSONObject(response));
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
 			 * TODO Error handling.
 			 */
@@ -308,15 +352,39 @@ public class TodoistApiHandler {
 		return user;
 	}
 
+	/**
+	 * <pre>
+	 * /API/getProjects
+	 * 
+	 * Returns all os user's projects.
+	 * 
+	 * Required parameters:
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON list of all of user's projects:
+	 *     [
+	 *       {"user_id": 1, "name": "Test project", "color": 1, "collapsed": 0, "item_order": 1, "indent": 1, "cache_count": 4, "id": 22073},
+	 *       {"user_id": 1, "name": "Another test project", "color": 2, "collapsed": 0, "item_order": 2, "indent": 1, "cache_count": 0, "id": 22074},
+	 *       ...
+	 *     ]
+	 * </pre>
+	 * 
+	 * @return A list of projects for the current user.
+	 */
 	public ArrayList<Project> getProjects()
 	{
+		String query = TodoistApiHandlerConstants.GET_PROJECTS
+			.replace(PARAMETERS.TOKEN, user.getApiToken());
+		String response = call(query);
 		ArrayList<Project> ret = new ArrayList<Project>();
 		try {
-			JSONArray jArray = new JSONArray(call(GET_PROJECTS.replace(PARAM_TOKEN, user.getApiToken()))); 
+			JSONArray jArray = new JSONArray(response); 
 			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Project(jArray.getJSONObject(i), user));
 			}
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
 			 * TODO Error Handling.
 			 */
@@ -324,12 +392,35 @@ public class TodoistApiHandler {
 		return ret;
 	}
 	
+	/**
+	 * <pre>
+	 * /API/getProject
+	 * 
+	 * Return's information about a project.
+	 * 
+	 * Required parameters:
+	 *   token: The user's token (received on login)
+	 *   project_id: The id of the project to fetch
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with project info
+	 *     {"user_id": 1L, "name": "Test project", "color": 1L, "collapsed": 0L, "item_order": 1L, "indent": 1L, "cache_count": 4L, "id": 22073L}
+	 * </pre>
+	 * 
+	 * @param project_id the id of the project to fetch.
+	 * @return Project
+	 */
 	public Project getProject(Integer project_id)
 	{
+		String query = TodoistApiHandlerConstants.GET_PROJECT
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.PROJECT_ID, project_id.toString());
+		String response = call(query);
 		Project ret = null;
 		try {
-			ret = new Project(new JSONObject(call(GET_PROJECT.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()))), user);
+			ret = new Project(new JSONObject(response), user);
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
 			 * TODO Error handling.
 			 */
@@ -337,73 +428,110 @@ public class TodoistApiHandler {
 		return ret;
 	}
 
-	public Project addProject(String name)
+	/**
+	 * <pre>
+	 * /API/addProject
+	 * 
+	 * Add a new project.
+	 * 
+	 * Required parameters:
+	 *   name: The name of the new project
+	 *   token: The user's token (received on login)
+	 *   
+	 * Optional parameters:
+	 *   color: The color of the new project
+	 *   indent: The indent of the new project
+	 *   order: The order of the new project
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with project info:
+	 *     {"name": "...", "user_id": ..., ..., "collapsed": 0L, "id": 22000}
+	 *     
+	 * Error returns:
+	 *   "ERROR_NAME_IS_EMPTY"
+	 * </pre>
+	 * 
+	 * @param name The name of the new project.
+	 * @param entries The optional parameters.
+	 * @return The new project.
+	 */
+	public Project addProject(String name, Map.Entry<String, String>...entries)
 	{
+		String query = TodoistApiHandlerConstants.ADD_PROJECT
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.NAME, name);
+		
+		for (Map.Entry<String, String> n : entries) {
+			if (n.getKey().toLowerCase() == "color") {
+				query += OPTIONAL_PARAMETERS.COLOR.replace(PARAMETERS.COLOR, n.getValue());
+			} else if (n.getKey().toLowerCase() == "indent") {
+				query += OPTIONAL_PARAMETERS.INDENT.replace(PARAMETERS.INDENT, n.getValue());
+			} else if (n.getKey().toLowerCase() == "order") {
+				query += OPTIONAL_PARAMETERS.ORDER.replace(PARAMETERS.ORDER, n.getValue());
+			}
+		}
+		String response = call(query);
+		
 		Project ret = null;
 		try {
-			ret = new Project(new JSONObject(call(ADD_PROJECT.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_NAME, name))), user);
+			ret = new Project(new JSONObject(response), user);
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
 			 * TODO Error Handling.
 			 */
 		}
 		return ret;
-	}
-	
-	public Project updateProject(Map.Entry<String, String>...entries)
-	{
-		String Uri = UPDATE_PROJECT.replace(PARAM_TOKEN, user.getApiToken());
-		boolean id_found = false;
-		
-		for (Map.Entry<String, String> n : entries) {
-			if (n.getKey().toLowerCase() == "name") {
-				Uri += OPTIONAL_NAME.replace(PARAM_NAME, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "color") {
-				Uri += OPTIONAL_COLOR.replace(PARAM_COLOR, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "indent") {
-				Uri += OPTIONAL_INDENT.replace(PARAM_INDENT, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "projectid") { // REQUIRED!
-				Uri += PARAM_PROJECTID.replace(PARAM_PROJECTID, n.getValue());
-				id_found = true;
-			}
-		}
-		
-		if (!id_found) {
-			throw new IllegalArgumentException();
-		}
-		
-		Project ret = null;
-		try {
-			ret = new Project(new JSONObject(call(Uri)), user);
-		} catch (JSONException e) {
-			/**
-			 * TODO ErrorHandling
-			 */
-		}
-		return ret;
-	}
-	
-	public void deleteProject(Integer project_id)
-	{
-		call(DELETE_PROJECT.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()));
 	}
 	
 	/**
-	 * @param project_id
-	 * @return
+	 * <pre>
+	 * /API/updateProject
+	 * 
+	 * Update an existing project.
+	 * 
+	 * Required parameters:
+	 *   project_id: The id of the project to update
+	 *   token: The user's token (received on login)
+	 *   
+	 * Optional parameters:
+	 *   name: New name of the project
+	 *   color: New color of the project
+	 *   indent: New indent of the project
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with project info:
+	 *     {"name": "...", "user_id": ..., ..., "collapsed": 0L, "id": 22000}
+	 *     
+	 * Error returns:
+	 *   "ERROR_PROJECT_NOT_FOUND"
+	 * </pre>
+	 * 
+	 * @param project_id The id of the project to update.
+	 * @param entries Optional parameters.
+	 * @return The updated project.
 	 */
-	public ArrayList<String> getLabels(Integer project_id)
+	public Project updateProject(Integer project_id, Map.Entry<String, String>...entries)
 	{
-		ArrayList<String> ret = new ArrayList<String>();
-		try {
-			JSONArray jArray = new JSONArray(call(GET_LABELS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()))); 
-			for (int i = 0; i < jArray.length(); ++i) {
-				ret.add(jArray.getJSONObject(i).getString(Constants.JSON_LABELID));
+		String query = TodoistApiHandlerConstants.UPDATE_PROJECT
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.PROJECT_ID, project_id.toString());
+		
+		for (Map.Entry<String, String> n : entries) {
+			if (n.getKey().toLowerCase() == "color") {
+				query += OPTIONAL_PARAMETERS.COLOR.replace(PARAMETERS.COLOR, n.getValue());
+			} else if (n.getKey().toLowerCase() == "indent") {
+				query += OPTIONAL_PARAMETERS.INDENT.replace(PARAMETERS.INDENT, n.getValue());
+			} else if (n.getKey().toLowerCase() == "name") {
+				query += OPTIONAL_PARAMETERS.NAME.replace(PARAMETERS.NAME, n.getValue());
 			}
+		}
+		String response = call(query);
+		Project ret = null;
+		try {
+			ret = new Project(new JSONObject(response), user);
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
 			 * TODO ErrorHandling
 			 */
@@ -411,270 +539,683 @@ public class TodoistApiHandler {
 		return ret;
 	}
 	
-	public void updateLabel(String old_name, String new_name) {
-		call(UPDATE_LABEL.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_OLDNAME, old_name).replace(PARAM_NEWNAME, new_name));
-	}
-	
-	public void deleteLavel(String name) {
-		call(DELETE_LABEL.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_NAME, name));
-	}
-	
-	public ArrayList<Item> getUncompletedItems(Integer project_id)
+	/**
+	 * <pre>
+	 * /API/deleteProject
+	 * 
+	 * Delete an existing project.
+	 * 
+	 * Required parameters:
+	 *   proejct_id: The id of the project to update
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with text:
+	 *     "ok"
+	 * </pre>
+	 * 
+	 * @param project_id The ID of the project to delete.
+	 */
+	public void deleteProject(Integer project_id)
 	{
-		ArrayList<Item> ret = new ArrayList<Item>();
-		try {
-			JSONArray jArray = new JSONArray(call(GET_UNCOMPLETED_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()))); 
-			for(int i = 0; i < jArray.length(); ++i) {
-				ret.add(new Item(jArray.getJSONObject(i), user));
-			}
-		} catch (JSONException e) {
+		String query = TodoistApiHandlerConstants.DELETE_PROJECT
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.PROJECT_ID, project_id.toString());
+		String response = call(query);
+		if (response != "ok") {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
 			 * TODO Error Handling.
 			 */
-		} catch (ItemException e) {
-			//Log("ApiHandler", "User and item mismatch!");
+		}
+	}
+	
+	/**
+	 * <pre>
+	 * /API/getLabels
+	 * 
+	 * Returns all of user's labels.
+	 * 
+	 * Required parameters:
+	 *   proejct_id: The id of the project to update
+	 *   token: The user's token (received on login)
+	 * </pre>
+	 * 
+	 * @param project_id The project to get the labels for.
+	 * @return A list of labels.
+	 */
+	public ArrayList<String> getLabels(Integer project_id)
+	{
+		String query = TodoistApiHandlerConstants.GET_LABELS
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.PROJECT_ID, project_id.toString());
+		String response = call(query);
+		ArrayList<String> ret = new ArrayList<String>();
+		try {
+			JSONArray jArray = new JSONArray(response); 
+			for (int i = 0; i < jArray.length(); ++i) {
+				ret.add(jArray.getJSONObject(i).getString(JSON.LABEL_ID));
+			}
+		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO ErrorHandling
+			 */
 		}
 		return ret;
 	}
 	
-	public ArrayList<Item> getCompletedItems(Integer project_id)
-	{
+	/**
+	 * <pre>
+	 * /API/updateLabel
+	 * 
+	 * Changes the name of an existing label.
+	 * 
+	 * Required parameters:
+	 *   old_name: The name of the old label
+	 *   new_name: The name of the new label
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with text:
+	 *     "ok"
+	 * </pre>
+	 * 
+	 * @param old_name The old label name.
+	 * @param new_name The new label name.
+	 */
+	public void updateLabel(String old_name, String new_name) {
+		String query = TodoistApiHandlerConstants.UPDATE_LABEL
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.OLD_NAME, old_name)
+			.replace(PARAMETERS.NEW_NAME, new_name);
+		String response = call(query);
+		if (response != "ok") {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
+	}
+	
+	/**
+	 * <pre>
+	 * /API/deleteLabel
+	 * 
+	 * Deletes an existing label.
+	 * 
+	 * Required parameters:
+	 *   name: The name of the label to delete
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with text:
+	 *     "ok"
+	 * </pre>
+	 * 
+	 * @param name The label name to delete.
+	 */
+	public void deleteLabel(String name) {
+		String query = TodoistApiHandlerConstants.DELETE_LABEL
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.NAME, name);
+		String response = call(query);
+		if (response != "ok") {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
+	}
+	
+	/**
+	 * <pre>
+	 * /API/getUncompletedItems
+	 * 
+	 * Returns a project's uncompleted items (tasks).
+	 * 
+	 * Required parameters:
+	 *   proejct_id: The id of the project to update
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with user info:
+	 *     [
+	 *       {"due_date": new Date("Sun Apr 29 23:59:59 2007"), "user_id": 1, "collapsed": 0, "in_history": 0, "priority": 1, "item_order": 1, "content": "By these things", "indent": 1, "project_id": 22073, "id": 210870, "checked": 0, "date_string": "29. Apr 2007"},
+	 *       {"due_date": null, "user_id": 1, "collapsed": 0, "in_history": 0, "priority": 1, "item_order": 2, "content": "Milk", "indent": 2, "project_id": 22073, "id": 210867, "checked": 0, "date_string": ""},
+	 *       ...
+	 *     ]
+	 * </pre>
+	 * 
+	 * @param project_id The project to get the uncompleted items for.
+	 * @return List of items.
+	 */
+	public ArrayList<Item> getUncompletedItems(Integer project_id) {
+		String query = TodoistApiHandlerConstants.GET_UNCOMPLETED_ITEMS
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.PROJECT_ID, project_id.toString());
+		String response = call(query);
 		ArrayList<Item> ret = new ArrayList<Item>();
 		try {
-			JSONArray jArray = new JSONArray(call(GET_COMPLETED_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()))); 
+			JSONArray jArray = new JSONArray(response); 
 			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Item(jArray.getJSONObject(i), user));
 			}
 		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
-			 * Error Handling.
+			 * TODO Error Handling.
 			 */
-		} catch (ItemException e) {
-			
 		}
 		return ret;
 	}
 	
-	public ArrayList<Item> getItemsById(Integer...ids)
-	{
+	/**
+	 * <pre>
+	 * /API/getCompletedItems
+	 * 
+	 * Returns a project's completed items (tasks) - the tasks that are in history.
+	 * 
+	 * Required parameters:
+	 *   proejct_id: The id of the project to update
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with user info:
+	 *     [
+	 *       {"due_date": null, "user_id": 1, "collapsed": 0, "in_history": 1, "priority": 1, "item_order": 2, "content": "Fluffy ferret", "indent": 1, "project_id": 22073, "id": 210872, "checked": 1, "date_string": ""},
+	 *       {"due_date": null, "user_id": 1, "collapsed": 0, "in_history": 1, "priority": 1, "item_order": 1, "content": "Test", "indent": 1, "project_id": 22073, "id": 210871, "checked": 1, "date_string": ""}
+	 *       ...
+	 *     ]
+	 * </pre>
+	 * 
+	 * @param project_id The id of the project to get the completed items for.
+	 * @return The list of items.
+	 */
+	public ArrayList<Item> getCompletedItems(Integer project_id) {
+		String query = TodoistApiHandlerConstants.GET_COMPLETED_ITEMS
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.PROJECT_ID, project_id.toString());
+		String response = call(query);
+		ArrayList<Item> ret = new ArrayList<Item>();
+		try {
+			JSONArray jArray = new JSONArray(response); 
+			for(int i = 0; i < jArray.length(); ++i) {
+				ret.add(new Item(jArray.getJSONObject(i), user));
+			}
+		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * Error Handling.
+			 */
+		}
+		return ret;
+	}
+
+	/**
+	 * <pre>
+	 * /API/getItemsById
+	 * 
+	 * Required parameters:
+	 *   ids: A JSON list of ids to fetch
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON list with item objects. Example:
+	 *     http://todoist.com/API/getItemsById?ids=[210873,210874]&token=fb5f22601ec566e48083213f7573e908a7a272e5
+	 *     [
+	 *       {"due_date": null, "user_id": 1, "collapsed": 0, "in_history": 1, "priority": 1, "item_order": 2, "content": "Fluffy ferret", "indent": 1, "project_id": 22073, "id": 210873, "checked": 1, "date_string": ""},
+	 *       {"due_date": null, "user_id": 1, "collapsed": 0, "in_history": 1, "priority": 1, "item_order": 1, "content": "Test", "indent": 1, "project_id": 22073, "id": 210874, "checked": 1, "date_string": ""}
+	 *       ...
+	 *     ]
+	 * </pre>
+	 * 
+	 * @param ids The list of ids to return.
+	 * @return The list of items.
+	 */
+	public ArrayList<Item> getItemsById(Integer...ids) {
+		/**
+		 * TODO Make this method take an actual list?
+		 */
+		String query = TodoistApiHandlerConstants.GET_ITEMS_BY_ID
+			.replace(PARAMETERS.TOKEN, user.getApiToken());
+	
 		boolean first = true;
 		String idstring = "[";
 		for (Integer n : ids) {
 			if (first) {
 				idstring += n.toString();
 				first = false;
-			}
-			idstring += "," + n.toString(); 
-		}
-		idstring += "]";
-		
-		String response = call(GET_ITEMS_BY_ID.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
-		ArrayList<Item> ret = new ArrayList<Item>();
-		try
-		{
-			JSONArray jArray = new JSONArray(response); 
-			for(int i = 0; i < jArray.length(); ++i) {
-				ret.add(new Item(jArray.getJSONObject(i), user));
-			}
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ItemException e)
-		{
-			
-		}
-		return ret;
-	}
-	
-	public Item addItem(Integer project_id, String content, Map.Entry<String, String>...entries)
-	{
-		String Uri = ADD_ITEM.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()).replace(PARAM_CONTENT, content);
-
-		for (Map.Entry<String, String> n : entries) {
-			if (n.getKey().toLowerCase() == "date_string") {
-				Uri += OPTIONAL_DATESTRING.replace(PARAM_DATESTRING, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "priority") {
-				Uri += OPTIONAL_PRIORITY.replace(PARAM_PRIORITY, n.getValue());
-			}
-		}
-		
-		Item ret = null;
-		try
-		{
-			ret = new Item(new JSONObject(call(Uri)), user);
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ItemException e)
-		{
-			
-		}
-		return ret;
-	}
-	
-	public Item updateItem(Integer item_id, Map.Entry<String, String>...entries)
-	{
-		String Uri = UPDATE_ITEM.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_ITEMID, item_id.toString());
-		
-		for (Map.Entry<String, String> n : entries) {
-			if (n.getKey().toLowerCase() == "content") {
-				Uri += OPTIONAL_CONTENT.replace(PARAM_CONTENT, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "date_string") {
-				Uri += OPTIONAL_DATESTRING.replace(PARAM_DATESTRING, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "priority") {
-				Uri += OPTIONAL_PRIORITY.replace(PARAM_PRIORITY, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "indent") {
-				Uri += OPTIONAL_INDENT.replace(PARAM_INDENT, n.getValue());
-			}
-			else if (n.getKey().toLowerCase() == "item_order") {
-				Uri += OPTIONAL_ORDER.replace(PARAM_ORDER, n.getValue());
-			}
-		}
-		
-		Item ret = null;
-		try
-		{
-			ret = new Item(new JSONObject(call(Uri)), user);
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ItemException e)
-		{
-			
-		}
-		return ret;
-	}
-	
-	public void updateOrders(Integer project_id, Integer...item_ids)
-	{
-		boolean first = true;
-		String idstring = "[";
-		for (Integer n : item_ids) {
-			if (first) {
-				idstring += n.toString();
-				first = false;
-			}
-			else { // TODO Crap, where else did I forget this?
+			} else {
 				idstring += "," + n.toString();
 			}
 		}
 		idstring += "]";
 		
-		call(UPDATE_ORDERS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_PROJECTID, project_id.toString()).replace(PARAM_IDS, idstring));
+		query.replace(PARAMETERS.IDS, idstring);
+		String response = call(query);
+		ArrayList<Item> ret = new ArrayList<Item>();
+		try {
+			JSONArray jArray = new JSONArray(response); 
+			for(int i = 0; i < jArray.length(); ++i) {
+				ret.add(new Item(jArray.getJSONObject(i), user));
+			}
+		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
+		return ret;
 	}
 	
 	/**
-	 * @param item_ids
+	 * <pre>
+	 * /API/addItem
+	 * 
+	 * Adds an item to a project.
+	 * 
+	 * Required parameters:
+	 *   proejct_id: The id of the project to add to
+	 *   content: The text of the task
+	 *   token: The user's token (received on login)
+	 *   
+	 * Optional parameters:
+	 *   date_string: The date of the task, added in free form text. Examples of how date_string could look like.
+	 *   priority: The priority of the task (a number between 1 and 4 - 1 for very urgent and 4 for natural).
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with task info. Example:
+	 *     http://todoist.com/API/addItem?content=Test&project_id=22073&priority=1&token=fb5f22601ec566e48083213f7573e908a7a272e5
+	 *     {"due_date": null, "user_id": 1, "collapsed": 0, "in_history": 0, "priority": 1, "item_order": 5, "content": "Test", "indent": 1, "project_id": 22073, "id": 210873, "checked": 0, "date_string": null}
+	 * </pre>
+	 * 
+	 * @param project_id The id of the project to add the item to.
+	 * @param content The content of the item.
+	 * @param entries The optional parameters.
 	 * @return
 	 */
-	public Item[] updateRecurringDate(Integer...item_ids)
-	{
+	public Item addItem(Integer project_id, String content, Map.Entry<String, String>...entries) {
+		String query = TodoistApiHandlerConstants.ADD_ITEM
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.PROJECT_ID, project_id.toString())
+			.replace(PARAMETERS.CONTENT, content);
+
+		for (Map.Entry<String, String> n : entries) {
+			if (n.getKey().toLowerCase() == "date_string") {
+				query += OPTIONAL_PARAMETERS.DATE_STRING.replace(PARAMETERS.DATE_STRING, n.getValue());
+			} else if (n.getKey().toLowerCase() == "priority") {
+				query += OPTIONAL_PARAMETERS.PRIORITY.replace(PARAMETERS.PRIORITY, n.getValue());
+			}
+		}
+		
+		String response = call(query);
+		
+		Item ret = null;
+		try {
+			ret = new Item(new JSONObject(response), user);
+		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO
+			 */
+		}
+		return ret;
+	}
+	
+	/**
+	 * <pre>
+	 * /API/updateItem
+	 * 
+	 * Update an existing item.
+	 * 
+	 * Required parameters:
+	 *   id: The id of the item to update
+	 *   token: The user's token (received on login)
+	 *   
+	 * Optional parameters:
+	 *   content: The text of the task
+	 *   date_string: The date of the task, added in free form text. Examples of how date_string could look like.
+	 *   priority: The priority of the task (a number between 1 and 4 - 1 for very urgent and 4 for natural).
+	 *   indent: The indent of the task
+	 *   item_order: The order of the task
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON object with the updated task info. Example:
+	 *     http://todoist.com/API/updateItem?id=210873&content=TestHello&token=fb5f22601ec566e48083213f7573e908a7a272e5
+	 *     {"due_date": null, "user_id": 1, "collapsed": 0, "in_history": 0, "priority": 1, "item_order": 5, "content": "TestHello", "indent": 1, "project_id": 22073, "id": 210873, "checked": 0, "date_string": null}
+	 * </pre>
+	 * 
+	 * @param item_id The id of the item to update.
+	 * @param entries The optional parameters.
+	 * @return The updated item.
+	 */
+	public Item updateItem(Integer item_id, Map.Entry<String, String>...entries) {
+		String query = TodoistApiHandlerConstants.UPDATE_ITEM
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.ITEM_ID, item_id.toString());
+		
+		for (Map.Entry<String, String> n : entries) {
+			if (n.getKey().toLowerCase() == "content") {
+				query += OPTIONAL_PARAMETERS.CONTENT.replace(PARAMETERS.CONTENT, n.getValue());
+			}
+			else if (n.getKey().toLowerCase() == "date_string") {
+				query += OPTIONAL_PARAMETERS.DATE_STRING.replace(PARAMETERS.DATE_STRING, n.getValue());
+			}
+			else if (n.getKey().toLowerCase() == "priority") {
+				query += OPTIONAL_PARAMETERS.PRIORITY.replace(PARAMETERS.PRIORITY, n.getValue());
+			}
+			else if (n.getKey().toLowerCase() == "indent") {
+				query += OPTIONAL_PARAMETERS.INDENT.replace(PARAMETERS.INDENT, n.getValue());
+			}
+			else if (n.getKey().toLowerCase() == "item_order") {
+				query += OPTIONAL_PARAMETERS.ORDER.replace(PARAMETERS.ORDER, n.getValue());
+			}
+		}
+		
+		String response = call(query);
+		
+		Item ret = null;
+		try {
+			ret = new Item(new JSONObject(response), user);
+		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
+		return ret;
+	}
+	
+	/**
+	 * <pre>
+	 * /API/updateOrders
+	 * 
+	 * Update the order of a project's tasks.
+	 * 
+	 * Required parameters:
+	 *   project_id: The project of the tasks
+	 *   item_id_list: A JSON list of the tasks's order, could be [3,2,9,7]
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with:
+	 *     "ok"
+	 * </pre>
+	 * 
+	 * @param project_id The id of the project to update.
+	 * @param item_ids The order of the ids to update to.
+	 */
+	public void updateOrders(Integer project_id, Integer...item_ids) {
+		/**
+		 * TODO Make the item_ids an actual list?
+		 */
+		String query = TodoistApiHandlerConstants.UPDATE_ORDERS
+			.replace(PARAMETERS.TOKEN, user.getApiToken())
+			.replace(PARAMETERS.PROJECT_ID, project_id.toString());
+		
 		boolean first = true;
 		String idstring = "[";
 		for (Integer n : item_ids) {
 			if (first) {
 				idstring += n.toString();
 				first = false;
-			}
-			else {
+			} else { // TODO Crap, where else did I forget this?
 				idstring += "," + n.toString();
 			}
 		}
 		idstring += "]";
 		
-		String response = call(UPDATE_RECURRING_DATE.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
+		query.replace(PARAMETERS.IDS, idstring);
+		
+		String response = call(query);
+		
+		if (response != "ok") {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
+	}
+	
+	/**
+	 * <pre>
+	 * /API/updateRecurringDate
+	 * 
+	 * Update recurring dates and set them to next date regarding an item's date_string.
+	 * 
+	 * Required parameters:
+	 *   ids: A JSON list of items that are recurring.
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with a JSON list with the updated tasks. Example:
+	 *     [
+	 *       {"due_date": "Wed Mar 3 23:59:59 2010", "collapsed": 0, "labels": [], "is_dst": 0, "has_notifications": 0, "checked": 0, "indent": 1, "children": null, "content": "Test", "user_id": 1, "mm_offset": 60, "in_history": 0, "id": 3457537, "priority": 3, "item_order": 99, "project_id": 455832, "chains": null, "date_string": "every day"}
+	 *     ]
+	 * </pre>
+	 * 
+	 * @param item_ids Items to mark as recurring.
+	 * @return List of updated items.
+	 */
+	public ArrayList<Item> updateRecurringDate(Integer...item_ids) {
+		/**
+		 * TODO Make item_ids an actual list.
+		 */
+		String query = TodoistApiHandlerConstants.UPDATE_RECURRING_DATE
+			.replace(PARAMETERS.TOKEN, user.getApiToken());
+		
+		boolean first = true;
+		String idstring = "[";
+		for (Integer n : item_ids) {
+			if (first) {
+				idstring += n.toString();
+				first = false;
+			} else {
+				idstring += "," + n.toString();
+			}
+		}
+		idstring += "]";
+		
+		query.replace(PARAMETERS.IDS, idstring);
+		
+		String response = call(query);
+		
 		ArrayList<Item> ret = new ArrayList<Item>();
-		try
-		{
+		try {
 			JSONArray jArray = new JSONArray(response); 
 			for(int i = 0; i < jArray.length(); ++i) {
 				ret.add(new Item(jArray.getJSONObject(i), user));
 			}
+		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
 		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-		}
-		catch (ItemException e)
-		{
-			
-		}
-		return (Item[])ret.toArray();
+		return ret;
 	}
 	
-	public void deleteItems(Integer...item_ids)
-	{
-		boolean first = true;
-		String idstring = "[";
-		for (Integer n : item_ids) {
-			if (first) {
-				idstring += n.toString();
-				first = false;
-			}
-			else {
-				idstring += "," + n.toString();
-			}
-		}
-		idstring += "]";
-		
-		call(DELETE_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
-	}
-	
-	public void completeItems(boolean in_history, Integer...item_ids)
-	{
+	/**
+	 * <pre>
+	 * /API/deleteItems
+	 * 
+	 * Delete existing items.
+	 * 
+	 * Required parameters:
+	 *   ids: A JSON list of ids to delete
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with:
+	 *     "ok"
+	 * </pre>
+	 * 
+	 * @param item_ids The items to delete.
+	 */
+	public void deleteItems(Integer...item_ids) {
 		/**
-		 * TODO Make this a private method, listToString()?
+		 * TODO Make item_ids an actual list?
 		 */
+		String query = TodoistApiHandlerConstants.DELETE_ITEMS
+			.replace(PARAMETERS.TOKEN, user.getApiToken());
+		
 		boolean first = true;
 		String idstring = "[";
 		for (Integer n : item_ids) {
 			if (first) {
 				idstring += n.toString();
 				first = false;
-			}
-			else {
+			} else {
 				idstring += "," + n.toString();
 			}
 		}
 		idstring += "]";
 		
-		String Uri = COMPLETE_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring);
-		if (!in_history) Uri += OPTIONAL_INHISTORY.replace(PARAM_INHISTORY, "0");
-		call(Uri);
+		query.replace(PARAMETERS.IDS, idstring);
+		
+		String response = call(query);
+		
+		if (response != "ok") {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
 	}
 	
-	public void uncompleteItems(Integer...item_ids)
-	{
+	/**
+	 * <pre>
+	 * /API/completeItems
+	 * 
+	 * Complete items and move them to history.
+	 * 
+	 * Required parameters:
+	 *   ids: A JSON list of ids to delete
+	 *   token: The user's token (received on login)
+	 *   
+	 * Optional parameters:
+	 *   in_history: If these tasks should be moved to history, default is 1. Setting it to 0 will not move it to history. Useful when checking off sub tasks.
+	 * 
+	 * Successful return:
+	 *   HTTP 200 OK with:
+	 *     "ok"
+	 * </pre>
+	 * 
+	 * @param in_history Move these tasks to history?
+	 * @param item_ids The items to complete.
+	 */
+	public void completeItems(boolean in_history, Integer...item_ids) {
+		/**
+		 * TODO Make item_ids an actual list?
+		 * TODO Make in_history truly optional?
+		 */
+		String query = TodoistApiHandlerConstants.COMPLETE_ITEMS
+			.replace(PARAMETERS.TOKEN, user.getApiToken());
+		
+		if (!in_history) query += OPTIONAL_PARAMETERS.IN_HISTORY.replace(PARAMETERS.IN_HISTORY, "0");
+		
 		boolean first = true;
 		String idstring = "[";
 		for (Integer n : item_ids) {
 			if (first) {
 				idstring += n.toString();
 				first = false;
-			}
-			else {
+			} else {
 				idstring += "," + n.toString();
 			}
 		}
 		idstring += "]";
 		
-		call(UNCOMPLETE_ITEMS.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_IDS, idstring));
+		query.replace(PARAMETERS.IDS, idstring);
+		String response = call(query);
+		
+		if (response != "ok") {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
 	}
 	
-	/*
-	public ArrayList<Item> query(String...queries)
-	{
-		// TODO Double check API.
+	/**
+	 * <pre>
+	 * /API/uncompleteItems
+	 * 
+	 * Uncomplete items and move them to the active projects.
+	 * 
+	 * Required parameters:
+	 *   ids: A JSON list of ids to delete
+	 *   token: The user's token (received on login)
+	 *   
+	 * Successful return:
+	 *   HTTP 200 OK with:
+	 *     "ok"
+	 * </pre>
+	 * 
+	 * @param item_ids
+	 */
+	public void uncompleteItems(Integer...item_ids) {
+		/**
+		 * TODO Make item_ids an actual list.
+		 */
+		String query = TodoistApiHandlerConstants.UNCOMPLETE_ITEMS
+			.replace(PARAMETERS.TOKEN, user.getApiToken());
+		
+		boolean first = true;
+		String idstring = "[";
+		for (Integer n : item_ids) {
+			if (first) {
+				idstring += n.toString();
+				first = false;
+			} else {
+				idstring += "," + n.toString();
+			}
+		}
+		idstring += "]";
+		
+		query.replace(PARAMETERS.IDS, idstring);
+		
+		String response = call(query);
+		
+		if (response != "ok") {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
+	}
+	
+	/**
+	 * <pre>
+	 * /API/query
+	 * 
+	 * Required parameters:
+	 *   queries: A JSON list of queries to search. Examples of searches can be found on Todoist help
+	 *   token: The user's token (received on login)
+	 * 
+	 * Optional parameters:
+	 *   as_count: If set to 1 then no data will be returned, instead count of tasks will be returned.
+	 *    
+	 * Successful return:
+	 *   HTTP 200 OK with JSON data of tasks found:
+	 *     http://todoist.com/API/query?queries=["2007-4-29T10:13","overdue","p1","p2"]&token=fb5f22601ec566e48083213f7573e908a7a272e5
+	 *     
+	 *   JSON data is returned:
+	 *     [
+	 *       {"type": "date", "query": "2007-4-29T10:13", "data": [[...]]},
+	 *       {"type": "overdue", "data": [...]}, 
+	 *       ...
+	 *     ]
+	 * </pre>
+	 */
+	public ArrayList<Item> query(String...queries) {
+		/**
+		 * TODO Make queries an actual list?
+		 */
+		String query = TodoistApiHandlerConstants.QUERY
+			.replace(PARAMETERS.TOKEN, user.getApiToken());
+		
 		boolean first = true;
 		String idstring = "[";
 		for (String n : queries) {
@@ -687,90 +1228,22 @@ public class TodoistApiHandler {
 		}
 		idstring += "]";
 		
-		call(QUERY.replace(PARAM_TOKEN, user.getApiToken()).replace(PARAM_QUERIES, idstring));
-	}
-	*/
-	
-	public User getUser()
-	{
-		return user;
-	}
-	
-	/**
-	 * TODO Implement the query call.
-	 */
-	
-	/* Todoist URLs */
-	private static final String TODOIST = "http://todoist.com/API/";
-	private static final String TODOIST_SSL = "https://todoist.com/API/";
-	
-	/* URI Parameter Values */
-	private static final String PARAM_TOKEN = "MyToken";		// User's API Token
-	private static final String PARAM_PROJECTID = "Project_ID";	// Project's ID
-	private static final String PARAM_EMAIL = "MyEMAIL";		// User's Email Address
-	private static final String PARAM_PASSWORD = "MyPassword";	// User's Password
-	private static final String PARAM_FULLNAME = "MyFullName";	// User's FullName
-	private static final String PARAM_TIMEZONE = "MyTimeZone";	// User's Timezone
-	private static final String PARAM_NAME = "MyName";			// Project Name || Label's Name
-	private static final String PARAM_COLOR = "MyColor";		// Project Color
-	private static final String PARAM_INDENT = "MyIndent";		// Project Indent
-	private static final String PARAM_ORDER = "MyOrder";		// Project Order
-	private static final String PARAM_OLDNAME = "MyOldName";	// Label's Old Name
-	private static final String PARAM_NEWNAME = "MyNewName";	// Label's New Name
-	private static final String PARAM_IDS = "MyIDS";			// JSON List of Item ID's (tasks)
-	private static final String PARAM_CONTENT = "MyContent";	// Text of the Item (task)
-	private static final String PARAM_DATESTRING = "MyDateString"; // Date String of Item (task)
-	private static final String PARAM_PRIORITY = "MyPriority";	// Priority of Item (task)
-	private static final String PARAM_ITEMID = "MyItemID";		// ID of an Item (task)
-	private static final String PARAM_QUERIES = "MyQuery";		// Query
-	private static final String PARAM_INHISTORY = "InHistory";  // In History
-	
-	/* Todoist User API */
-	private static final String LOGIN = TODOIST_SSL + "login?email=" + PARAM_EMAIL + "&password=" + PARAM_PASSWORD; // .Replace(PARAM_EMAIL,email).Replace(PARAM_PASSWORD,password);
-	private static final String GET_TIMEZONES = TODOIST + "getTimezones";
-	private static final String REGISTER = TODOIST_SSL + "register?email=" + PARAM_EMAIL + "&full_name=" + PARAM_FULLNAME + "&password=" + PARAM_PASSWORD + "&timezone=" + PARAM_TIMEZONE; // .Replace(PARAM_EMAIL,email).Replace(PARAM_FULLNAME,full_name).Replace(PARAM_PASSWORD,password).Replace(PARAM_TIMEZONE,timezone);
-	private static final String UPDATE_USER = TODOIST_SSL + "updateUser?token=" + PARAM_TOKEN; // .Replace(PARAM_TOKEN,token);
+		query.replace(PARAMETERS.QUERIES, idstring);
 		
-	/* Todoist Projects API */
-	private static final String GET_PROJECTS = TODOIST + "getProjects?token=" + PARAM_TOKEN; // .Replace(PARAM_TOKEN,token);
-	private static final String GET_PROJECT = TODOIST + "getProject?token=" + PARAM_TOKEN + "&project_id=" + PARAM_PROJECTID; // .Replace(PARAM_TOKEN,token).Replace(PARAM_PROJECTID,project_id);
-	private static final String ADD_PROJECT = TODOIST + "addProject?name=" + PARAM_NAME + "&token=" + PARAM_TOKEN; // .Replace(PARAM_NAME,name).Replace(PARAM_TOKEN,token);
-	private static final String UPDATE_PROJECT = TODOIST + "updateProject?project_id=" + PARAM_PROJECTID + "&token=" + PARAM_TOKEN; // .Replace(PARAM_PROJECTID,project_id).Replace(PARAM_TOKEN,token);
-	private static final String DELETE_PROJECT = TODOIST + "deleteProject?project_id=" + PARAM_PROJECTID + "&token=" + PARAM_TOKEN; // .Replace(PARAM_PROJECTID,project_id).Replace(PARAM_TOKEN,token);
-	
-	/* Todoist Labels API */
-	private static final String GET_LABELS = TODOIST + "getLabels?project_id=" + PARAM_PROJECTID + "&token=" + PARAM_TOKEN; // .Replace(PARAM_PROJECTID, project_id).Replace(PARAM_TOKEN,token);
-	private static final String UPDATE_LABEL = TODOIST + "updateLabel?old_name=" + PARAM_OLDNAME + "&new_name=" + PARAM_NEWNAME + "&token=" + PARAM_TOKEN; // .Replace(PARAM_OLDNAME,old_name).Replace(PARAM_NEWNAME,new_name).Replace(PARAM_TOKEN,token);
-	private static final String DELETE_LABEL = TODOIST + "deleteLabel?name=" + PARAM_NAME + "&token=" + PARAM_TOKEN; // .Replace(PARAM_NAME, name).Replace(PARAM_TOKEN,token);
-	
-	/* Todoist Items API */
-	private static final String GET_UNCOMPLETED_ITEMS = TODOIST + "getUncompletedItems?project_id=" + PARAM_PROJECTID + "&token=" + PARAM_TOKEN; //.Replace(PARAM_PROJECTID,project_id).Replace(PARAM_TOKEN,token);
-	private static final String GET_COMPLETED_ITEMS = TODOIST + "getCompletedItems?project_id=" + PARAM_PROJECTID + "&token=" + PARAM_TOKEN; //.Replace(PARAM_PROJECTID,project_id).Replace(PARAM_TOKEN,token);
-	private static final String GET_ITEMS_BY_ID = TODOIST + "getItemsById?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; //.Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
-	private static final String ADD_ITEM = TODOIST + "addItem?project_id=" + PARAM_PROJECTID + "&content=" + PARAM_CONTENT + "&token=" + PARAM_TOKEN;
-	private static final String UPDATE_ITEM = TODOIST + "updateItem?id=" + PARAM_ITEMID + "&token=" + PARAM_TOKEN; // .Replace(PARAM_ITEMID,id).Replace(PARAM_TOKEN,token);
-	private static final String UPDATE_ORDERS = TODOIST + "updateOrders?project_id=" + PARAM_PROJECTID + "&item_id_list=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_PROJECTID,project_id).Replace(PARAM_IDS,item_id_list).Replace(PARAM_TOKEN,token);
-	private static final String UPDATE_RECURRING_DATE = TODOIST + "UpdateRecurringDate?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
-	private static final String DELETE_ITEMS = TODOIST + "DeleteItems?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
-	private static final String COMPLETE_ITEMS = TODOIST + "CompleteItems?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
-	private static final String UNCOMPLETE_ITEMS = TODOIST + "UncompleteItems?ids=" + PARAM_IDS + "&token=" + PARAM_TOKEN; // .Replace(PARAM_IDS,ids).Replace(PARAM_TOKEN,token);
-	
-	/* Date Query & Search API */
-	private static final String QUERY = TODOIST + "query?queries=" + PARAM_QUERIES + "&token=" + PARAM_TOKEN; // .Replace(PARAM_QUERIES,queries).Replace(PARAM_TOKEN,token);
-	
-	/* Todoist Optional API Parameters 
-	 * Check /docs/ for Details on OPTIONAL parameters 
-	 */
-	private static final String OPTIONAL_EMAIL = "&email=" + PARAM_EMAIL; // .Replace(PARAM_EMAIL,email);
-	private static final String OPTIONAL_FULLNAME = "&full_name=" + PARAM_FULLNAME; // .Replace(PARAM_FULLNAME, full_name);
-	private static final String OPTIONAL_PASSWORD = "&password=" + PARAM_PASSWORD; // .Replace(PARAM_PASSWORD, password);
-	private static final String OPTIONAL_TIMEZONE = "&timezone=" + PARAM_TIMEZONE; // .Replace(PARAM_TIMEZONE, timezone);
-	private static final String OPTIONAL_NAME = "&name=" + PARAM_NAME;	// .Replace(PARAM_NAME,name);
-	private static final String OPTIONAL_COLOR = "&color=" + PARAM_COLOR;	// .Replace(PARAM_COLOR,color);
-	private static final String OPTIONAL_INDENT = "&indent=" + PARAM_INDENT;	// .Replace(PARAM_INDENT,indent);
-	private static final String OPTIONAL_ORDER = "&order=" + PARAM_ORDER;	// .Replace(PARAM_ORDER,order);
-	private static final String OPTIONAL_DATESTRING = "&date_string=" + PARAM_DATESTRING; // .Replace(PARAM_DATESTRING, date_string);
-	private static final String OPTIONAL_PRIORITY = "&priority=" + PARAM_PRIORITY;	// .Replace(PARAM_PRIORITY, priority);
-	private static final String OPTIONAL_CONTENT = "&content=" + PARAM_CONTENT; // .Replace(PARAM_CONTENT, content);
-	private static final String OPTIONAL_INHISTORY = "&in_history=" + PARAM_INHISTORY; // .Replace(PARAM_INHISTORY, inhistory);
+		String response = call(query);
+		
+		ArrayList<Item> ret = new ArrayList<Item>();
+		try {
+			JSONArray jArray = new JSONArray(response); 
+			for(int i = 0; i < jArray.length(); ++i) {
+				ret.add(new Item(jArray.getJSONObject(i), user));
+			}
+		} catch (JSONException e) {
+			Log.e(this.toString(), "Received the following response from Todoist: " + response);
+			/**
+			 * TODO Error Handling.
+			 */
+		}
+		return ret;
+	}
 }

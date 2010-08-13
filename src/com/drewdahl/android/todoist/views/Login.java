@@ -47,8 +47,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.drewdahl.android.todoist.R;
-import com.drewdahl.android.todoist.models.User;
-import com.drewdahl.android.todoist.models.UserException;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 
 /**
  * An Activity that allows the user to Login.
@@ -85,22 +84,16 @@ public class Login extends Activity {
             		showToast("Please, input your password.");
             	} else {
             		try {
-            			User user = null;
             			Log.d(this.toString(), "Logging in");
-            			user = User.login(email, password);
+            			TodoistApiHandler.getInstance().login(email, password);
             			/**
             			 * TODO Make this actually save the user information.
             			 * TODO Only if we want to remember information?
             			 */
-            			user.save(Login.this.getContentResolver());
-            			Log.d(this.toString(), "Logged in");
-            			Log.d(this.toString(), "Notifying calling activity");
+            			TodoistApiHandler.getInstance().getUser().save(Login.this.getContentResolver());
                 		setResult(RESULT_OK, new Intent());
-                		/**
-                		 * TODO Save the user information if we want to remember.
-                		 */
                 		finish(); // Kill this activity so we don't listen anymore.
-            		} catch (UserException e) {
+            		} catch (RuntimeException e) {
             			Log.d(this.toString(), "Caught exception during login");
             			/**
             			 * TODO if the following isn't expected we should support request it.

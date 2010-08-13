@@ -36,19 +36,13 @@
 
 package com.drewdahl.android.todoist.models;
 
-import java.util.ArrayList;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.os.Parcel;
-import android.os.Parcelable;
 
-import com.drewdahl.android.todoist.Constants;
-import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
-import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerException;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.JSON;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 
 /**
@@ -63,72 +57,36 @@ import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
  * associate the user with an actual todoist account.  Without that what
  * use is there for this thing?
  */
-public class User implements Parcelable {
+public class User {
 	public static final String KEY = "com.drewdahl.android.todoist.models.User";
 	
-	/**
-	 * @param JSONObject obj Just so we never get confused.
-	 */
-	public User(JSONObject obj) throws JSONException
-	{
-		email = obj.getString(Constants.JSON_EMAIL);
-		full_name = obj.getString(Constants.JSON_FULLNAME);
-		id = obj.getInt(Constants.JSON_ID);
-		api_token = obj.getString(Constants.JSON_APITOKEN);
-		start_page = obj.getString(Constants.JSON_STARTPAGE);
-		timezone = obj.getString(Constants.JSON_TIMEZONE);
+	public User(JSONObject obj) throws JSONException {
+		email = obj.getString(JSON.EMAIL);
+		full_name = obj.getString(JSON.FULL_NAME);
+		id = obj.getInt(JSON.ID);
+		api_token = obj.getString(JSON.API_TOKEN);
+		start_page = obj.getString(JSON.START_PAGE);
+		timezone = obj.getString(JSON.TIMEZONE);
 		/**
 		 * TODO Get this right.
 		tz_offset = obj.getJSONObject(Constants.JSON_TZOFFSET);
 		 */
-		time_format = obj.getInt(Constants.JSON_TIMEFORMAT);
-		date_format = obj.getInt(Constants.JSON_DATEFORMAT);
-		sort_order = obj.getInt(Constants.JSON_SORTORDER);
-		twitter = obj.getString(Constants.JSON_TWITTER);
-		jabber = obj.getString(Constants.JSON_JABBER);
-		msn = obj.getString(Constants.JSON_MSN);
-		mobile_number = obj.getString(Constants.JSON_MOBILENUMBER);
-		mobile_host = obj.getString(Constants.JSON_MOBILEHOST);
-	}
-	
-	public ArrayList<Project> GetProjects()
-	{
-		return TodoistApiHandler.getInstance().getProjects();
-	}
-	
-	public static User login(String email, String password) throws UserException {
-		User user = null;
-		
-		try {
-			user = TodoistApiHandler.getInstance().login(email, password);
-		} catch (TodoistApiHandlerException e) {
-			throw new UserException("Login Failure.");
-		}
-		return user;
-	}
-	
-	public static User register(String email, String full_name, String password, String timezone) {
-		User user = null;
-		
-		user = TodoistApiHandler.getInstance().register(email, full_name, password, timezone);
-		return user;
-	}
-	
-	public static User getUser() {
-		User user = null;
-		
-		user = TodoistApiHandler.getInstance().getUser();
-		return user;
+		time_format = obj.getInt(JSON.TIME_FORMAT);
+		date_format = obj.getInt(JSON.DATE_FORMAT);
+		sort_order = obj.getInt(JSON.SORT_ORDER);
+		twitter = obj.getString(JSON.TWITTER);
+		jabber = obj.getString(JSON.JABBER);
+		msn = obj.getString(JSON.MSN);
+		mobile_number = obj.getString(JSON.MOBILE_NUMBER);
+		mobile_host = obj.getString(JSON.MOBILE_HOST);
 	}
 	
 	public void save(ContentResolver resolver) {
-		/**
-		 * TODO Move this to the service's API and let Service be the gatekeeper.
-		 */
 		ContentValues values = new ContentValues();
+
 		values.put(Users.EMAIL, email);
 		values.put(Users.FULL_NAME, full_name);
-		//values.put(Users._ID, id);
+		values.put(Users._ID, id);
 		values.put(Users.API_TOKEN, api_token);
 		values.put(Users.START_PAGE, start_page);
 		values.put(Users.TIMEZONE, timezone);
@@ -144,6 +102,7 @@ public class User implements Parcelable {
 		values.put(Users.MSN, msn);
 		values.put(Users.MOBILE_NUMBER, mobile_number);
 		values.put(Users.MOBILE_HOST, mobile_host);
+		
 		resolver.insert(Users.CONTENT_URI, values);
 	}
 	
@@ -151,162 +110,127 @@ public class User implements Parcelable {
 	 * Getters and Setters ...
 	 */
 	
-	public String getEmail()
-	{
+	public String getEmail() {
 		return email;
 	}
 	
-	public void setEmail(String email)
-	{
+	public void setEmail(String email) {
 		this.email = email;
 	}
 	
-	public String getFullName()
-	{
+	public String getFullName() {
 		return full_name;
 	}
 	
-	public void setFullName(String full_name)
-	{
+	public void setFullName(String full_name) {
 		this.full_name = full_name;
 	}
 	
-	public Integer getId()
-	{
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(Integer id)
-	{
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	public String getApiToken()
-	{
+	public String getApiToken() {
 		return api_token;
 	}
 	
-	public void setApiToken(String api_token)
-	{
+	public void setApiToken(String api_token) {
 		this.api_token = api_token;
 	}
 	
-	public String getStartPage()
-	{
+	public String getStartPage() {
 		return start_page;
 	}
 	
-	public void setStartPage(String start_page)
-	{
+	public void setStartPage(String start_page) {
 		this.start_page = start_page;
 	}
 	
-	public String getTimezone()
-	{
+	public String getTimezone() {
 		return timezone;
 	}
 	
-	public void setTimezone(String timezone)
-	{
+	public void setTimezone(String timezone) {
 		this.timezone = timezone;
 	}
 	
 	/**
 	 * TODO Get this right.
-	public JSONObject getTzOffset()
-	{
+	public JSONObject getTzOffset() {
 		return tz_offset;
 	}
 	
-	public void setTzOffset(JSONObject tz_offset)
-	{
+	public void setTzOffset(JSONObject tz_offset) {
 		this.tz_offset = tz_offset;
 	}
 	 */
 	
-	public Integer getTimeFormat()
-	{
+	public Integer getTimeFormat() {
 		return time_format;
 	}
 	
-	public void setTimeFormat(Integer time_format)
-	{
+	public void setTimeFormat(Integer time_format) {
 		this.time_format = time_format;
 	}
 	
-	public Integer getDateFormat()
-	{
+	public Integer getDateFormat() {
 		return date_format;
 	}
 	
-	public void setDateFormat(Integer date_format)
-	{
+	public void setDateFormat(Integer date_format) {
 		this.date_format = date_format;
 	}
 	
-	public Integer getSortOrder()
-	{
+	public Integer getSortOrder() {
 		return sort_order;
 	}
 	
-	public void setSortOrder(Integer sort_order)
-	{
+	public void setSortOrder(Integer sort_order) {
 		this.sort_order = sort_order;
 	}
 	
-	public String getTwitter()
-	{
+	public String getTwitter() {
 		return twitter;
 	}
 	
-	public void setTwitter(String twitter)
-	{
+	public void setTwitter(String twitter) {
 		this.twitter = twitter;
 	}
 	
-	public String getJabber()
-	{
+	public String getJabber() {
 		return jabber;
 	}
 	
-	public void setJabber(String jabber)
-	{
+	public void setJabber(String jabber) {
 		this.jabber = jabber;
 	}
 	
-	public String getMsn()
-	{
+	public String getMsn() {
 		return msn;
 	}
 	
-	public void setMsn(String msn)
-	{
+	public void setMsn(String msn) {
 		this.msn = msn;
 	}
 	
-	public String getMobileNumber()
-	{
+	public String getMobileNumber() {
 		return mobile_number;
 	}
 	
-	public void setMobileNumber(String mobile_number)
-	{
+	public void setMobileNumber(String mobile_number) {
 		this.mobile_number = mobile_number;
 	}
-	
-	public String getMobileHost()
-	{
+	 
+	public String getMobileHost() {
 		return mobile_host;
 	}
 	
-	public void setMobileHost(String mobile_host)
-	{
+	public void setMobileHost(String mobile_host) {
 		this.mobile_host = mobile_host;
-	}
-	
-	public String getToken()
-	{
-		return token;
 	}
 	
 	private String email;		  // User's e-mail address	someGuy@someDomain.com
@@ -327,70 +251,4 @@ public class User implements Parcelable {
 	private String msn;			  // User's msn account		amix_bin@msn.com
 	private String mobile_number; // User's mobile number	
 	private String mobile_host;	  // User's mobile host
-	private String token;         // The login session token from the API.
-	
-	/**
-	 * @category Parcelable
-	 * 
-	 * TODO http://developer.android.com/reference/android/os/Parcelable.html
-	 */
-	public void writeToParcel(Parcel out, int flags)
-	{
-		out.writeString(email);
-		out.writeString(full_name);
-		out.writeInt(id);
-		out.writeString(api_token);
-		out.writeString(start_page);
-		out.writeString(timezone);
-		/**
-		 * TODO Get this right.
-		parcel.writeSOMETHING(tz_offset);
-		 */
-		out.writeInt(time_format);
-		out.writeInt(date_format);
-		out.writeInt(sort_order);
-		out.writeString(twitter);
-		out.writeString(jabber);
-		out.writeString(msn);
-		out.writeString(mobile_number);
-		out.writeString(mobile_host);
-		out.writeString(token);
-	}
-	
-	public int describeContents()
-	{
-		return 0;
-	}
-	
-	public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
-		public User createFromParcel(Parcel in) {
-			return new User(in);
-		}
-		
-		public User[] newArray(int size) {
-			return new User[size];
-		}
-	};
-	
-	private User(Parcel in) {
-		email = in.readString();
-		full_name = in.readString();
-		id = in.readInt();
-		api_token = in.readString();
-		start_page = in.readString();
-		timezone = in.readString();
-		/**
-		 * TODO Get this right.
-		tz_offset = in.readSOMETHING();
-		 */
-		time_format = in.readInt();
-		date_format = in.readInt();
-		sort_order = in.readInt();
-		twitter = in.readString();
-		jabber = in.readString();
-		msn = in.readString();
-		mobile_number = in.readString();
-		mobile_host = in.readString();
-		token = in.readString();
-	}
 }
