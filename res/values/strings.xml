@@ -2,15 +2,7 @@
 <resources>
     <string name="app_name">Todoist for Android</string>
     <string name="app_version">Abas</string>
-	<string name="main_no_items">No items to display</string>
-	<string name="login">Login</string>
-	<!-- TODO Necessary if we include this in the stacktrace we e-mail? -->
-	<string-array name="support_areas">
-		<item>Login</item>
-		<item>Registration</item>
-		<item>Item List</item>
-		<item>Item Editor</item>
-		<item>Project List</item>
-		<item>Project Editor</item>
-	</string-array>
+    <string name="project_title">Todoist for Android :: Projects</string>
+    <string name="item_title">Todoist for Android :: Items</string>
+    <string name="login_title">Todoist for Android :: Login</string>
 </resources>
