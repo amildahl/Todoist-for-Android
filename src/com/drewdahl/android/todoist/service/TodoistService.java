@@ -24,22 +24,32 @@ public class TodoistService extends Service {
 	
 	class TodoistWorker implements Runnable {
 		public void run() {
-			while (TodoistApiHandler.getInstance().getUser() == null);
+			while (TodoistApiHandler.getInstance().getUser() == null) {
+				try {
+					Thread.currentThread().sleep(5000);
+				} catch (InterruptedException e) {
+					continue;
+				}
+			}
 			Long now = Long.valueOf(System.currentTimeMillis());
+			Long expire = now - (5 * 60 * 100000);
 
 			Cursor c = null;
 				
-			c = getContentResolver().query(Projects.CONTENT_URI, null, Projects.CACHE_TIME + "<=" + now.toString(), null, null);
+			c = getContentResolver().query(Projects.CONTENT_URI, null, Projects.CACHE_TIME + "<=" + expire.toString(), null, null);
 			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-				Project p = new Project(c, TodoistApiHandler.getInstance().getUser());
+				Integer pid = c.getInt(c.getColumnIndex(Projects._ID));
+				Project p = TodoistApiHandler.getInstance().getProject(pid);
 				p.save(getContentResolver());
 			}
 			c.close();
 
-			c = getContentResolver().query(Items.CONTENT_URI, null, Items.CACHE_TIME + "<=" + now, null, null);
+			c = getContentResolver().query(Items.CONTENT_URI, null, Items.CACHE_TIME + "<=" + expire.toString(), null, null);
 			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-				Item i = new Item(c, TodoistApiHandler.getInstance().getUser());
-				i.save(getContentResolver());
+				Integer iid = c.getInt(c.getColumnIndex(Projects._ID));
+				for (Item i : TodoistApiHandler.getInstance().getItemsById(iid)) {
+					i.save(getContentResolver());
+				}
 			}
 			c.close();
 		}
@@ -54,7 +64,13 @@ public class TodoistService extends Service {
 	}
 	
 	private void initialSync() {
-		while (TodoistApiHandler.getInstance().getUser() == null);
+		while (TodoistApiHandler.getInstance().getUser() == null) {
+			try {
+				Thread.currentThread().sleep(5000);
+			} catch (InterruptedException e) {
+				continue;
+			}
+		}
 		Log.d(this.toString(), "Project Count: " + TodoistApiHandler.getInstance().getProjects().size());
 		for (Project p : TodoistApiHandler.getInstance().getProjects()) {
 			Log.d(this.toString(), "Adding project: " + p.getName());

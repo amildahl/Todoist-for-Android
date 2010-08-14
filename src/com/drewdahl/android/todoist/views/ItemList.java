@@ -57,7 +57,9 @@ public class ItemList extends ListActivity {
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
+        
         /**
+         * TODO Add context menus.
          * TODO Roll this into the Item interface?
          */
         Cursor c = getContentResolver().query(Items.CONTENT_URI, null, null, null, null);
