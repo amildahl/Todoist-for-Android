@@ -38,6 +38,7 @@ package com.drewdahl.android.todoist.views;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -93,12 +94,17 @@ public class Login extends Activity {
             			TodoistApiHandler.getInstance().getUser().save(Login.this.getContentResolver());
                 		setResult(RESULT_OK, new Intent());
                 		finish(); // Kill this activity so we don't listen anymore.
+            		} catch (SQLiteConstraintException e) {
+            			/**
+            			 * TODO Hopefully this is temporary.
+            			 */
+            			Log.d(this.toString(), "Caught a constraint exception");
+            			Log.d(this.toString(), "The following constraint failed: " + e.getLocalizedMessage());
             		} catch (RuntimeException e) {
             			Log.d(this.toString(), "Caught exception during login");
             			/**
             			 * TODO if the following isn't expected we should support request it.
             			 */
-            			Log.e(this.toString(), e.getStackTrace().toString());
             			showToast("Incorrect Password!");
             		}
            		}

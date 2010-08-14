@@ -857,7 +857,7 @@ public class TodoistApiHandler {
 		} catch (JSONException e) {
 			Log.e(this.toString(), "Received the following response from Todoist: " + response);
 			/**
-			 * TODO
+			 * TODO Error Handling.
 			 */
 		}
 		return ret;
