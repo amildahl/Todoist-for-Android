@@ -62,8 +62,8 @@ public class ItemList extends ListActivity {
          */
         Cursor c = getContentResolver().query(Items.CONTENT_URI, null, null, null, null);
         startManagingCursor(c);
-        String[] cols = new String[]{Items.CONTENT,Items.PROJECT_ID};
-        int[] names = new int[]{R.id.TextViewItemContent,R.id.TextViewItemCategory};
+        String[] cols = new String[]{Items.CONTENT};
+        int[] names = new int[]{R.id.TextViewItemContent};
         adapter = new SimpleCursorAdapter(this, R.layout.item, c, cols, names);
         setListAdapter(adapter);
     }
