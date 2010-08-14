@@ -110,7 +110,7 @@ public class TodoistProvider extends ContentProvider {
 					+ Items._ID + " INTEGER PRIMARY KEY,"
 					+ Items.USER_ID + " INTEGER,"
 					+ Items.PROJECT_ID + " INTEGER,"
-					+ Items.DUE_DATE + " INTEGER,"
+					+ Items.DUE_DATE + " TEXT,"
 					+ Items.COLLAPSED + " INTEGER,"
 					+ Items.IN_HISTORY + " INTEGER,"
 					+ Items.PRIORITY + " INTEGER,"

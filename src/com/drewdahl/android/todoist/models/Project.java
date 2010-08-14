@@ -91,6 +91,7 @@ public class Project {
 		} else {
 			resolver.update(myUri, values, null, null);
 		}
+		c.close();
 	}
 
 	/**

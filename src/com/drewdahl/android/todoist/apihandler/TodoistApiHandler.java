@@ -145,7 +145,7 @@ public class TodoistApiHandler {
 		try {
 			getRequest.setURI(new URI(Uri));
 			HttpResponse response = client.execute(getRequest);
-			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()), 8);
 			
 			/**
 			 * TODO Return status code to requester?
@@ -176,7 +176,7 @@ public class TodoistApiHandler {
 				}
 			}
 		}
-		Log.d(this.toString(), "Web Result: " + ret);
+		Log.d(this.toString(), "Web Result: " + ret.toString());
 		return ret;
 	}
 	
@@ -691,6 +691,7 @@ public class TodoistApiHandler {
 	 * @return List of items.
 	 */
 	public ArrayList<Item> getUncompletedItems(Integer project_id) {
+		Log.d(this.toString(), "Calling getUncompletedItems");
 		String query = TodoistApiHandlerConstants.GET_UNCOMPLETED_ITEMS
 			.replace(PARAMETERS.TOKEN, user.getApiToken())
 			.replace(PARAMETERS.PROJECT_ID, project_id.toString());
@@ -733,6 +734,7 @@ public class TodoistApiHandler {
 	 * @return The list of items.
 	 */
 	public ArrayList<Item> getCompletedItems(Integer project_id) {
+		Log.d(this.toString(), "Calling getCompletedItems");
 		String query = TodoistApiHandlerConstants.GET_COMPLETED_ITEMS
 			.replace(PARAMETERS.TOKEN, user.getApiToken())
 			.replace(PARAMETERS.PROJECT_ID, project_id.toString());

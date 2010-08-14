@@ -34,7 +34,7 @@ import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
 public class Item {
 	public Item(JSONObject obj, User user) throws JSONException {
-		due_date = obj.getInt(JSON.DUE_DATE);
+		due_date = obj.getString(JSON.DUE_DATE);
 		this.user = user;
 		collapsed = obj.getInt(JSON.COLLAPSED);
 		in_history = obj.getInt(JSON.IN_HISTORY);
@@ -52,7 +52,7 @@ public class Item {
 	}
 
 	public Item(Cursor c, User user) {
-		due_date = c.getInt(c.getColumnIndex(Items.DUE_DATE));
+		due_date = c.getString(c.getColumnIndex(Items.DUE_DATE));
 		this.user = user;
 		collapsed = c.getInt(c.getColumnIndex(Items.COLLAPSED));
 		in_history = c.getInt(c.getColumnIndex(Items.IN_HISTORY));
@@ -89,16 +89,17 @@ public class Item {
 		} else {
 			resolver.update(myUri, values, null, null);
 		}
+		c.close();
 	}
 
 	/**
 	 * Setters and Getters.
 	 */
-	public Integer getDueDate() {
+	public String getDueDate() {
 		return due_date;
 	}
 	
-	public void setDueDate(Integer due_date) {
+	public void setDueDate(String due_date) {
 		this.due_date = due_date;
 	}
 	
@@ -186,7 +187,7 @@ public class Item {
 		this.date_string = date_string;
 	}
 	
-	private Integer due_date;
+	private String due_date;
 	private User user = null;
 	private Integer collapsed;
 	private Integer in_history;
