@@ -20,53 +20,52 @@ public class TodoistService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		initialSync();
-		startScheduledSync();
 	}
 	
 	class TodoistWorker implements Runnable {
 		public void run() {
-			if (TodoistApiHandler.getInstance().getUser() != null) {
-				Long now = Long.valueOf(System.currentTimeMillis());
+			while (TodoistApiHandler.getInstance().getUser() == null);
+			Long now = Long.valueOf(System.currentTimeMillis());
 
-				Cursor c = null;
+			Cursor c = null;
 				
-				c = getContentResolver().query(Projects.CONTENT_URI, null, Projects.CACHE_TIME + "<=" + now.toString(), null, null);
-				for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-					Project p = new Project(c, TodoistApiHandler.getInstance().getUser());
-					p.save(getContentResolver());
-				}
-
-				c = getContentResolver().query(Items.CONTENT_URI, null, Items.CACHE_TIME + "<=" + now, null, null);
-				for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-					Item i = new Item(c, TodoistApiHandler.getInstance().getUser());
-					i.save(getContentResolver());
-				}
+			c = getContentResolver().query(Projects.CONTENT_URI, null, Projects.CACHE_TIME + "<=" + now.toString(), null, null);
+			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+				Project p = new Project(c, TodoistApiHandler.getInstance().getUser());
+				p.save(getContentResolver());
 			}
-			/**
-			 * TODO Threads need to die.
-			 */
+			c.close();
+
+			c = getContentResolver().query(Items.CONTENT_URI, null, Items.CACHE_TIME + "<=" + now, null, null);
+			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+				Item i = new Item(c, TodoistApiHandler.getInstance().getUser());
+				i.save(getContentResolver());
+			}
+			c.close();
 		}
 	}
 	
 	private void startScheduledSync() {
 		ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
-		scheduler.scheduleAtFixedRate(new TodoistWorker(), 0, 3, TimeUnit.SECONDS);
+		/**
+		 * TODO Make this value configurable.
+		 */
+		scheduler.scheduleAtFixedRate(new TodoistWorker(), 0, 300, TimeUnit.SECONDS);
 	}
 	
 	private void initialSync() {
-		if (TodoistApiHandler.getInstance().getUser() != null) {
-			Log.d(this.toString(), "Project Count: " + TodoistApiHandler.getInstance().getProjects().size());
-			for (Project p : TodoistApiHandler.getInstance().getProjects()) {
-				Log.d(this.toString(), "Adding project: " + p.getName());
-				p.save(TodoistService.this.getContentResolver());
-				for (Item i : TodoistApiHandler.getInstance().getUncompletedItems(p.getId())) {
-					Log.d(this.toString(), "Adding item: " + i.getId());
-					i.save(TodoistService.this.getContentResolver());
-				}
-				for (Item i : TodoistApiHandler.getInstance().getCompletedItems(p.getId())) {
-					Log.d(this.toString(), "Adding item: " + i.getId());
-					i.save(TodoistService.this.getContentResolver());
-				}
+		while (TodoistApiHandler.getInstance().getUser() == null);
+		Log.d(this.toString(), "Project Count: " + TodoistApiHandler.getInstance().getProjects().size());
+		for (Project p : TodoistApiHandler.getInstance().getProjects()) {
+			Log.d(this.toString(), "Adding project: " + p.getName());
+			p.save(TodoistService.this.getContentResolver());
+			for (Item i : TodoistApiHandler.getInstance().getUncompletedItems(p.getId())) {
+				Log.d(this.toString(), "Adding item: " + i.getId());
+				i.save(TodoistService.this.getContentResolver());
+			}
+			for (Item i : TodoistApiHandler.getInstance().getCompletedItems(p.getId())) {
+				Log.d(this.toString(), "Adding item: " + i.getId());
+				i.save(TodoistService.this.getContentResolver());
 			}
 		}
 	}
