@@ -61,7 +61,13 @@ public class Launcher extends Activity {
 		Intent intent = new Intent(this, ItemList.class);
 		
 		startActivity(intent);
-		
 		finish();
+	}
+	
+	public static void startSupportIssue() {
+		/**
+		 * TODO Call this function when a support issue needs to be handled.
+		 * TODO Determine what parameters we want from the system when an issue occurs.
+		 */
 	}
 }

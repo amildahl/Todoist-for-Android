@@ -42,6 +42,8 @@ import org.json.JSONObject;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.JSON;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
@@ -59,6 +61,17 @@ public class Project {
 		id = obj.getInt(JSON.ID);
 	}
 
+	public Project(Cursor c, User user) {
+		this.user = user;
+		name = c.getString(c.getColumnIndex(Projects.NAME));
+		color = c.getString(c.getColumnIndex(Projects.COLOR));
+		collapsed = c.getInt(c.getColumnIndex(Projects.COLLAPSED));
+		item_order = c.getInt(c.getColumnIndex(Projects.ITEM_ORDER));
+		cache_count = c.getInt(c.getColumnIndex(Projects.CACHE_COUNT));
+		indent = c.getInt(c.getColumnIndex(Projects.INDENT));
+		id = c.getInt(c.getColumnIndex(Projects._ID));
+	}
+
 	public void save(ContentResolver resolver) {
 		ContentValues values = new ContentValues();
 		
@@ -71,7 +84,13 @@ public class Project {
 		values.put(Projects.INDENT, indent);
 		values.put(Projects._ID, id);
 
-		resolver.insert(ContentUris.withAppendedId(Projects.CONTENT_URI, id), values);
+		Uri myUri = ContentUris.withAppendedId(Projects.CONTENT_URI, id);
+		Cursor c = resolver.query(myUri, null, null, null, null);
+		if (c.getCount() < 1) {
+			resolver.insert(Projects.CONTENT_URI, values);
+		} else {
+			resolver.update(myUri, values, null, null);
+		}
 	}
 
 	/**

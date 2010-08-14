@@ -25,6 +25,8 @@ import org.json.JSONObject;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.JSON;
@@ -49,6 +51,21 @@ public class Item {
 		date_string = obj.getString(JSON.DATE_STRING);
 	}
 
+	public Item(Cursor c, User user) {
+		due_date = c.getInt(c.getColumnIndex(Items.DUE_DATE));
+		this.user = user;
+		collapsed = c.getInt(c.getColumnIndex(Items.COLLAPSED));
+		in_history = c.getInt(c.getColumnIndex(Items.IN_HISTORY));
+		priority = c.getInt(c.getColumnIndex(Items.PRIORITY));
+		item_order = c.getInt(c.getColumnIndex(Items.ITEM_ORDER));
+		content = c.getString(c.getColumnIndex(Items.CONTENT));
+		indent = c.getInt(c.getColumnIndex(Items.INDENT));
+		this.project = TodoistApiHandler.getInstance().getProject(c.getInt(c.getColumnIndex(Items.PROJECT_ID)));
+		id = c.getInt(c.getColumnIndex(Items._ID));
+		checked = c.getInt(c.getColumnIndex(Items.CHECKED));
+		date_string = c.getString(c.getColumnIndex(Items.DATE_STRING));
+	}
+
 	public void save(ContentResolver resolver) {
 		ContentValues values = new ContentValues();
 
@@ -65,7 +82,13 @@ public class Item {
 		values.put(Items.CHECKED, checked);
 		values.put(Items.DATE_STRING, date_string);
 
-		resolver.insert(ContentUris.withAppendedId(Items.CONTENT_URI, id), values);
+		Uri myUri = ContentUris.withAppendedId(Items.CONTENT_URI, id);
+		Cursor c = resolver.query(myUri, null, null, null, null);
+		if (c.getCount() < 1) {
+			resolver.insert(Items.CONTENT_URI, values);
+		} else {
+			resolver.update(myUri, values, null, null);
+		}
 	}
 
 	/**
