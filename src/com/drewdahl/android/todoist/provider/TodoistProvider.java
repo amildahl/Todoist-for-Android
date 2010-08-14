@@ -4,7 +4,6 @@ import com.drewdahl.android.todoist.provider.TodoistProviderMetaData;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Projects;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
-import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.CacheTimes;
 
 import java.util.HashMap;
 
@@ -66,20 +65,13 @@ public class TodoistProvider extends ContentProvider {
 		sUsersProjectionMap.put(Users.JABBER, Users.JABBER);
 		sUsersProjectionMap.put(Users.DATE_FORMAT, Users.DATE_FORMAT);
 		sUsersProjectionMap.put(Users.PREMIUM_UNTIL, Users.PREMIUM_UNTIL);
+		/**
+		 * TODO Make this proper?
 		sUsersProjectionMap.put(Users.TZ_OFFSET, Users.TZ_OFFSET);
+		 */
 		sUsersProjectionMap.put(Users.MSN, Users.MSN);
 		sUsersProjectionMap.put(Users.DEFAULT_REMINDER, Users.DEFAULT_REMINDER);
 		sUsersProjectionMap.put(Users.EMAIL, Users.EMAIL);
-	}
-	
-	private static HashMap<String, String> sCacheTimesProjectionMap;
-	static {
-		sCacheTimesProjectionMap = new HashMap<String, String>();
-		sCacheTimesProjectionMap.put(CacheTimes._ID, CacheTimes._ID);
-		sCacheTimesProjectionMap.put(CacheTimes.USER_ID, CacheTimes.USER_ID);
-		sCacheTimesProjectionMap.put(CacheTimes.PROJECT_ID, CacheTimes.PROJECT_ID);
-		sCacheTimesProjectionMap.put(CacheTimes.ITEM_ID, CacheTimes.ITEM_ID);
-		sCacheTimesProjectionMap.put(CacheTimes.INSERTED_AT, CacheTimes.INSERTED_AT);		
 	}
 	
 	private static final UriMatcher sUriMatcher;
@@ -89,8 +81,6 @@ public class TodoistProvider extends ContentProvider {
 	private static final int INCOMING_SINGLE_PROJECT_URI_INDICATOR = 4;
 	private static final int INCOMING_USER_COLLECTION_URI_INDICATOR = 5;
 	private static final int INCOMING_SINGLE_USER_URI_INDICATOR = 6;
-	private static final int INCOMING_CACHETIME_COLLECTION_URI_INDICATOR = 7;
-	private static final int INCOMING_SINGLE_CACHETIME_URI_INDICATOR = 8;
 	static {
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 		sUriMatcher.addURI(TodoistProviderMetaData.AUTHORITY, "items", INCOMING_ITEM_COLLECTION_URI_INDICATOR);
@@ -99,8 +89,6 @@ public class TodoistProvider extends ContentProvider {
 		sUriMatcher.addURI(TodoistProviderMetaData.AUTHORITY, "projects/#", INCOMING_SINGLE_PROJECT_URI_INDICATOR);
 		sUriMatcher.addURI(TodoistProviderMetaData.AUTHORITY, "users", INCOMING_USER_COLLECTION_URI_INDICATOR);
 		sUriMatcher.addURI(TodoistProviderMetaData.AUTHORITY, "users/#", INCOMING_SINGLE_USER_URI_INDICATOR);
-		sUriMatcher.addURI(TodoistProviderMetaData.AUTHORITY, "cacheitems", INCOMING_CACHETIME_COLLECTION_URI_INDICATOR);
-		sUriMatcher.addURI(TodoistProviderMetaData.AUTHORITY, "cacheitems/#", INCOMING_SINGLE_CACHETIME_URI_INDICATOR);
 	}
 
 	private DatabaseHelper mOpenHelper;
@@ -130,7 +118,8 @@ public class TodoistProvider extends ContentProvider {
 					+ Items.CONTENT + " TEXT,"
 					+ Items.INDENT + " INTEGER,"
 					+ Items.CHECKED + " INTEGER,"
-					+ Items.DATE_STRING + " TEXT"
+					+ Items.DATE_STRING + " TEXT,"
+					+ Items.CACHE_TIME + " INTEGER"
 					+ ");");
 			db.execSQL("CREATE TABLE " + Projects.TABLE_NAME + " ("
 					+ Projects._ID + " INTEGER PRIMARY KEY,"
@@ -140,7 +129,8 @@ public class TodoistProvider extends ContentProvider {
 					+ Projects.COLLAPSED + " INTEGER,"
 					+ Projects.ITEM_ORDER + " INTEGER,"
 					+ Projects.CACHE_COUNT + " INTEGER,"
-					+ Projects.INDENT + " INTEGER"
+					+ Projects.INDENT + " INTEGER,"
+					+ Projects.CACHE_TIME + " INTEGER"
 					+ ");");
 			db.execSQL("CREATE TABLE " + Users.TABLE_NAME + " ("
 					+ Users._ID + " INTEGER PRIMARY KEY,"
@@ -157,14 +147,10 @@ public class TodoistProvider extends ContentProvider {
 					+ Users.JABBER + " TEXT,"
 					+ Users.MSN + " TEXT,"
 					+ Users.MOBILE_NUMBER + " TEXT,"
-					+ Users.MOBILE_HOST + " TEXT"
-					+ ");");
-			db.execSQL("CREATE TABLE " + CacheTimes.TABLE_NAME + " ("
-					+ CacheTimes._ID + " INTEGER PRIMARY KEY,"
-					+ CacheTimes.INSERTED_AT + " INTEGER,"
-					+ CacheTimes.ITEM_ID + " INTEGER,"
-					+ CacheTimes.PROJECT_ID + " INTEGER,"
-					+ CacheTimes.USER_ID + " INTEGER"
+					+ Users.MOBILE_HOST + " TEXT,"
+					+ Users.DEFAULT_REMINDER + " TEXT,"
+					+ Users.PREMIUM_UNTIL + " TEXT,"
+					+ Users.CACHE_TIME + " INTEGER"
 					+ ");");
 			/**
 			 * TODO Read http://justatheory.com/computers/databases/sqlite/foreign_key_triggers.html
@@ -177,7 +163,6 @@ public class TodoistProvider extends ContentProvider {
 			db.execSQL("DROP TABLE IF EXISTS " + Items.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + Projects.TABLE_NAME);
 			db.execSQL("DROP TABLE IF EXISTS " + Users.TABLE_NAME);
-			db.execSQL("DROP TABLE IF EXISTS " + CacheTimes.TABLE_NAME);
 			/**
 			 * TODO Create migrations and manageability.
 			 */
@@ -200,10 +185,6 @@ public class TodoistProvider extends ContentProvider {
 			return Users.CONTENT_TYPE;
 		case INCOMING_SINGLE_USER_URI_INDICATOR:
 			return Users.CONTENT_ITEM_TYPE;
-		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
-			return CacheTimes.CONTENT_TYPE;
-		case INCOMING_SINGLE_CACHETIME_URI_INDICATOR:
-			return CacheTimes.CONTENT_ITEM_TYPE;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -249,17 +230,6 @@ public class TodoistProvider extends ContentProvider {
 			qb.appendWhere(Users._ID + "=" + uri.getPathSegments().get(1));
 			orderBy = Users.DEFAULT_SORT_ORDER;
 			break;
-		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
-			qb.setTables(CacheTimes.TABLE_NAME);
-			qb.setProjectionMap(sCacheTimesProjectionMap);
-			orderBy = CacheTimes.DEFAULT_SORT_ORDER;
-			break;
-		case INCOMING_SINGLE_CACHETIME_URI_INDICATOR:
-			qb.setTables(CacheTimes.TABLE_NAME);
-			qb.setProjectionMap(sCacheTimesProjectionMap);
-			qb.appendWhere(CacheTimes._ID + "=" + uri.getPathSegments().get(1));
-			orderBy = CacheTimes.DEFAULT_SORT_ORDER;
-			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -281,11 +251,6 @@ public class TodoistProvider extends ContentProvider {
 		String table;
 		String column; // This column will be nulled if all values are empty.
 		
-		String where = null;
-		String[] whereArgs = null;
-		
-		ContentValues cache_values = new ContentValues();
-		
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
 			table = Items.TABLE_NAME;
@@ -301,11 +266,9 @@ public class TodoistProvider extends ContentProvider {
 					) {
 				throw new IllegalArgumentException("Missing required value");
 			}
+			
+			values.put(Items.CACHE_TIME, now);
 
-			where = CacheTimes.ITEM_ID + "=" + values.getAsInteger(Items._ID);
-			
-			cache_values.put(CacheTimes.ITEM_ID, values.getAsInteger(Items._ID));
-			
 			break;
 		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
 			table = Projects.TABLE_NAME;
@@ -323,10 +286,8 @@ public class TodoistProvider extends ContentProvider {
 					) {
 				throw new IllegalArgumentException("Missing required value");
 			}
-
-			where = CacheTimes.PROJECT_ID + "=" + values.getAsInteger(Projects._ID);
 			
-			cache_values.put(CacheTimes.PROJECT_ID, values.getAsInteger(Projects._ID));
+			values.put(Projects.CACHE_TIME, now);
 			
 			break;
 		case INCOMING_USER_COLLECTION_URI_INDICATOR:
@@ -348,23 +309,7 @@ public class TodoistProvider extends ContentProvider {
 				throw new IllegalArgumentException("Missing required value");
 			}
 			
-			where = CacheTimes.USER_ID + "=" + values.getAsInteger(Users._ID);
-			
-			cache_values.put(CacheTimes.USER_ID, values.getAsInteger(Users._ID));
-			
-			break;
-		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
-			table = CacheTimes.TABLE_NAME;
-			column = CacheTimes.INSERTED_AT;
-			
-			if (!values.containsKey(CacheTimes.INSERTED_AT) || (
-					!values.containsKey(CacheTimes.ITEM_ID) &&
-					!values.containsKey(CacheTimes.PROJECT_ID) &&
-					!values.containsKey(CacheTimes.USER_ID)
-					)
-				) {
-				throw new IllegalArgumentException("Missing required value");
-			}
+			values.put(Users.CACHE_TIME, now);
 			
 			break;
 		default:
@@ -376,15 +321,6 @@ public class TodoistProvider extends ContentProvider {
 		if (rowId > 0) {
 			Uri insertedUri = ContentUris.withAppendedId(uri, rowId);
 			getContext().getContentResolver().notifyChange(insertedUri, null);
-
-			/**
-			 * TODO Verify if this is an issue.
-			if (sUriMatcher.match(uri) != INCOMING_CACHETIME_COLLECTION_URI_INDICATOR) {
-				cache_values.put(CacheTimes.INSERTED_AT, now);
-				this.delete(CacheTimes.CONTENT_URI, where, whereArgs);
-				this.insert(CacheTimes.CONTENT_URI, cache_values);
-			}
-			*/
 			return insertedUri;
 		}
 		throw new SQLException("Failed to insert row into " + uri);
@@ -397,52 +333,38 @@ public class TodoistProvider extends ContentProvider {
 		String rowId;
 		
 		Long now = Long.valueOf(System.currentTimeMillis());
-		ContentValues cache_values = new ContentValues();
-		
-		String cache_where = null;
 
 		switch (sUriMatcher.match(uri)) {
 		case INCOMING_ITEM_COLLECTION_URI_INDICATOR:
+			values.put(Items.CACHE_TIME, now);
 			count = db.update(Items.TABLE_NAME, values, where, whereArgs);
-			/**
-			 * TODO Make the cache refresh for all items affected.
-			 */
-			//cache_where = 
 			break;
 		case INCOMING_SINGLE_ITEM_URI_INDICATOR:
+			values.put(Items.CACHE_TIME, now);
 			rowId = uri.getPathSegments().get(1);
 			count = db.update(Items.TABLE_NAME, values, Items._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
 			break;
 		case INCOMING_PROJECT_COLLECTION_URI_INDICATOR:
+			values.put(Projects.CACHE_TIME, now);
 			count = db.update(Projects.TABLE_NAME, values, where, whereArgs);
 			break;
 		case INCOMING_SINGLE_PROJECT_URI_INDICATOR:
+			values.put(Projects.CACHE_TIME, now);
 			rowId = uri.getPathSegments().get(1);
 			count = db.update(Projects.TABLE_NAME, values, Projects._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
 			break;
 		case INCOMING_USER_COLLECTION_URI_INDICATOR:
+			values.put(Users.CACHE_TIME, now);
 			count = db.update(Users.TABLE_NAME, values, where, whereArgs);
 			break;
 		case INCOMING_SINGLE_USER_URI_INDICATOR:
+			values.put(Users.CACHE_TIME, now);
 			rowId = uri.getPathSegments().get(1);
 			count = db.update(Users.TABLE_NAME, values, Users._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
-			break;
-		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
-			count = db.update(CacheTimes.TABLE_NAME, values, where, whereArgs);
-			break;
-		case INCOMING_SINGLE_CACHETIME_URI_INDICATOR:
-			rowId = uri.getPathSegments().get(1);
-			count = db.update(CacheTimes.TABLE_NAME, values, CacheTimes._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unkown URI " + uri);
 		}
-		
-		/**
-		 * TODO get cache_where correct or this refreshes all cache values.
-		 */
-		cache_values.put(CacheTimes.INSERTED_AT, now);
-		db.update(CacheTimes.TABLE_NAME, cache_values, cache_where, null);
 		
 		getContext().getContentResolver().notifyChange(uri, null);
 		return count;
@@ -477,13 +399,6 @@ public class TodoistProvider extends ContentProvider {
 		case INCOMING_SINGLE_USER_URI_INDICATOR:
 			rowId = uri.getPathSegments().get(1);
 			count = db.delete(Users.TABLE_NAME, Users._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
-			break;
-		case INCOMING_CACHETIME_COLLECTION_URI_INDICATOR:
-			count = db.delete(CacheTimes.TABLE_NAME, where, whereArgs);
-			break;
-		case INCOMING_SINGLE_CACHETIME_URI_INDICATOR:
-			rowId = uri.getPathSegments().get(1);
-			count = db.delete(CacheTimes.TABLE_NAME, CacheTimes._ID + "=" + rowId + (!TextUtils.isEmpty(where) ? " AND (" + where + ")" : ""), whereArgs);
 			break;
 		default:
 			throw new IllegalArgumentException("Unkown URI " + uri);

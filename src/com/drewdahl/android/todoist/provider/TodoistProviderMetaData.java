@@ -23,12 +23,11 @@ public final class TodoistProviderMetaData {
     public static final String AUTHORITY = "com.drewdahl.android.todoist.provider.TodoistProvider";
 
     public static final String DATABASE_NAME = "todoist.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 4;
     
     public static final String ITEMS_TABLE_NAME = "items";
     public static final String PROJECTS_TABLE_NAME = "projects";
     public static final String USERS_TABLE_NAME = "users";
-    public static final String CACHETIMES_TABLE_NAME = "cachetimes";
     
     private TodoistProviderMetaData() {}
     
@@ -39,7 +38,7 @@ public final class TodoistProviderMetaData {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/items");
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.drewdahl.item";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.drewdahl.item";
-        public static final String DEFAULT_SORT_ORDER = "modified DESC";
+        public static final String DEFAULT_SORT_ORDER = "due_date DESC";
 
         public static final String USER_ID = "user_id";
         public static final String PROJECT_ID = "project_id";
@@ -52,6 +51,7 @@ public final class TodoistProviderMetaData {
         public static final String INDENT = "indent";
         public static final String CHECKED = "checked";
         public static final String DATE_STRING = "date_string";
+        public static final String CACHE_TIME = "cache_time";
     }
     
     public static final class Projects implements BaseColumns {
@@ -61,7 +61,7 @@ public final class TodoistProviderMetaData {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/projects");
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.drewdahl.project";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.drewdahl.project";
-        public static final String DEFAULT_SORT_ORDER = "modified DESC";
+        public static final String DEFAULT_SORT_ORDER = "name DESC";
 
         public static final String USER_ID = "user_id";
         public static final String NAME = "name";
@@ -70,6 +70,7 @@ public final class TodoistProviderMetaData {
         public static final String ITEM_ORDER = "item_order";
         public static final String CACHE_COUNT = "cache_count";
         public static final String INDENT = "inent";
+        public static final String CACHE_TIME = "cache_time";
     }
 
     public static final class Users implements BaseColumns {
@@ -79,7 +80,7 @@ public final class TodoistProviderMetaData {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/users");
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.drewdahl.user";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.drewdahl.user";
-        public static final String DEFAULT_SORT_ORDER = "modified DESC";
+        public static final String DEFAULT_SORT_ORDER = "email DESC";
 
         public static final String START_PAGE = "start_page";
         public static final String TWITTER = "twitter";
@@ -93,24 +94,13 @@ public final class TodoistProviderMetaData {
         public static final String JABBER = "jabber";
         public static final String DATE_FORMAT = "date_format";
         public static final String PREMIUM_UNTIL = "premium_until";
+        /**
+         * TODO Make this proper?
         public static final String TZ_OFFSET = "tz_offset";
+         */
         public static final String MSN = "msn";
         public static final String DEFAULT_REMINDER = "default_reminder";
         public static final String EMAIL = "email";
-    }
-    
-    public static final class CacheTimes implements BaseColumns {
-        private CacheTimes() {}
-        public static final String TABLE_NAME = "cachetimes";
-
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/cachetimes");
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.drewdahl.cachetime";
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.drewdahl.cachetime";
-        public static final String DEFAULT_SORT_ORDER = "modified DESC";
-
-        public static final String USER_ID = "user_id";
-        public static final String PROJECT_ID = "project_id";
-        public static final String ITEM_ID = "item_id";
-        public static final String INSERTED_AT = "inserted_at";
+        public static final String CACHE_TIME = "cache_time";
     }
 }

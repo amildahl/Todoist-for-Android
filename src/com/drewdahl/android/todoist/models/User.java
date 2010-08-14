@@ -40,7 +40,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandlerConstants.JSON;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
@@ -79,6 +82,9 @@ public class User {
 		msn = obj.getString(JSON.MSN);
 		mobile_number = obj.getString(JSON.MOBILE_NUMBER);
 		mobile_host = obj.getString(JSON.MOBILE_HOST);
+		/**
+		 * TODO Add premium stuffs ...
+		 */
 	}
 	
 	public void save(ContentResolver resolver) {
@@ -103,7 +109,13 @@ public class User {
 		values.put(Users.MOBILE_NUMBER, mobile_number);
 		values.put(Users.MOBILE_HOST, mobile_host);
 		
-		resolver.insert(Users.CONTENT_URI, values);
+		Uri myUri = ContentUris.withAppendedId(Users.CONTENT_URI, id);
+		Cursor c = resolver.query(myUri, null, null, null, null);
+		if (c.getCount() < 1) {
+			resolver.insert(Users.CONTENT_URI, values);
+		} else {
+			resolver.update(myUri, values, null, null);
+		}
 	}
 	
 	/**
