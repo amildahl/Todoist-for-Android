@@ -52,6 +52,11 @@ public class TodoistService extends Service {
 				}
 			}
 			c.close();
+			
+			/**
+			 * TODO Find new items.
+			 */
+			initialSync();
 		}
 	}
 	
