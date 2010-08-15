@@ -83,12 +83,16 @@ public class ItemList extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) 
     {
+    	Intent intent = null;
+    	
     	switch (item.getItemId())
     	{
     	case R.id.menu_newItem:
+    		intent = new Intent(this, ItemEdit.class);
+    		startActivity(intent);
     		return true;
     	case R.id.menu_projectList:
-    		Intent intent = new Intent(this, ProjectList.class);
+    		intent = new Intent(this, ProjectList.class);
     		startActivity(intent);
     		/**
     		 * TODO Make this a bit more robust.
@@ -124,6 +128,8 @@ public class ItemList extends ListActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item)
     {
+    	Intent intent = null;
+    	
     	switch (item.getItemId()) {
     	case R.id.menu_deleteItem:
     		/**
@@ -136,7 +142,8 @@ public class ItemList extends ListActivity {
     		/**
     		 * TODO make this a picker and take it out of context?
     		 */
-    		new Intent(this, ItemEdit.class);
+    		intent = new Intent(this, ItemEdit.class);
+    		startActivity(intent);
     		return true;
     	case R.id.menu_moveItem:
     		/**

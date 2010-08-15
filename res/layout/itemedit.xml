@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    >
+    <TableLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal"
+        >
+        <TableRow>
+            <TextView android:id="@+id/TextViewProject"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:textColor="@color/default_font_color"
+                android:text="Project: "
+                android:gravity="center_vertical"
+                android:layout_gravity="right"
+                />
+            <Spinner android:id="@+id/SpinnerProject"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView android:id="@+id/TextViewDate"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:textColor="@color/default_font_color"
+                android:text="Date: "
+                android:gravity="center_vertical"
+                android:layout_gravity="right"
+                />
+            <EditText android:id="@+id/EditTextDate"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                />
+        </TableRow>
+    </TableLayout>
+    <TextView android:id="@+id/TextViewContent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/default_font_color"
+        android:text="Content: "
+        android:layout_width="wrap_content"
+        android:gravity="right"
+        />
+    <EditText android:id="@+id/EditTextContent"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        />
+    <Button android:id="@+id/ButtonSubmit"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Submit"
+        android:clickable="true"
+        android:minWidth="120px"
+        android:layout_gravity="center"
+        />
+</LinearLayout>
