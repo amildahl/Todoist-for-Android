@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/menuGroup_Main">
+        <item android:id="@+id/menu_editProject"
+            android:orderInCategory="5"
+            android:title="Edit Item"
+            />
+        <item android:id="@+id/menu_deleteProject"
+            android:orderInCategory="5"
+            android:title="Delete Item"
+            />
+    </group>
+</menu>

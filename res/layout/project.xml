@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayoutItem"
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent" 
+    android:background="@color/background"
+    android:orientation="horizontal"
+    >
+    <TextView android:id="@+id/TextViewProjectCacheCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="#"
+        android:layout_marginLeft="5px"
+        android:padding="5px"
+        android:textColorHighlight="@color/default_project_color"
+        />
+    <TextView android:id="@+id/TextViewProjectName"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textColor="@color/default_font_color"
+        android:text="Content"
+        android:layout_weight="1.0"
+        android:padding="5px"
+        android:layout_marginLeft="5px"
+        />
+</LinearLayout>

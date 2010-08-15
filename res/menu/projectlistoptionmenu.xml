@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/menuGroup_Main">
+        <item android:id="@+id/menu_newProject"
+            android:orderInCategory="3"
+            android:title="New Item"
+            />
+        <item android:id="@+id/menu_itemList"
+            android:orderInCategory="4"
+            android:title="Items"
+            />
+        <item android:id="@+id/menu_logout"
+            android:orderInCategory="5"
+            android:title="Logout"
+            />
+    </group>
+</menu>
