@@ -55,11 +55,11 @@ public class ProjectList extends ListActivity {
     		Intent intent = new Intent(this, ItemList.class);
     		startActivity(intent);
     		/**
-    		 * TODO Make this a bit more robust.
-    		 */
+    		 * TODO Make this a bit more robust.  I mean work ...
     		if (getParent().getParent().getComponentName() == getComponentName()) {
     			finish();
     		}
+    		 */
     		return true;
     	case R.id.menu_logout:
     		/**
@@ -96,6 +96,8 @@ public class ProjectList extends ListActivity {
     		 * TODO make this a picker and take it out of context?
     		 */
     		new Intent(this, ItemEdit.class);
+    		return true;
+    	case R.id.menu_addItem:
     		return true;
     	default:
     		return super.onContextItemSelected(item);

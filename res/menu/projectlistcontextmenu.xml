@@ -2,11 +2,15 @@
     <group android:id="@+id/menuGroup_Main">
         <item android:id="@+id/menu_editProject"
             android:orderInCategory="5"
-            android:title="Edit Item"
+            android:title="Edit Project"
             />
         <item android:id="@+id/menu_deleteProject"
             android:orderInCategory="5"
-            android:title="Delete Item"
+            android:title="Delete Project"
+            />
+        <item android:id="@+id/menu_addItem"
+            android:orderInCategory="3"
+            android:title="Add Item"
             />
     </group>
 </menu>
