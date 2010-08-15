@@ -32,7 +32,10 @@ public class TodoistService extends Service {
 				}
 			}
 			Long now = Long.valueOf(System.currentTimeMillis());
-			Long expire = now - (5 * 60 * 100000);
+			/**
+			 * TODO Make this configurable?
+			 */
+			Long expire = now - (2 * 60 * 100000);
 
 			Cursor c = null;
 				

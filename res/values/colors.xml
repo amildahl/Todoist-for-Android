@@ -3,4 +3,5 @@
 	<color name="background">#FFFFFF</color>
 	<color name="item_divider">#000000</color>
 	<color name="default_font_color">#000000</color>
+	<color name="default_project_color">#FF8581</color>
 </resources>
