@@ -54,6 +54,12 @@ public class ProjectList extends ListActivity {
     	case R.id.menu_itemList:
     		Intent intent = new Intent(this, ItemList.class);
     		startActivity(intent);
+    		/**
+    		 * TODO Make this a bit more robust.
+    		 */
+    		if (getParent().getParent().getComponentName() == getComponentName()) {
+    			finish();
+    		}
     		return true;
     	case R.id.menu_logout:
     		/**
