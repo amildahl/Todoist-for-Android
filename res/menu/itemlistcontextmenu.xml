@@ -3,6 +3,7 @@
         <item android:id="@+id/menu_editItem"
             android:orderInCategory="5"
             android:title="Edit Item"
+            android:icon="@drawable/ic_menu_edit"
             />
         <item android:id="@+id/menu_moveItem"
             android:orderInCategory="5"
@@ -11,6 +12,7 @@
         <item android:id="@+id/menu_deleteItem"
             android:orderInCategory="5"
             android:title="Delete Item"
+            android:icon="@drawable/ic_menu_delete"
             />
     </group>
 </menu>
