@@ -3,14 +3,17 @@
         <item android:id="@+id/menu_editProject"
             android:orderInCategory="5"
             android:title="Edit Project"
+            android:icon="@drawable/ic_menu_edit"
             />
         <item android:id="@+id/menu_deleteProject"
             android:orderInCategory="5"
             android:title="Delete Project"
+            android:icon="@drawable/ic_menu_delete"
             />
         <item android:id="@+id/menu_addItem"
             android:orderInCategory="3"
             android:title="Add Item"
+            android:icon="@drawable/ic_menu_add"
             />
     </group>
 </menu>

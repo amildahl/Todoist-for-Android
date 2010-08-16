@@ -3,14 +3,17 @@
         <item android:id="@+id/menu_newItem"
             android:orderInCategory="3"
             android:title="New Item"
+            android:icon="@drawable/ic_menu_add"
             />
         <item android:id="@+id/menu_projectList"
             android:orderInCategory="4"
             android:title="Projects"
+            android:icon="@drawable/ic_menu_agenda"
             />
         <item android:id="@+id/menu_logout"
             android:orderInCategory="5"
             android:title="Logout"
+            android:icon="@drawable/ic_menu_close_clear_cancel"
             />
         <item android:id="@+id/menu_sortMenu"
             android:orderInCategory="3"
@@ -27,5 +30,10 @@
                     />
             </menu>
         </item>
+        <item android:id="@+id/menu_preferences"
+            android:orderInCategory="7"
+            android:title="Preferences"
+            android:icon="@drawable/ic_menu_preferences"
+            />
     </group>
 </menu>

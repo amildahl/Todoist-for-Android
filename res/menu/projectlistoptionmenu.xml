@@ -2,7 +2,8 @@
     <group android:id="@+id/menuGroup_Main">
         <item android:id="@+id/menu_newProject"
             android:orderInCategory="3"
-            android:title="New Item"
+            android:title="New Project"
+            android:icon="@drawable/ic_menu_add"
             />
         <item android:id="@+id/menu_itemList"
             android:orderInCategory="4"
@@ -11,6 +12,12 @@
         <item android:id="@+id/menu_logout"
             android:orderInCategory="5"
             android:title="Logout"
+            android:icon="@drawable/ic_menu_close_clear_cancel"
+            />
+        <item android:id="@+id/menu_preferences"
+            android:orderInCategory="7"
+            android:title="Preferences"
+            android:icon="@drawable/ic_menu_preferences"
             />
     </group>
 </menu>
