@@ -26,7 +26,7 @@ public class TodoistService extends Service {
 		public void run() {
 			while (TodoistApiHandler.getInstance().getUser() == null) {
 				try {
-					Thread.currentThread().sleep(5000);
+					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 					continue;
 				}
@@ -74,7 +74,7 @@ public class TodoistService extends Service {
 	private void initialSync() {
 		while (TodoistApiHandler.getInstance().getUser() == null) {
 			try {
-				Thread.currentThread().sleep(5000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				continue;
 			}
