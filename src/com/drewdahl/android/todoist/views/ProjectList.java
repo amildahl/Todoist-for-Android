@@ -66,6 +66,8 @@ public class ProjectList extends ListActivity {
     		 * TODO Unset the remember me option.
     		 */
     		return true;
+    	case R.id.menu_preferences:
+    		return true;
     	default:
     		return super.onOptionsItemSelected(item);
     	}
