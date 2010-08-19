@@ -111,6 +111,8 @@ public class ItemList extends ListActivity {
     		 * TODO Recreate the adapter with the new qeury?
     		 */
     		return true;
+    	case R.id.menu_preferences:
+    		return true;
     	default:
     		return super.onOptionsItemSelected(item);
     	}
