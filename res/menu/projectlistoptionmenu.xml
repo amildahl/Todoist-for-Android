@@ -8,6 +8,7 @@
         <item android:id="@+id/menu_itemList"
             android:orderInCategory="4"
             android:title="Items"
+            android:icon="@drawable/ic_menu_agenda"
             />
         <item android:id="@+id/menu_logout"
             android:orderInCategory="5"

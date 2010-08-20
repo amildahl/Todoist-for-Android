@@ -87,6 +87,27 @@ public class User {
 		 */
 	}
 	
+	public User(Cursor c) {
+		email = c.getString(c.getColumnIndex(Users.EMAIL));
+		full_name = c.getString(c.getColumnIndex(Users.FULL_NAME));
+		id = c.getInt(c.getColumnIndex(Users._ID));
+		api_token = c.getString(c.getColumnIndex(Users.API_TOKEN));
+		start_page = c.getString(c.getColumnIndex(Users.START_PAGE));
+		timezone = c.getString(c.getColumnIndex(Users.TIMEZONE));
+		/**
+		 * TODO Get this right.
+		tz_offset = c.getSomething(c.getColumnIndex(Users.TZ_OFFSET));
+		 */
+		time_format = c.getInt(c.getColumnIndex(Users.TIME_FORMAT));
+		date_format = c.getInt(c.getColumnIndex(Users.DATE_FORMAT));
+		sort_order = c.getInt(c.getColumnIndex(Users.SORT_ORDER));
+		twitter = c.getString(c.getColumnIndex(Users.TWITTER));
+		jabber = c.getString(c.getColumnIndex(Users.JABBER));
+		msn = c.getString(c.getColumnIndex(Users.MSN));
+		mobile_number = c.getString(c.getColumnIndex(Users.MOBILE_NUMBER));
+		mobile_host = c.getString(c.getColumnIndex(Users.MOBILE_HOST));
+	}
+
 	public void save(ContentResolver resolver) {
 		ContentValues values = new ContentValues();
 

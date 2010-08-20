@@ -80,7 +80,7 @@ public final class TodoistProviderMetaData {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/users");
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.drewdahl.user";
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.drewdahl.user";
-        public static final String DEFAULT_SORT_ORDER = "email DESC";
+        public static final String DEFAULT_SORT_ORDER = "cache_time DESC";
 
         public static final String START_PAGE = "start_page";
         public static final String TWITTER = "twitter";

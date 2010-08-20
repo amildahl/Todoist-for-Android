@@ -18,6 +18,7 @@
         <item android:id="@+id/menu_sortMenu"
             android:orderInCategory="3"
             android:title="Sort"
+            android:icon="@drawable/ic_menu_sort_by_size"
             >
             <menu>
                 <item android:id="@+id/menu_sortPriority"
