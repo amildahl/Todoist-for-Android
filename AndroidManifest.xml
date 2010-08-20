@@ -51,6 +51,14 @@
                  <category android:name="android.intent.category.LAUNCHER" />
              </intent-filter>
 		</activity>
+		<activity android:name=".preferences.TodoistPreferences"
+		    android:label="@string/preferences_title"
+		    >
+		    <intent-filter>
+		          <action android:name=".preferences.TodoistPreferences" />
+		          <category android:name="android.intent.category.PREFERENCE" />
+		    </intent-filter>
+		</activity>
 		<provider android:name=".provider.TodoistProvider"
 			android:authorities="com.drewdahl.android.todoist.provider.TodoistProvider"
 			/>

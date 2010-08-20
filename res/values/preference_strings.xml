@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preferences_title">Todoist Preferences</string>
+    
+    <string name="key_remember_me">todoist_remember_me</string>
+    <string name="title_remember_me">Remember Me</string>
+    <string name="summary_remember_me">Remember Login Information</string>
+</resources>

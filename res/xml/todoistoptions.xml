@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="todoist_option_preference"
+    android:title="@string/preferences_title"
+    >
+    <CheckBoxPreference
+        android:key="@string/key_remember_me"
+        android:title="@string/title_remember_me"
+        android:summary="@string/summary_remember_me"
+        android:selectable="true"
+        android:persistent="true"
+        android:defaultValue="off"
+        />
+</PreferenceScreen>

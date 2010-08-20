@@ -37,6 +37,7 @@
 package com.drewdahl.android.todoist.views;
 
 import com.drewdahl.android.todoist.R;
+import com.drewdahl.android.todoist.preferences.TodoistPreferences;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
 import android.app.ListActivity;
@@ -112,6 +113,8 @@ public class ItemList extends ListActivity {
     		 */
     		return true;
     	case R.id.menu_preferences:
+    		intent = new Intent().setClass(this, TodoistPreferences.class);
+    		startActivity(intent);
     		return true;
     	default:
     		return super.onOptionsItemSelected(item);
