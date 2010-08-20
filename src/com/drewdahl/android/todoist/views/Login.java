@@ -94,12 +94,6 @@ public class Login extends Activity {
             			TodoistApiHandler.getInstance().getUser().save(Login.this.getContentResolver());
                 		setResult(RESULT_OK, new Intent());
                 		finish(); // Kill this activity so we don't listen anymore.
-            		} catch (SQLiteConstraintException e) {
-            			/**
-            			 * TODO Hopefully this is temporary.
-            			 */
-            			Log.d(this.toString(), "Caught a constraint exception");
-            			Log.d(this.toString(), "The following constraint failed: " + e.getLocalizedMessage());
             		} catch (RuntimeException e) {
             			Log.d(this.toString(), "Caught exception during login");
             			/**

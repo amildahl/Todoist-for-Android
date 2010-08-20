@@ -962,7 +962,7 @@ public class TodoistApiHandler {
 			if (first) {
 				idstring += n.toString();
 				first = false;
-			} else { // TODO Crap, where else did I forget this?
+			} else {
 				idstring += "," + n.toString();
 			}
 		}
