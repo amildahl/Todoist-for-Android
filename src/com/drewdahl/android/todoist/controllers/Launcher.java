@@ -80,6 +80,7 @@ public class Launcher extends Activity {
 		/**
 		 * TODO Call this function when a support issue needs to be handled.
 		 * TODO Determine what parameters we want from the system when an issue occurs.
+		 * TODO Potentially launch the SupportForm activity here depending on the user's choice from sbumitting and seriousness of issue.
 		 */
 	}
 }

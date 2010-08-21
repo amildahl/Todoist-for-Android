@@ -52,7 +52,7 @@
              </intent-filter>
 		</activity>
 		<activity android:name=".preferences.TodoistPreferences"
-		    android:label="@string/preferences_title"
+		    android:label="@string/title_todoist_preferences"
 		    >
 		    <intent-filter>
 		          <action android:name=".preferences.TodoistPreferences" />
