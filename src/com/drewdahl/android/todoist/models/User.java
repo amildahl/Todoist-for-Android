@@ -140,6 +140,11 @@ public class User {
 		c.close();
 	}
 	
+	@Override
+	public String toString() {
+		return full_name;
+	}
+	
 	/**
 	 * Getters and Setters ...
 	 */

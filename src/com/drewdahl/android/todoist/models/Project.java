@@ -93,6 +93,11 @@ public class Project {
 		}
 		c.close();
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 
 	/**
 	 * Setters and Getters.
