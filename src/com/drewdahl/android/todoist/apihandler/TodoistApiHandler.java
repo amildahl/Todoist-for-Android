@@ -325,6 +325,9 @@ public class TodoistApiHandler {
 	 */
 	public User updateUser(Map.Entry<String, String>...entries)
 	{
+		/**
+		 * TODO Move entries to a HashMap?
+		 */
 		String query = TodoistApiHandlerConstants.UPDATE_USER
 			.replace(PARAMETERS.TOKEN, user.getApiToken());
 		

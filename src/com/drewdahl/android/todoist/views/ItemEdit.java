@@ -1,7 +1,12 @@
 package com.drewdahl.android.todoist.views;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.drewdahl.android.todoist.R;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.models.Item;
 import com.drewdahl.android.todoist.models.Project;
 
 import android.app.Activity;
@@ -24,37 +29,38 @@ public class ItemEdit extends Activity {
 		
 		setContentView(R.layout.itemedit);
 		
-		/*
-		ArrayAdapter<Project> adapter = new ArrayAdapter<Project>(this, 0, 0, TodoistApiHandler.getInstance().getProjects());
+		ArrayAdapter<Project> adapter = new ArrayAdapter<Project>(this, android.R.layout.simple_spinner_item, TodoistApiHandler.getInstance().getProjects());
 		((Spinner)findViewById(R.id.SpinnerProject)).setAdapter(adapter);
-		*/
 		
-		/**
-		 * TODO Hook the project spinner into the menu edit.
-		 */
-
         findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
-            	public void onClick(View view) {
-            		/*
-            	String email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
-            	String password = ((EditText)findViewById(R.id.EditTextPassword)).getText().toString();
+            public void onClick(View view) {
+            	String date = ((EditText)findViewById(R.id.EditTextDate)).getText().toString();
+           		String content = ((EditText)findViewById(R.id.EditTextContent)).getText().toString();
+           		Project project = (Project)((Spinner)findViewById(R.id.SpinnerProject)).getSelectedItem();
 
-            	if (email.length() < 1) {
-            		Log.d(this.toString(), "E-Mail too short");
-            		showToast("Please, input your e-mail address.");
-            	} else if (password.length() < 1) {
-            		Log.d(this.toString(), "Password too short");
-            		showToast("Please, input your password.");
+           		if (content.length() < 1) {
+            		Log.d(this.toString(), "Content was empty!");
+            		showToast("Please, input a task.");
+           		} else if (project == null) {
+           			Log.d(this.toString(), "No project selected!");
+           			showToast("Please, select a project.");
             	} else {
-            		try {
-                		setResult(RESULT_OK, new Intent());
-                		finish(); // Kill this activity so we don't listen anymore.
-            		} catch (RuntimeException e) {
-            			Log.d(this.toString(), "Caught exception during login");
-            			showToast("Incorrect Password!");
-            		}
+            		/**
+            		 * TODO Error Handling
+               		 * TODO Fix this nearly fubarred mess!
+               		 */
+               		Item i = null;
+               		if (date.length() < 1) {
+               			i = TodoistApiHandler.getInstance().addItem(project.getId(), content);
+               		} else {
+               			setResult(RESULT_OK, new Intent());
+                   		Map<String, String> e = new HashMap<String, String>();
+                   		e.put("date_string", date);
+                   		i = TodoistApiHandler.getInstance().addItem(project.getId(), content, e.entrySet().iterator().next());
+               		}
+               		i.save(getContentResolver());
+               		finish(); // Kill this activity so we don't listen anymore.
            		}
-        */
         	}
         });
     }
