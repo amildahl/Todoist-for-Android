@@ -34,6 +34,7 @@ public class Launcher extends Activity {
 			c.moveToFirst();
 			TodoistApiHandler.getInstance().setUser(new User(c));
 			startActivityUserStartPage();
+			c.close();
 		}
 	}
 	

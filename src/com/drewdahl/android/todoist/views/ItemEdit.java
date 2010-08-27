@@ -2,7 +2,6 @@ package com.drewdahl.android.todoist.views;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.drewdahl.android.todoist.R;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
@@ -11,13 +10,11 @@ import com.drewdahl.android.todoist.models.Project;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -58,7 +55,7 @@ public class ItemEdit extends Activity {
                    		e.put("date_string", date);
                    		i = TodoistApiHandler.getInstance().addItem(project.getId(), content, e.entrySet().iterator().next());
                		}
-               		i.save(getContentResolver());
+               		i.save(ItemEdit.this.getContentResolver());
                		finish(); // Kill this activity so we don't listen anymore.
            		}
         	}
