@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="key_todoist_preferences">todoist_preferences</string>
+    <string name="title_todoist_preferences">Todoist Preferences</string>
+    
+    <string name="key_todoist_general_preferences">todoist_general_preferences</string>
+    <string name="title_todoist_general_preferences">General Preferences</string>
+    
+    <string name="key_todoist_start_page">todoist_general_start_page</string>
+    <string name="title_todoist_start_page">Start Page</string>
+    <string-array name="entries_todoist_start_page">
+        <item>Blank</item>
+        <item>Info Page</item>
+        <item>Today and Overdue</item>
+        <item>Overdue, Today and Tomorrow</item>
+        <item>7 Days and Overdue</item>
+        <!-- TODO This adds an edit box to take the custom query. -->
+        <item>Custom Query</item>
+        <!-- TODO Projects added to this list? -->
+    </string-array>
+    <string name="default_todoist_start_page">Info Page</string>
+    
+    <string name="key_todoist_date_format">todoist_general_date_format</string>
+    <string name="title_todoist_date_format">Date Format</string>
+    <string-array name="entries_todoist_date_format">
+        <item>DD-MM-YYYY</item>
+        <item>MM-DD-YYYY</item>
+    </string-array>
+    <string name="default_todoist_date_format">MM-DD-YYYY</string>
+    
+    <string name="key_todoist_time_format">todoist_general_time_format</string>
+    <string name="title_todoist_time_format">Time Format</string>
+    <string-array name="entries_todoist_time_format">
+        <item>13:00</item>
+        <item>1:00pm</item>
+    </string-array>
+    <string name="default_todoist_time_format">1:00pm</string>
+    
+    <string name="key_todoist_timezone">todoist_general_timezone</string>
+    <string name="title_todoist_timezone">Time Zone</string>
+    
+    <string name="key_todoist_sort_order">todoist_general_sort_order</string>
+    <string name="title_todoist_sort_order">Sort Order</string>
+    <string-array name="entries_todoist_sort_order">
+        <item>Oldest Dates First</item>
+        <item>Oldest Dates Last</item>
+    </string-array>
+    <string name="default_todoist_sort_order">Oldest Dates Last</string>
+    
+    <string name="key_todoist_user_preferences">todoist_user_preferences</string>
+    <string name="title_todoist_user_preferences">Account</string>
+    <string name="summary_todoist_user_preferences">Your Information</string>
+    
+    <string name="key_remember_me">todoist_remember_me</string>
+    <string name="title_remember_me">Remember Me</string>
+    <string name="summary_remember_me_on">Remember Login Information</string>
+    <string name="summary_remember_me_off">Forget Login Information</string>
+    
+    <string name="key_todoist_full_name">todoist_user_full_name</string>
+    <string name="title_todoist_full_name">Full Name</string>
+    
+    <string name="key_todoist_email">todoist_user_email</string>
+    <string name="title_todoist_email">Email</string>
+
+    <string name="title_todoist_password">Password</string>
+    
+    <string name="title_todoist_api_token">Web Service Token</string>
+
+    <string name="key_todoist_premium_preferences">todoist_premium_preferences</string>
+    <string name="title_todoist_premium_preferences">Todoist Premium</string>
+    <string name="summary_todoist_premium_preferences">Coming Soon!</string>
+</resources>

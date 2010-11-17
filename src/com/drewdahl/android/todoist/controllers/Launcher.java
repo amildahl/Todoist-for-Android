@@ -2,10 +2,15 @@ package com.drewdahl.android.todoist.controllers;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.drewdahl.android.todoist.R;
 import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.models.User;
+import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Users;
 import com.drewdahl.android.todoist.service.TodoistService;
 import com.drewdahl.android.todoist.views.ItemList;
 import com.drewdahl.android.todoist.views.Login;
@@ -17,12 +22,20 @@ public class Launcher extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		SharedPreferences prefs = getSharedPreferences("com.drewdahl.android.todoist_preferences", 0);
 		/**
-		 * TODO Maybe: If option remember me is set and we have credentials just go to view.
+		 * TODO Bring default values into the resources.
 		 */
-		
-		Intent intent = new Intent(this, Login.class);
-		this.startActivityForResult(intent, LOGIN_REQUEST);
+		if (!prefs.getBoolean(getString(R.string.key_remember_me), false)) {
+			Intent intent = new Intent(this, Login.class);
+			this.startActivityForResult(intent, LOGIN_REQUEST);
+		} else {
+			Cursor c = getContentResolver().query(Users.CONTENT_URI, null, null, null, null);
+			c.moveToFirst();
+			TodoistApiHandler.getInstance().setUser(new User(c));
+			startActivityUserStartPage();
+			c.close();
+		}
 	}
 	
 	@Override
@@ -68,6 +81,7 @@ public class Launcher extends Activity {
 		/**
 		 * TODO Call this function when a support issue needs to be handled.
 		 * TODO Determine what parameters we want from the system when an issue occurs.
+		 * TODO Potentially launch the SupportForm activity here depending on the user's choice from sbumitting and seriousness of issue.
 		 */
 	}
 }

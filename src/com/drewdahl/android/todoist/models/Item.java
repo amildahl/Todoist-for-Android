@@ -91,6 +91,11 @@ public class Item {
 		}
 		c.close();
 	}
+	
+	@Override
+	public String toString() {
+		return content;
+	}
 
 	/**
 	 * Setters and Getters.

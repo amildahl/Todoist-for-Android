@@ -38,7 +38,7 @@ package com.drewdahl.android.todoist.views;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteConstraintException;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -64,14 +64,6 @@ public class Login extends Activity {
         
         setContentView(R.layout.login);
 
-        if (((CheckBox)findViewById(R.id.CheckBoxRememberPassword)).isChecked()) {
-        	Log.d(this.toString(), "Remember Me Checked");
-        	Log.d(this.toString(), "Setting remember me option");
-        	/**
-        	 * TODO Set Option to remember.
-        	 */
-        }
-        
         findViewById(R.id.ButtonSubmit).setOnClickListener(new Button.OnClickListener() {
             	public void onClick(View view) {
             	String email = ((EditText)findViewById(R.id.EditTextEmail)).getText().toString();
@@ -87,6 +79,12 @@ public class Login extends Activity {
             		try {
             			Log.d(this.toString(), "Logging in");
             			TodoistApiHandler.getInstance().login(email, password);
+            			
+            	        if (((CheckBox)findViewById(R.id.CheckBoxRememberPassword)).isChecked()) {
+            	        	SharedPreferences prefs = getSharedPreferences("com.drewdahl.android.todoist_preferences", 0);
+            	        	prefs.edit().putBoolean(getString(R.string.key_remember_me), true).commit();
+            	        }
+            	        
             			/**
             			 * TODO Make this actually save the user information.
             			 * TODO Only if we want to remember information?
@@ -94,12 +92,6 @@ public class Login extends Activity {
             			TodoistApiHandler.getInstance().getUser().save(Login.this.getContentResolver());
                 		setResult(RESULT_OK, new Intent());
                 		finish(); // Kill this activity so we don't listen anymore.
-            		} catch (SQLiteConstraintException e) {
-            			/**
-            			 * TODO Hopefully this is temporary.
-            			 */
-            			Log.d(this.toString(), "Caught a constraint exception");
-            			Log.d(this.toString(), "The following constraint failed: " + e.getLocalizedMessage());
             		} catch (RuntimeException e) {
             			Log.d(this.toString(), "Caught exception during login");
             			/**

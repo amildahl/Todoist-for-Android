@@ -37,17 +37,25 @@
 package com.drewdahl.android.todoist.views;
 
 import com.drewdahl.android.todoist.R;
+import com.drewdahl.android.todoist.apihandler.TodoistApiHandler;
+import com.drewdahl.android.todoist.models.Item;
+import com.drewdahl.android.todoist.preferences.TodoistPreferences;
 import com.drewdahl.android.todoist.provider.TodoistProviderMetaData.Items;
 
 import android.app.ListActivity;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class ItemList extends ListActivity {
@@ -59,8 +67,14 @@ public class ItemList extends ListActivity {
         super.onCreate(savedInstanceState);
         
         /**
+         * TODO Context menu doesn't work.
+         */
+        registerForContextMenu(getListView());
+        
+        /**
          * TODO Add context menus.
          * TODO Roll this into the Item interface?
+         * TODO Filter out the completed Items
          */
         Cursor c = getContentResolver().query(Items.CONTENT_URI, null, null, null, null);
         startManagingCursor(c);
@@ -112,6 +126,8 @@ public class ItemList extends ListActivity {
     		 */
     		return true;
     	case R.id.menu_preferences:
+    		intent = new Intent().setClass(this, TodoistPreferences.class);
+    		startActivity(intent);
     		return true;
     	default:
     		return super.onOptionsItemSelected(item);
@@ -131,6 +147,10 @@ public class ItemList extends ListActivity {
     public boolean onContextItemSelected(MenuItem item)
     {
     	Intent intent = null;
+    	
+    	AdapterView.AdapterContextMenuInfo info;
+  	    info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+    	long id = getListAdapter().getItemId(info.position);
     	
     	switch (item.getItemId()) {
     	case R.id.menu_deleteItem:
@@ -154,6 +174,24 @@ public class ItemList extends ListActivity {
     		return true;
     	default:
     		return super.onContextItemSelected(item);
+    	}
+    }
+    
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+    	Uri uri = ContentUris.withAppendedId(getIntent().getData(), id);
+    	
+    	Log.d(this.toString(), "Clicked item: " + String.valueOf(id));
+    	String action = getIntent().getAction();
+    	if (Intent.ACTION_PICK.equals(action) || Intent.ACTION_GET_CONTENT.equals(action)) {
+    		setResult(RESULT_OK, new Intent().setData(uri));
+    	} else {
+    		/**
+    		 * TODO Update this so it's behind a cleaner API.
+    		 */
+    		TodoistApiHandler.getInstance().completeItems(true, (int)id);
+    		Item i = TodoistApiHandler.getInstance().getItemsById((int)id).get(0);
+    		i.save(getContentResolver());
     	}
     }
 }
